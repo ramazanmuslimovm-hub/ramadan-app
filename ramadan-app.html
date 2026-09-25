@@ -109,6 +109,8 @@
     font-family:'Inter',sans-serif;
   }
   .field input:focus{ outline:none; border-color:var(--accent); }
+  .field-row{ display:flex; gap:12px; }
+  .field-row .field{ flex:1; }
   .toggle-row{
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 0; border-top:1px solid var(--line);
@@ -126,9 +128,31 @@
     font-family:'Inter',sans-serif; cursor:pointer; margin-top:4px;
   }
   .btn:active{ opacity:0.85; }
+  .btn-small{ width:auto; padding:13px 18px; margin-top:0; flex-shrink:0; }
   .note{ font-size:13px; color:var(--text-muted); line-height:1.6; margin-top:10px; }
   .about{ font-size:13px; color:var(--text-muted); line-height:1.7; margin-top:6px; }
   .status-msg{ font-size:13px; color:var(--text-muted); text-align:center; padding:30px 10px; }
+
+  /* habits */
+  .habit-add-row{ display:flex; gap:10px; margin-bottom:22px; }
+  .habit-add-row input{
+    flex:1; background:var(--surface); border:1px solid var(--line);
+    border-radius:12px; padding:13px 14px; color:var(--text); font-size:15px;
+    font-family:'Inter',sans-serif;
+  }
+  .habit-add-row input:focus{ outline:none; border-color:var(--accent); }
+  .habit-card{ border:1px solid var(--line); border-radius:var(--radius); padding:16px 16px 18px; margin-bottom:14px; }
+  .habit-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .habit-name{ flex:1; font-size:15px; font-weight:600; }
+  .habit-progress{ font-size:13px; color:var(--text-muted); }
+  .habit-del{ background:none; border:none; color:var(--text-muted); font-size:18px; line-height:1; cursor:pointer; padding:2px 4px; }
+  .habit-grid{ display:flex; flex-wrap:wrap; gap:6px; }
+  .habit-cell{
+    width:29px; height:29px; border-radius:8px; border:1px solid var(--line);
+    background:var(--surface); color:var(--text-muted); font-size:11px;
+    font-family:'Inter',sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .habit-cell.on{ background:var(--accent); border-color:var(--accent); color:#fff; font-size:13px; }
 
   /* bottom nav */
   .nav{
@@ -142,10 +166,10 @@
   .nav-item{
     flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
     padding:10px 0 8px; color:var(--text-muted); background:none; border:none;
-    font-family:'Inter',sans-serif; font-size:11px; cursor:pointer;
+    font-family:'Inter',sans-serif; font-size:10.5px; cursor:pointer;
   }
   .nav-item.active{ color:var(--accent); }
-  .nav-item svg{ width:22px; height:22px; }
+  .nav-item svg{ width:21px; height:21px; }
 
   .view{ display:none; }
   .view.active{ display:block; }
@@ -181,25 +205,41 @@
     </div>
     <section>
       <div class="section-title">Сегодня</div>
-      <div class="about" id="todayNote">Город не выбран. Откройте «Профиль», чтобы указать город — тогда расчёт времени будет точным.</div>
+      <div class="about" id="todayNote">Город не выбран. Откройте «Профиль», чтобы указать страну и город — тогда расчёт времени будет точным.</div>
     </section>
   </div>
 
   <!-- CALENDAR -->
   <div class="view" id="view-calendar">
     <div class="section-title" style="margin-bottom:14px;">Календарь Рамадана</div>
-    <div id="calList"><div class="status-msg">Укажите город в профиле, чтобы увидеть расписание на весь месяц.</div></div>
+    <div id="calList"><div class="status-msg">Укажите страну и город в профиле, чтобы увидеть расписание на весь месяц.</div></div>
+  </div>
+
+  <!-- HABITS -->
+  <div class="view" id="view-habits">
+    <div class="section-title" style="margin-bottom:14px;">Трекер привычек</div>
+    <div class="habit-add-row">
+      <input type="text" id="habitInput" placeholder="Например: Читать 1 стр. Корана">
+      <button class="btn btn-small" id="addHabitBtn">Добавить</button>
+    </div>
+    <div id="habitsList"><div class="status-msg">Пока нет ни одной привычки — добавьте первую выше.</div></div>
   </div>
 
   <!-- PROFILE -->
   <div class="view" id="view-profile">
-    <div class="section-title">Город</div>
-    <div class="field">
-      <label for="cityInput">Название города</label>
-      <input type="text" id="cityInput" placeholder="Например: Алматы">
+    <div class="section-title">Страна и город</div>
+    <div class="field-row">
+      <div class="field">
+        <label for="countryInput">Страна</label>
+        <input type="text" id="countryInput" placeholder="Например: Казахстан">
+      </div>
+      <div class="field">
+        <label for="cityInput">Город</label>
+        <input type="text" id="cityInput" placeholder="Например: Алматы">
+      </div>
     </div>
-    <button class="btn" id="saveCityBtn">Сохранить город</button>
-    <div class="note">Время намаза рассчитывается автоматически по названию города (Aladhan API), метод расчёта — Muslim World League.</div>
+    <button class="btn" id="saveCityBtn">Сохранить</button>
+    <div class="note">Время намаза рассчитывается автоматически по стране и городу (Aladhan API), метод расчёта — Muslim World League.</div>
 
     <section>
       <div class="section-title">Напоминания</div>
@@ -222,7 +262,7 @@
 
     <section>
       <div class="section-title">О приложении</div>
-      <div class="about">Личный кабинет для месяца Рамадан: время сухура и ифтара по вашему городу, календарь на весь месяц и настройки напоминаний. Пространство для новых разделов оставлено осознанно — оно будет расти вместе с вашими задачами.</div>
+      <div class="about">Личный кабинет для месяца Рамадан: время сухура и ифтара по вашей стране и городу, календарь на весь месяц и трекер личных привычек.</div>
     </section>
   </div>
 
@@ -235,6 +275,10 @@
       <button class="nav-item" data-view="calendar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
         Календарь
+      </button>
+      <button class="nav-item" data-view="habits">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></svg>
+        Привычки
       </button>
       <button class="nav-item" data-view="profile">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6"/></svg>
@@ -252,7 +296,6 @@
   const store = {
     get(k, def){
       try{
-        if(tg && tg.CloudStorage){ /* async API not used for simplicity, fallback to localStorage */ }
         const v = localStorage.getItem(k);
         return v === null ? def : JSON.parse(v);
       }catch(e){ return def; }
@@ -274,7 +317,12 @@
   }
 
   // ---- navigation ----
-  const views = { home: document.getElementById('view-home'), calendar: document.getElementById('view-calendar'), profile: document.getElementById('view-profile') };
+  const views = {
+    home: document.getElementById('view-home'),
+    calendar: document.getElementById('view-calendar'),
+    habits: document.getElementById('view-habits'),
+    profile: document.getElementById('view-profile')
+  };
   document.querySelectorAll('.nav-item').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
@@ -296,44 +344,107 @@
     });
   });
 
-  // ---- city ----
+  // ---- country + city ----
+  const countryInput = document.getElementById('countryInput');
   const cityInput = document.getElementById('cityInput');
+  let country = store.get('country', '');
   let city = store.get('city', '');
+  countryInput.value = country;
   cityInput.value = city;
   document.getElementById('saveCityBtn').addEventListener('click', ()=>{
+    country = countryInput.value.trim();
     city = cityInput.value.trim();
+    store.set('country', country);
     store.set('city', city);
     if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
     loadToday();
     loadCalendar();
   });
 
+  // ---- habits ----
+  const habitInput = document.getElementById('habitInput');
+  const habitsListEl = document.getElementById('habitsList');
+  function uid(){ return 'h' + Date.now() + Math.floor(Math.random()*1000); }
+  function renderHabits(){
+    const habits = store.get('habits', []);
+    if(!habits.length){
+      habitsListEl.innerHTML = '<div class="status-msg">Пока нет ни одной привычки — добавьте первую выше.</div>';
+      return;
+    }
+    habitsListEl.innerHTML = habits.map(h=>{
+      const days = h.days || {};
+      const doneCount = Object.values(days).filter(Boolean).length;
+      let cells = '';
+      for(let d=1; d<=30; d++){
+        const on = !!days[d];
+        cells += '<button class="habit-cell'+(on?' on':'')+'" data-habit="'+h.id+'" data-day="'+d+'">'+(on?'✓':d)+'</button>';
+      }
+      return '<div class="habit-card">'
+        + '<div class="habit-head"><div class="habit-name">'+h.name+'</div><div class="habit-progress">'+doneCount+' / 30</div><button class="habit-del" data-del="'+h.id+'">×</button></div>'
+        + '<div class="habit-grid">'+cells+'</div>'
+        + '</div>';
+    }).join('');
+  }
+  document.getElementById('addHabitBtn').addEventListener('click', ()=>{
+    const name = habitInput.value.trim();
+    if(!name) return;
+    const habits = store.get('habits', []);
+    habits.push({ id: uid(), name: name, days: {} });
+    store.set('habits', habits);
+    habitInput.value = '';
+    renderHabits();
+    if(tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+  });
+  habitsListEl.addEventListener('click', (e)=>{
+    const cell = e.target.closest('.habit-cell');
+    const del = e.target.closest('.habit-del');
+    if(cell){
+      const habits = store.get('habits', []);
+      const h = habits.find(x=>x.id===cell.dataset.habit);
+      if(h){
+        h.days = h.days || {};
+        h.days[cell.dataset.day] = !h.days[cell.dataset.day];
+        store.set('habits', habits);
+        renderHabits();
+        if(tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+      }
+    } else if(del){
+      let habits = store.get('habits', []);
+      habits = habits.filter(x=>x.id!==del.dataset.del);
+      store.set('habits', habits);
+      renderHabits();
+    }
+  });
+
   // ---- date formatting ----
   const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
   const WEEKDAYS_SHORT = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
   function fmtGregorian(d){ return d.getDate() + ' ' + MONTHS_RU[d.getMonth()]; }
+  function placeLabel(){ return country ? (city + ', ' + country) : city; }
 
   // ---- API ----
-  function apiTimingsToday(city, cb){
+  function apiTimingsToday(cb){
     if(!city){ cb(null); return; }
     const today = new Date();
     const dd = String(today.getDate()).padStart(2,'0');
     const mm = String(today.getMonth()+1).padStart(2,'0');
     const yyyy = today.getFullYear();
-    fetch('https://api.aladhan.com/v1/timingsByAddress/'+dd+'-'+mm+'-'+yyyy+'?address='+encodeURIComponent(city)+'&method=3')
-      .then(r=>r.json()).then(d=>cb(d && d.code===200 ? d.data : null)).catch(()=>cb(null));
+    const url = country
+      ? 'https://api.aladhan.com/v1/timingsByCity/'+dd+'-'+mm+'-'+yyyy+'?city='+encodeURIComponent(city)+'&country='+encodeURIComponent(country)+'&method=3'
+      : 'https://api.aladhan.com/v1/timingsByAddress/'+dd+'-'+mm+'-'+yyyy+'?address='+encodeURIComponent(city)+'&method=3';
+    fetch(url).then(r=>r.json()).then(d=>cb(d && d.code===200 ? d.data : null)).catch(()=>cb(null));
   }
-  function apiRamadanCalendar(city, cb){
+  function apiRamadanCalendar(cb){
     if(!city){ cb(null); return; }
-    // find current hijri year via today's timings, then fetch full Ramadan (month 9) calendar
-    apiTimingsToday(city, (data)=>{
+    apiTimingsToday((data)=>{
       if(!data){ cb(null); return; }
       let hYear = parseInt(data.date.hijri.year, 10);
       let hMonth = parseInt(data.date.hijri.month.number, 10);
-      // if we're past Ramadan this hijri year, show the upcoming one
       if(hMonth > 9) hYear += 1;
-      fetch('https://api.aladhan.com/v1/hijriCalendarByAddress/'+hYear+'/9?address='+encodeURIComponent(city)+'&method=3')
-        .then(r=>r.json()).then(d=>cb(d && d.code===200 ? d.data : null)).catch(()=>cb(null));
+      const url = country
+        ? 'https://api.aladhan.com/v1/hijriCalendarByCity/'+hYear+'/9?city='+encodeURIComponent(city)+'&country='+encodeURIComponent(country)+'&method=3'
+        : 'https://api.aladhan.com/v1/hijriCalendarByAddress/'+hYear+'/9?address='+encodeURIComponent(city)+'&method=3';
+      fetch(url).then(r=>r.json()).then(d=>cb(d && d.code===200 ? d.data : null)).catch(()=>cb(null));
     });
   }
 
@@ -358,13 +469,13 @@
   function loadToday(){
     dateLineEl.textContent = fmtGregorian(new Date());
     if(!city){
-      todayNoteEl.textContent = 'Город не выбран. Откройте «Профиль», чтобы указать город — тогда расчёт времени будет точным.';
-      heroMeta.textContent = 'Укажите город в профиле';
+      todayNoteEl.textContent = 'Город не выбран. Откройте «Профиль», чтобы указать страну и город — тогда расчёт времени будет точным.';
+      heroMeta.textContent = 'Укажите страну и город в профиле';
       return;
     }
-    todayNoteEl.textContent = 'Расчёт по городу: ' + city + '.';
-    apiTimingsToday(city, (data)=>{
-      if(!data){ heroMeta.textContent = 'Не удалось загрузить время намаза. Проверьте название города.'; return; }
+    todayNoteEl.textContent = 'Расчёт по городу: ' + placeLabel() + '.';
+    apiTimingsToday((data)=>{
+      if(!data){ heroMeta.textContent = 'Не удалось загрузить время намаза. Проверьте страну и город.'; return; }
       todayTimings = data.timings;
       const hijri = data.date.hijri;
       dateLineEl.textContent = fmtGregorian(new Date()) + ' · ' + hijri.day + ' ' + hijri.month.ar + ' · день ' + hijri.day + ' Рамадана';
@@ -385,7 +496,6 @@
     } else if(now < maghrib){
       target = maghrib; label = 'До ифтара'; cls = 'state-iftar';
     } else {
-      // after maghrib — count to tomorrow's fajr (approx, uses today's fajr time as estimate)
       target = new Date(fajr.getTime() + 24*3600*1000); label = 'До окончания сухура'; cls = 'state-suhur';
     }
     heroEl.classList.remove('state-iftar','state-suhur');
@@ -397,8 +507,8 @@
     const s = String(Math.floor((diff%60000)/1000)).padStart(2,'0');
     heroTimer.textContent = h+':'+m+':'+s;
     heroMeta.innerHTML = cls==='state-iftar'
-      ? 'Магриб в <b>'+todayTimings.Maghrib.split(' ')[0]+'</b> · '+city
-      : 'Фаджр в <b>'+todayTimings.Fajr.split(' ')[0]+'</b> · '+city;
+      ? 'Магриб в <b>'+todayTimings.Maghrib.split(' ')[0]+'</b> · '+placeLabel()
+      : 'Фаджр в <b>'+todayTimings.Fajr.split(' ')[0]+'</b> · '+placeLabel();
   }
   setInterval(tick, 1000);
 
@@ -406,14 +516,12 @@
   const calListEl = document.getElementById('calList');
   function loadCalendar(){
     if(!city){
-      calListEl.innerHTML = '<div class="status-msg">Укажите город в профиле, чтобы увидеть расписание на весь месяц.</div>';
+      calListEl.innerHTML = '<div class="status-msg">Укажите страну и город в профиле, чтобы увидеть расписание на весь месяц.</div>';
       return;
     }
     calListEl.innerHTML = '<div class="status-msg">Загружаем календарь…</div>';
-    apiRamadanCalendar(city, (days)=>{
+    apiRamadanCalendar((days)=>{
       if(!days){ calListEl.innerHTML = '<div class="status-msg">Не удалось загрузить календарь.</div>'; return; }
-      const todayStr = new Date().toLocaleDateString('en-GB').split('/').join('-'); // dd-mm-yyyy not matching API format directly, compare by date string instead
-      const todayKey = new Date(); todayKey.setHours(0,0,0,0);
       calListEl.innerHTML = days.map(day=>{
         const g = day.date.gregorian;
         const gd = new Date(g.year+'-'+g.month.number+'-'+g.day);
@@ -430,6 +538,7 @@
 
   loadToday();
   loadCalendar();
+  renderHabits();
 })();
 </script>
 </body>
