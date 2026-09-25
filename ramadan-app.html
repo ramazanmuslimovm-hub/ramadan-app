@@ -1,885 +1,148 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Планер</title>
-  <style>
-    :root {
-      --bg: #f7f8fc;
-      --card: #ffffff;
-      --text: #232638;
-      --muted: #858b9e;
-      --line: #e9ebf2;
-      --blue: #5269e8;
-      --blue-light: #eef0ff;
-      --green-light: #e8f6ee;
-      --green: #338b5d;
-      --radius: 18px;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    button, input { font: inherit; }
-    button { cursor: pointer; }
-
-    .app {
-      width: min(100%, 900px);
-      margin: 0 auto;
-      padding: 22px 18px 100px;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 28px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 19px;
-      font-weight: 750;
-    }
-
-    .brand-icon {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      color: white;
-      background: var(--blue);
-      border-radius: 13px;
-    }
-
-    .avatar {
-      display: grid;
-      place-items: center;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: #e9eafa;
-      color: #4d5cc2;
-      font-weight: 700;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      letter-spacing: -.5px;
-    }
-
-    h2, h3 { margin: 0; }
-    h2 { font-size: 17px; }
-    h3 { font-size: 15px; }
-
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .heading {
-      margin: 12px 0 20px;
-    }
-
-    .heading p {
-      margin: 4px 0 0;
-      color: var(--muted);
-    }
-
-    .panel {
-      padding: 19px;
-      margin-bottom: 16px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: 0 8px 26px #25305a08;
-    }
-
-    .panel-heading {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 15px;
-    }
-
-    .week-nav, .calendar-nav {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .icon-button {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--line);
-      border-radius: 11px;
-      background: white;
-      color: #656b7d;
-    }
-
-    .week-range {
-      min-width: 135px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .week-strip {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-
-    .week-day {
-      padding: 10px 4px;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      background: white;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    .week-day.selected {
-      color: white;
-      background: var(--blue);
-      border-color: var(--blue);
-    }
-
-    .week-day .day-name {
-      display: block;
-      font-size: 10px;
-      text-transform: uppercase;
-    }
-
-    .week-day .day-number {
-      display: block;
-      margin: 5px 0;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .week-day.selected .day-number { color: white; }
-
-    .task-list, .habit-list {
-      display: grid;
-      gap: 8px;
-    }
-
-    .task {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 11px 9px;
-      border-radius: 12px;
-    }
-
-    .task:hover { background: #f8f9fc; }
-
-    .task input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--blue);
-      flex: none;
-    }
-
-    .task-title { flex: 1; }
-
-    .task.done .task-title {
-      color: #9da2af;
-      text-decoration: line-through;
-    }
-
-    .task-time {
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .add-button, .primary-button {
-      border: 0;
-      border-radius: 12px;
-      padding: 11px 14px;
-      color: white;
-      background: var(--blue);
-      font-weight: 650;
-    }
-
-    .add-button {
-      width: 100%;
-      margin-top: 10px;
-      text-align: left;
-    }
-
-    .progress {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .progress-ring {
-      --percent: 0%;
-      display: grid;
-      place-items: center;
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: conic-gradient(var(--blue) var(--percent), #edf0f5 0);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .progress-ring span {
-      display: grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: white;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 5px;
-      padding: 4px;
-      border-radius: 12px;
-      background: #f1f2f7;
-    }
-
-    .tabs button {
-      padding: 8px 10px;
-      border: 0;
-      border-radius: 9px;
-      color: var(--muted);
-      background: transparent;
-      font-size: 12px;
-    }
-
-    .tabs button.active {
-      color: var(--text);
-      background: white;
-      box-shadow: 0 1px 4px #20264210;
-    }
-
-    .view { display: none; }
-    .view.active { display: block; }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-    }
-
-    .calendar-weekday {
-      padding: 7px 0;
-      color: var(--muted);
-      font-size: 11px;
-      text-align: center;
-    }
-
-    .calendar-cell {
-      min-height: 64px;
-      padding: 7px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: white;
-      color: var(--text);
-      text-align: left;
-    }
-
-    .calendar-cell.other-month { color: #b9bdc8; }
-    .calendar-cell.today { color: var(--blue); font-weight: 700; }
-    .calendar-cell.selected { border: 2px solid var(--blue); }
-
-    .calendar-cell small {
-      display: block;
-      margin-top: 5px;
-      color: var(--blue);
-      font-size: 10px;
-    }
-
-    .year-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .year-month {
-      padding: 13px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: white;
-      text-align: left;
-    }
-
-    .habit-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 4px;
-      border-bottom: 1px solid #f1f2f6;
-    }
-
-    .habit-row:last-child { border-bottom: 0; }
-    .habit-name { flex: 1; }
-
-    .habit-check {
-      width: 30px;
-      height: 30px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      color: #9da2af;
-      background: white;
-    }
-
-    .habit-check.done {
-      color: var(--green);
-      background: var(--green-light);
-      border-color: #d4ecdd;
-    }
-
-    .empty {
-      padding: 22px 8px;
-      color: var(--muted);
-      text-align: center;
-    }
-
-    .bottom-nav {
-      position: fixed;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      display: flex;
-      justify-content: center;
-      gap: 45px;
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      border-top: 1px solid var(--line);
-      background: #ffffffed;
-      backdrop-filter: blur(12px);
-    }
-
-    .nav-button {
-      border: 0;
-      color: var(--muted);
-      background: transparent;
-      font-size: 12px;
-    }
-
-    .nav-button.active {
-      color: var(--blue);
-      font-weight: 700;
-    }
-
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      background: #20243a66;
-    }
-
-    .modal-backdrop.open { display: flex; }
-
-    .modal {
-      width: min(100%, 420px);
-      padding: 20px;
-      border-radius: 18px;
-      background: white;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .modal input {
-      width: 100%;
-      margin: 7px 0 12px;
-      padding: 11px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-    }
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .secondary-button {
-      padding: 10px 13px;
-      border: 0;
-      border-radius: 10px;
-      background: #f0f1f5;
-    }
-
-    @media (max-width: 520px) {
-      .app { padding: 16px 13px 95px; }
-      .week-strip { gap: 4px; }
-      .week-day { padding: 9px 2px; }
-      .panel { padding: 15px; }
-      .year-grid { grid-template-columns: repeat(2, 1fr); }
-      .calendar-cell { min-height: 48px; padding: 5px; }
-      .bottom-nav { gap: 25px; }
-    }
-  </style>
-</head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f8fc"><title>Планер</title>
+<style>
+:root{--bg:#f7f8fc;--card:#fff;--text:#232638;--muted:#858b9e;--line:#e9ebf2;--blue:#5269e8;--soft:#eef0ff;--green:#338b5d;--green-soft:#e8f6ee;--r:18px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer}
+.app{width:min(100%,900px);margin:auto;padding:20px 18px 112px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.brand{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:750}.brand-icon{width:40px;height:40px;border-radius:14px;background:var(--blue);color:white;display:grid;place-items:center;font-size:21px}.avatar{width:39px;height:39px;border-radius:50%;background:#e9eafa;color:#4d5cc2;display:grid;place-items:center;font-weight:700}
+h1{margin:0;font-size:28px;letter-spacing:-.5px}h2{margin:0;font-size:17px}.muted{font-size:13px;color:var(--muted)}.heading{margin:8px 0 19px}.heading p{margin:0 0 5px;color:var(--muted)}
+.panel{padding:18px;margin-bottom:15px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:0 8px 26px #25305a08}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.period-tools,.week-tools{display:flex;align-items:center;gap:7px}.icon-button{width:36px;height:36px;border:1px solid var(--line);border-radius:11px;background:#fff;color:#60677b}.week-range{min-width:130px;text-align:center;color:var(--muted);font-size:12px}
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.week-day{padding:9px 3px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--muted);text-align:center}.week-day.selected{background:var(--blue);border-color:var(--blue);color:white}.week-day span{display:block}.week-day .dow{font-size:10px}.week-day .num{margin-top:5px;color:var(--text);font-weight:700}.week-day.selected .num{color:white}
+.task-list{display:grid;gap:6px}.task-row{display:flex;align-items:center;gap:11px;padding:12px 9px;border-radius:12px;cursor:pointer}.task-row:hover{background:#f8f9fc}.task-check{width:21px;height:21px;accent-color:var(--blue);flex:none;cursor:pointer}.task-copy{min-width:0;flex:1}.task-title{display:block;font-weight:600;overflow-wrap:anywhere}.task-description{display:block;margin-top:3px;color:var(--muted);font-size:12px;overflow-wrap:anywhere}.task-time{color:var(--muted);font-size:12px;white-space:nowrap}.task-row.done .task-title{text-decoration:line-through;color:#9da2af}.add-button,.primary{border:0;border-radius:12px;padding:11px 14px;background:var(--blue);color:#fff;font-weight:650}.add-button{width:100%;margin-top:9px;text-align:left}.empty{padding:22px 8px;color:var(--muted);text-align:center}
+.tabs{display:flex;gap:3px;padding:4px;border-radius:12px;background:#f1f2f7}.tabs button{border:0;border-radius:9px;padding:7px 9px;background:transparent;color:var(--muted);font-size:12px}.tabs button.active{background:#fff;color:var(--text);box-shadow:0 1px 4px #20264210}.view{display:none}.view.active{display:block}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.calendar-weekday{padding:6px 0;color:var(--muted);font-size:10px;text-align:center}.calendar-cell{min-height:58px;padding:6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text);text-align:left;vertical-align:top}.calendar-cell.other{color:#b9bdc8}.calendar-cell.today{color:var(--blue);font-weight:700}.calendar-cell.selected{border:2px solid var(--blue)}.calendar-cell small{display:block;margin-top:4px;color:var(--blue);font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.year-month{padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff;text-align:left}.year-month strong{text-transform:capitalize}.year-month span{display:block;margin-top:4px;color:var(--muted);font-size:11px}.week-agenda{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.week-column{min-height:105px;padding:7px;border:1px solid var(--line);border-radius:10px;background:#fff}.week-column.today{background:#f5f7ff;border-color:#cfd6ff}.week-column h3{margin:0 0 7px;font-size:11px;color:var(--muted)}.week-event{margin:4px 0;padding:5px;border-radius:6px;background:var(--soft);font-size:10px;overflow-wrap:anywhere}
+.habit-row{display:flex;align-items:center;gap:10px;padding:10px 3px;border-bottom:1px solid #f1f2f6}.habit-row:last-child{border:0}.habit-name{flex:1}.habit-check{width:32px;height:32px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#9da2af}.habit-check.done{background:var(--green-soft);border-color:#d4ecdd;color:var(--green)}
+.bottom-nav{position:fixed;z-index:5;right:0;bottom:0;left:0;display:flex;justify-content:center;gap:clamp(35px,12vw,90px);padding:8px 12px calc(9px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#ffffffed;backdrop-filter:blur(12px)}.nav-button{min-width:76px;padding:4px 8px;border:0;border-radius:12px;background:transparent;color:var(--muted);display:grid;justify-items:center;gap:3px;font-size:13px}.nav-button .nav-icon{font-size:26px;line-height:1.1}.nav-button.active{color:var(--blue);font-weight:700}
+.backdrop{position:fixed;z-index:10;inset:0;display:none;align-items:center;justify-content:center;padding:16px;background:#20243a66}.backdrop.open{display:flex}.modal{width:min(100%,440px);padding:20px;border-radius:19px;background:#fff;box-shadow:0 20px 70px #12162b33}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.modal h2{font-size:18px}.close-button{width:34px;height:34px;border:0;border-radius:10px;background:#f1f2f6;color:#656b7b}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:12px;color:#666c7e;font-weight:600}.field input,.field textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;outline:none;background:white;color:var(--text)}.field input:focus,.field textarea:focus{border-color:#9ca8f5}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}.secondary{padding:10px 13px;border:0;border-radius:10px;background:#f0f1f5;color:#50566a}
+@media(max-width:520px){.app{padding:15px 12px 110px}.panel{padding:14px}.week-strip{gap:4px}.week-day{padding:8px 1px}.week-range{min-width:108px}.year-grid{grid-template-columns:repeat(2,1fr)}.calendar-cell{min-height:49px;padding:4px}.week-agenda{gap:3px}.week-column{padding:4px;min-height:90px}.week-column h3{font-size:9px}.week-event{font-size:9px;padding:4px}.tabs button{padding:7px 6px}}
+</style></head>
 <body>
-  <div class="app">
-    <header>
-      <div class="brand"><span class="brand-icon">✓</span> Планер</div>
-      <div class="avatar">Р</div>
-    </header>
+<div class="app">
+<header><div class="brand"><div class="brand-icon">✓</div> Планер</div><div class="avatar">Р</div></header>
+<main>
+<section class="view active" id="todayView">
+<div class="heading"><p id="greeting" class="muted"></p><h1>План на день</h1></div>
+<div class="panel"><div class="panel-head"><h2>Неделя</h2><div class="week-tools"><button class="icon-button" id="weekPrev">‹</button><span class="week-range" id="weekRange"></span><button class="icon-button" id="weekNext">›</button></div></div><div class="week-strip" id="weekStrip"></div></div>
+<div class="panel"><div class="panel-head"><h2 id="selectedDateTitle">Задачи</h2><span class="muted" id="taskCount"></span></div><div class="task-list" id="taskList"></div><button class="add-button" id="addTask">＋ Добавить задачу</button></div>
+</section>
+<section class="view" id="calendarView">
+<div class="heading"><p class="muted">Планируй заранее</p><h1>Календарь</h1></div>
+<div class="panel"><div class="panel-head"><div class="period-tools"><button class="icon-button" id="periodPrev">‹</button><strong id="periodTitle"></strong><button class="icon-button" id="periodNext">›</button></div><div class="tabs" id="calendarTabs"><button data-mode="day">День</button><button data-mode="week">Неделя</button><button data-mode="month" class="active">Месяц</button><button data-mode="year">Год</button></div></div><div id="calendarContent"></div></div>
+<div class="panel"><div class="panel-head"><h2 id="calendarDayTitle">Задачи выбранного дня</h2><button class="primary" id="addCalendarTask">＋ Задача</button></div><div class="task-list" id="calendarTaskList"></div></div>
+</section>
+<section class="view" id="habitsView">
+<div class="heading"><p class="muted">Маленькие шаги каждый день</p><h1>Привычки</h1></div>
+<div class="panel"><div class="panel-head"><h2>На выбранный день</h2><button class="primary" id="addHabit">＋ Добавить</button></div><div id="habitList"></div></div>
+</section>
+</main></div>
+<nav class="bottom-nav">
+<button class="nav-button active" data-view="todayView"><span class="nav-icon">⌂</span><span>Сегодня</span></button>
+<button class="nav-button" data-view="calendarView"><span class="nav-icon">▦</span><span>Календарь</span></button>
+<button class="nav-button" data-view="habitsView"><span class="nav-icon">◉</span><span>Привычки</span></button>
+</nav>
+<div class="backdrop" id="taskModal"><form class="modal" id="taskForm">
+<div class="modal-head"><h2 id="modalTitle">Новая задача</h2><button class="close-button" type="button" id="closeModal">×</button></div>
+<div class="field"><label for="taskTitle">Заголовок</label><input id="taskTitle" maxlength="120" required placeholder="Что нужно сделать?"></div>
+<div class="field"><label for="taskDescription">Описание</label><textarea id="taskDescription" rows="3" placeholder="Добавь подробности (необязательно)"></textarea></div>
+<div class="form-row"><div class="field"><label for="taskDate">Дата</label><input id="taskDate" type="date"></div><div class="field"><label for="taskTime">Время</label><input id="taskTime" type="time"></div></div>
+<div class="modal-actions"><button class="secondary" type="button" id="cancelModal">Отмена</button><button class="primary">Сохранить</button></div>
+</form></div>
+<script>
+const today=new Date();today.setHours(0,0,0,0);
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const fromISO=s=>{const a=s.split("-").map(Number);return new Date(a[0],a[1]-1,a[2])};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const mondayOf=d=>{const x=new Date(d);x.setDate(x.getDate()-(x.getDay()+6)%7);return x};
+const fmt=(d,o)=>new Intl.DateTimeFormat("ru-RU",o).format(d);
+const weekdays=["ПН","ВТ","СР","ЧТ","ПТ","СБ","ВС"];
+const key="planner-data-v3";
+const initial={tasks:[
+{id:1,title:"Позаниматься нидерландским",description:"",date:iso(today),time:"12:30",done:false},
+{id:2,title:"Купить продукты",description:"",date:iso(today),time:"17:00",done:false},
+{id:3,title:"Отправить документы",description:"Проверить все файлы",date:iso(addDays(today,1)),time:"09:30",done:false},
+{id:4,title:"Запланировать поездку",description:"",date:iso(new Date(today.getFullYear()+1,today.getMonth(),today.getDate())),time:"",done:false}],
+habits:[
+{id:11,title:"Учить нидерландский",icon:"🇳🇱",days:[0,1,2,3,4,5,6],done:[]},
+{id:12,title:"Читать 20 минут",icon:"📖",days:[0,1,2,3,4,5,6],done:[]},
+{id:13,title:"Тренировка",icon:"🏋️",days:[0,2,4],done:[]}]};
+let data;try{data=JSON.parse(localStorage.getItem(key))||initial}catch(e){data=initial}
+let selectedDate=new Date(today),calendarDate=new Date(today),calendarMode="month",editingId=null;
+function save(){localStorage.setItem(key,JSON.stringify(data))}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
-    <main>
-      <section class="view active" id="todayView">
-        <div class="heading">
-          <p class="muted" id="greeting">Твоя неделя</p>
-          <h1>План на день</h1>
-        </div>
+// Генерируем короткий звук через браузер, без отдельного аудиофайла.
+function clickSound(){try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type="sine";o.frequency.value=720;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.06,c.currentTime+.008);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.055);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.06);o.onended=()=>c.close()}catch(e){}}
 
-        <div class="panel">
-          <div class="panel-heading">
-            <h2>Эта неделя</h2>
-            <div class="week-nav">
-              <button class="icon-button" id="weekBack">‹</button>
-              <span class="week-range" id="weekRange"></span>
-              <button class="icon-button" id="weekForward">›</button>
-            </div>
-          </div>
-          <div class="week-strip" id="weekStrip"></div>
-        </div>
-
-        <div class="panel">
-          <div class="panel-heading">
-            <h2 id="selectedDateTitle">Задачи</h2>
-            <span class="muted" id="taskProgress"></span>
-          </div>
-          <div class="task-list" id="taskList"></div>
-          <button class="add-button" id="addTask">＋ Добавить задачу</button>
-        </div>
-
-        <div class="panel">
-          <div class="panel-heading">
-            <h2>Привычки на день</h2>
-            <div class="progress">
-              <div class="progress-ring" id="progressRing"><span id="progressText">0%</span></div>
-            </div>
-          </div>
-          <div class="habit-list" id="todayHabits"></div>
-        </div>
-      </section>
-
-      <section class="view" id="calendarView">
-        <div class="heading">
-          <p class="muted">Все планы в одном месте</p>
-          <h1>Календарь</h1>
-        </div>
-        <div class="panel">
-          <div class="panel-heading">
-            <div class="calendar-nav">
-              <button class="icon-button" id="periodBack">‹</button>
-              <strong id="periodTitle"></strong>
-              <button class="icon-button" id="periodForward">›</button>
-            </div>
-            <div class="tabs" id="calendarTabs">
-              <button data-mode="day">День</button>
-              <button data-mode="week">Неделя</button>
-              <button data-mode="month" class="active">Месяц</button>
-              <button data-mode="year">Год</button>
-            </div>
-          </div>
-          <div id="calendarContent"></div>
-        </div>
-      </section>
-
-      <section class="view" id="habitsView">
-        <div class="heading">
-          <p class="muted">Маленькие шаги каждый день</p>
-          <h1>Привычки</h1>
-        </div>
-        <div class="panel">
-          <div class="panel-heading">
-            <h2>Мои привычки</h2>
-            <button class="primary-button" id="addHabit">＋ Добавить</button>
-          </div>
-          <div id="habitList"></div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <nav class="bottom-nav">
-    <button class="nav-button active" data-view="todayView">Сегодня</button>
-    <button class="nav-button" data-view="calendarView">Календарь</button>
-    <button class="nav-button" data-view="habitsView">Привычки</button>
-  </nav>
-
-  <div class="modal-backdrop" id="taskModal">
-    <form class="modal" id="taskForm">
-      <div class="modal-header">
-        <h2>Новая задача</h2>
-        <button type="button" class="icon-button" id="closeModal">×</button>
-      </div>
-      <label for="taskName">Название</label>
-      <input id="taskName" required placeholder="Что нужно сделать?">
-      <label for="taskDate">Дата</label>
-      <input id="taskDate" type="date">
-      <label for="taskTime">Время (необязательно)</label>
-      <input id="taskTime" type="time">
-      <div class="modal-actions">
-        <button type="button" class="secondary-button" id="cancelModal">Отмена</button>
-        <button class="primary-button">Сохранить</button>
-      </div>
-    </form>
-  </div>
-
-  <script>
-    // Данные прототипа сохраняются в этом браузере.
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const toISO = date =>
-      date.getFullYear() + "-" +
-      String(date.getMonth() + 1).padStart(2, "0") + "-" +
-      String(date.getDate()).padStart(2, "0");
-
-    const fromISO = value => {
-      const [year, month, day] = value.split("-").map(Number);
-      return new Date(year, month - 1, day);
-    };
-
-    const addDays = (date, amount) => {
-      const result = new Date(date);
-      result.setDate(result.getDate() + amount);
-      return result;
-    };
-
-    const mondayOf = date => {
-      const result = new Date(date);
-      result.setDate(result.getDate() + (result.getDay() + 6) % 7);
-      return result;
-    };
-
-    const formatDate = (date, options) =>
-      new Intl.DateTimeFormat("ru-RU", options).format(date);
-
-    const weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
-
-    let selectedDate = new Date(today);
-    let calendarDate = new Date(today);
-    let calendarMode = "month";
-
-    const starterData = {
-      tasks: [
-        { id: 1, title: "Позаниматься нидерландским", date: toISO(today), time: "12:30", done: false },
-        { id: 2, title: "Купить продукты", date: toISO(today), time: "17:00", done: false },
-        { id: 3, title: "Отправить документы", date: toISO(addDays(today, 1)), time: "09:30", done: false },
-        { id: 4, title: "Запланировать поездку", date: toISO(new Date(today.getFullYear() + 1, today.getMonth(), today.getDate())), time: "", done: false }
-      ],
-      habits: [
-        { id: 11, title: "Учить нидерландский", icon: "🇳🇱", days: [0,1,2,3,4,5,6], done: [] },
-        { id: 12, title: "Читать 20 минут", icon: "📖", days: [0,1,2,3,4,5,6], done: [] },
-        { id: 13, title: "Тренировка", icon: "🏋️", days: [0,2,4], done: [] }
-      ]
-    };
-
-    let data;
-    try {
-      data = JSON.parse(localStorage.getItem("planner-data")) || starterData;
-    } catch {
-      data = starterData;
-    }
-
-    function save() {
-      localStorage.setItem("planner-data", JSON.stringify(data));
-    }
-
-    function renderWeek() {
-      const start = mondayOf(selectedDate);
-      const end = addDays(start, 6);
-
-      document.getElementById("weekRange").textContent =
-        formatDate(start, { day: "numeric", month: "short" }) + " — " +
-        formatDate(end, { day: "numeric", month: "short" });
-
-      document.getElementById("weekStrip").innerHTML =
-        Array.from({ length: 7 }, (_, index) => {
-          const date = addDays(start, index);
-          const iso = toISO(date);
-          return `
-            <button class="week-day ${iso === toISO(selectedDate) ? "selected" : ""}" data-day="${iso}">
-              <span class="day-name">${weekdays[index]}</span>
-              <span class="day-number">${date.getDate()}</span>
-            </button>`;
-        }).join("");
-
-      document.querySelectorAll("[data-day]").forEach(button => {
-        button.onclick = () => {
-          selectedDate = fromISO(button.dataset.day);
-          calendarDate = new Date(selectedDate);
-          render();
-        };
-      });
-    }
-
-    function renderTasks() {
-      const dateKey = toISO(selectedDate);
-      const tasks = data.tasks.filter(task => task.date === dateKey);
-      const completed = tasks.filter(task => task.done).length;
-
-      document.getElementById("selectedDateTitle").textContent =
-        formatDate(selectedDate, { weekday: "long", day: "numeric", month: "long" });
-
-      document.getElementById("taskProgress").textContent =
-        tasks.length ? `${completed} из ${tasks.length} выполнено` : "Нет задач";
-
-      document.getElementById("taskList").innerHTML = tasks.length
-        ? tasks.map(task => `
-          <label class="task ${task.done ? "done" : ""}">
-            <input type="checkbox" data-task="${task.id}" ${task.done ? "checked" : ""}>
-            <span class="task-title">${escapeHTML(task.title)}</span>
-            <span class="task-time">${task.time || ""}</span>
-          </label>`).join("")
-        : `<div class="empty">На этот день задач пока нет.</div>`;
-
-      document.querySelectorAll("[data-task]").forEach(input => {
-        input.onchange = () => {
-          const task = data.tasks.find(item => item.id === Number(input.dataset.task));
-          task.done = input.checked;
-          save();
-          render();
-        };
-      });
-    }
-
-    function renderHabits() {
-      const dateKey = toISO(selectedDate);
-      const dayIndex = (selectedDate.getDay() + 6) % 7;
-      const habits = data.habits.filter(habit => habit.days.includes(dayIndex));
-      const doneCount = habits.filter(habit => habit.done.includes(dateKey)).length;
-      const percent = habits.length ? Math.round(doneCount / habits.length * 100) : 0;
-
-      document.getElementById("progressRing").style.setProperty("--percent", percent + "%");
-      document.getElementById("progressText").textContent = percent + "%";
-
-      document.getElementById("todayHabits").innerHTML = habits.length
-        ? habits.map(habit => {
-          const done = habit.done.includes(dateKey);
-          return `
-            <div class="habit-row">
-              <span>${habit.icon}</span>
-              <span class="habit-name">${escapeHTML(habit.title)}</span>
-              <button class="habit-check ${done ? "done" : ""}" data-habit="${habit.id}">
-                ${done ? "✓" : "○"}
-              </button>
-            </div>`;
-        }).join("")
-        : `<div class="empty">На этот день привычек нет.</div>`;
-
-      document.querySelectorAll("[data-habit]").forEach(button => {
-        button.onclick = () => {
-          const habit = data.habits.find(item => item.id === Number(button.dataset.habit));
-          habit.done = habit.done.includes(dateKey)
-            ? habit.done.filter(date => date !== dateKey)
-            : [...habit.done, dateKey];
-          save();
-          render();
-        };
-      });
-
-      document.getElementById("habitList").innerHTML = data.habits.map(habit => `
-        <div class="habit-row">
-          <span>${habit.icon}</span>
-          <span class="habit-name">${escapeHTML(habit.title)}</span>
-          <span class="muted">${habit.days.length} дн. в неделю</span>
-        </div>`).join("");
-    }
-
-    function renderCalendar() {
-      const title = document.getElementById("periodTitle");
-      const content = document.getElementById("calendarContent");
-      title.textContent = calendarMode === "year"
-        ? calendarDate.getFullYear()
-        : formatDate(calendarDate, { month: "long", year: "numeric" });
-
-      document.querySelectorAll("#calendarTabs button").forEach(button => {
-        button.classList.toggle("active", button.dataset.mode === calendarMode);
-      });
-
-      if (calendarMode === "year") {
-        content.innerHTML = `<div class="year-grid">${
-          Array.from({ length: 12 }, (_, month) => `
-            <button class="year-month" data-month="${month}">
-              <strong>${formatDate(new Date(calendarDate.getFullYear(), month, 1), { month: "long" })}</strong>
-              <div class="muted">Открыть месяц →</div>
-            </button>`).join("")
-        }</div>`;
-
-        document.querySelectorAll("[data-month]").forEach(button => {
-          button.onclick = () => {
-            calendarDate.setMonth(Number(button.dataset.month));
-            calendarMode = "month";
-            renderCalendar();
-          };
-        });
-        return;
-      }
-
-      if (calendarMode === "day") {
-        const tasks = data.tasks.filter(task => task.date === toISO(calendarDate));
-        content.innerHTML = `<div class="empty">${
-          formatDate(calendarDate, { weekday: "long", day: "numeric", month: "long" })
-        } · ${tasks.length} задач</div>`;
-        return;
-      }
-
-      const monthStart = new Date(calendarDate.getFullYear(), calendarDate.getMonth(), 1);
-      const firstCell = mondayOf(monthStart);
-      const monthDays = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 0).getDate();
-      const numberOfWeeks = Math.ceil(((monthStart.getDay() + 6) % 7 + monthDays) / 7);
-
-      content.innerHTML = `<div class="calendar-grid">
-        ${weekdays.map(day => `<div class="calendar-weekday">${day}</div>`).join("")}
-        ${Array.from({ length: numberOfWeeks * 7 }, (_, index) => {
-          const date = addDays(firstCell, index);
-          const key = toISO(date);
-          const count = data.tasks.filter(task => task.date === key).length;
-          const classes = [
-            "calendar-cell",
-            date.getMonth() !== calendarDate.getMonth() ? "other-month" : "",
-            key === toISO(today) ? "today" : "",
-            key === toISO(selectedDate) ? "selected" : ""
-          ].join(" ");
-
-          return `<button class="${classes}" data-calendar-day="${key}">
-            ${date.getDate()}${count ? `<small>${count} задач</small>` : ""}
-          </button>`;
-        }).join("")}
-      </div>`;
-
-      document.querySelectorAll("[data-calendar-day]").forEach(button => {
-        button.onclick = () => {
-          selectedDate = fromISO(button.dataset.calendarDay);
-          render();
-        };
-      });
-    }
-
-    function escapeHTML(value) {
-      return String(value).replace(/[&<>"']/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-      })[character]);
-    }
-
-    function render() {
-      renderWeek();
-      renderTasks();
-      renderHabits();
-      renderCalendar();
-    }
-
-    document.getElementById("weekBack").onclick = () => {
-      selectedDate = addDays(selectedDate, -7);
-      render();
-    };
-
-    document.getElementById("weekForward").onclick = () => {
-      selectedDate = addDays(selectedDate, 7);
-      render();
-    };
-
-    document.getElementById("calendarTabs").onclick = event => {
-      const button = event.target.closest("[data-mode]");
-      if (!button) return;
-      calendarMode = button.dataset.mode;
-      renderCalendar();
-    };
-
-    document.getElementById("periodBack").onclick = () => {
-      if (calendarMode === "year") calendarDate.setFullYear(calendarDate.getFullYear() - 1);
-      else if (calendarMode === "week") calendarDate = addDays(calendarDate, -7);
-      else calendarDate.setMonth(calendarDate.getMonth() - 1);
-      renderCalendar();
-    };
-
-    document.getElementById("periodForward").onclick = () => {
-      if (calendarMode === "year") calendarDate.setFullYear(calendarDate.getFullYear() + 1);
-      else if (calendarMode === "week") calendarDate = addDays(calendarDate, 7);
-      else calendarDate.setMonth(calendarDate.getMonth() + 1);
-      renderCalendar();
-    };
-
-    document.querySelectorAll(".nav-button").forEach(button => {
-      button.onclick = () => {
-        document.querySelectorAll(".nav-button").forEach(item => item.classList.remove("active"));
-        document.querySelectorAll(".view").forEach(item => item.classList.remove("active"));
-        button.classList.add("active");
-        document.getElementById(button.dataset.view).classList.add("active");
-      };
-    });
-
-    const modal = document.getElementById("taskModal");
-
-    document.getElementById("addTask").onclick = () => {
-      document.getElementById("taskDate").value = toISO(selectedDate);
-      modal.classList.add("open");
-      document.getElementById("taskName").focus();
-    };
-
-    function closeModal() {
-      modal.classList.remove("open");
-    }
-
-    document.getElementById("closeModal").onclick = closeModal;
-    document.getElementById("cancelModal").onclick = closeModal;
-
-    document.getElementById("taskForm").onsubmit = event => {
-      event.preventDefault();
-      data.tasks.push({
-        id: Date.now(),
-        title: document.getElementById("taskName").value.trim(),
-        date: document.getElementById("taskDate").value,
-        time: document.getElementById("taskTime").value,
-        done: false
-      });
-      save();
-      event.target.reset();
-      closeModal();
-      render();
-    };
-
-    document.getElementById("addHabit").onclick = () => {
-      const title = prompt("Какую привычку добавить?");
-      if (!title || !title.trim()) return;
-
-      data.habits.push({
-        id: Date.now(),
-        title: title.trim(),
-        icon: "✨",
-        days: [0, 1, 2, 3, 4, 5, 6],
-        done: []
-      });
-
-      save();
-      render();
-    };
-
-    render();
-  </script>
-</body>
-</html>
+function renderWeek(){
+ const start=mondayOf(selectedDate),end=addDays(start,6);
+ document.getElementById("weekRange").textContent=fmt(start,{day:"numeric",month:"short"})+" — "+fmt(end,{day:"numeric",month:"short"});
+ document.getElementById("weekStrip").innerHTML=Array.from({length:7},(_,i)=>{const d=addDays(start,i),s=iso(d);return '<button class="week-day '+(s===iso(selectedDate)?"selected":"")+'" data-week="'+s+'"><span class="dow">'+weekdays[i]+'</span><span class="num">'+d.getDate()+'</span></button>'}).join("");
+ document.querySelectorAll("[data-week]").forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.week);calendarDate=new Date(selectedDate);render()});
+}
+function renderTasks(id,dateKey){
+ const box=document.getElementById(id),list=data.tasks.filter(t=>t.date===dateKey).sort((a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99"));
+ box.innerHTML=list.length?list.map(t=>'<div class="task-row '+(t.done?"done":"")+'" data-edit="'+t.id+'"><input class="task-check" type="checkbox" data-check="'+t.id+'" '+(t.done?"checked":"")+'><div class="task-copy"><span class="task-title">'+esc(t.title)+'</span>'+(t.description?'<span class="task-description">'+esc(t.description)+'</span>':"")+'</div><span class="task-time">'+esc(t.time)+'</span></div>').join(""):'<div class="empty">На этот день задач пока нет.</div>';
+ box.querySelectorAll("[data-check]").forEach(cb=>{cb.onclick=e=>e.stopPropagation();cb.onchange=()=>{const t=data.tasks.find(x=>x.id===Number(cb.dataset.check));if(t){t.done=cb.checked;clickSound();save();render()}}});
+ box.querySelectorAll("[data-edit]").forEach(row=>row.onclick=e=>{if(e.target.closest("[data-check]"))return;openModal(Number(row.dataset.edit))});
+ if(id==="taskList"){const done=list.filter(t=>t.done).length;document.getElementById("taskCount").textContent=list.length?done+" из "+list.length+" выполнено":""}
+}
+function renderHabits(){
+ const day=(selectedDate.getDay()+6)%7,dateKey=iso(selectedDate),list=data.habits.filter(h=>h.days.includes(day));
+ document.getElementById("habitList").innerHTML=list.length?list.map(h=>{const yes=h.done.includes(dateKey);return '<div class="habit-row"><span>'+h.icon+'</span><span class="habit-name">'+esc(h.title)+'</span><button class="habit-check '+(yes?"done":"")+'" data-habit="'+h.id+'">'+(yes?"✓":"○")+'</button></div>'}).join(""):'<div class="empty">На этот день привычек нет.</div>';
+ document.querySelectorAll("[data-habit]").forEach(b=>b.onclick=()=>{const h=data.habits.find(x=>x.id===Number(b.dataset.habit));if(!h)return;h.done=h.done.includes(dateKey)?h.done.filter(x=>x!==dateKey):h.done.concat(dateKey);save();render()});
+}
+function renderCalendar(){
+ const box=document.getElementById("calendarContent"),title=document.getElementById("periodTitle"),y=calendarDate.getFullYear(),m=calendarDate.getMonth();
+ title.textContent=calendarMode==="year"?String(y):fmt(calendarDate,{month:"long",year:"numeric"});
+ document.querySelectorAll("#calendarTabs button").forEach(b=>b.classList.toggle("active",b.dataset.mode===calendarMode));
+ if(calendarMode==="day"){box.innerHTML='<div class="empty">'+fmt(calendarDate,{weekday:"long",day:"numeric",month:"long"})+'</div>';return}
+ if(calendarMode==="year"){
+  box.innerHTML='<div class="year-grid">'+Array.from({length:12},(_,i)=>'<button class="year-month" data-month="'+i+'"><strong>'+fmt(new Date(y,i,1),{month:"long"})+'</strong><span>Открыть месяц →</span></button>').join("")+'</div>';
+  box.querySelectorAll("[data-month]").forEach(b=>b.onclick=()=>{calendarDate.setMonth(Number(b.dataset.month));calendarMode="month";renderCalendar()});return
+ }
+ if(calendarMode==="week"){
+  const start=mondayOf(calendarDate);box.innerHTML='<div class="week-agenda">'+Array.from({length:7},(_,i)=>{const d=addDays(start,i),ls=data.tasks.filter(t=>t.date===iso(d));return '<div class="week-column '+(iso(d)===iso(today)?"today":"")+'"><h3>'+weekdays[i]+" "+d.getDate()+'</h3>'+ls.map(t=>'<div class="week-event">'+esc(t.title)+'</div>').join("")+'</div>'}).join("")+'</div>';return
+ }
+ const first=new Date(y,m,1),start=mondayOf(first),count=new Date(y,m+1,0).getDate(),cells=Math.ceil(((first.getDay()+6)%7+count)/7)*7;
+ box.innerHTML='<div class="calendar-grid">'+weekdays.map(d=>'<div class="calendar-weekday">'+d+'</div>').join("")+Array.from({length:cells},(_,i)=>{const d=addDays(start,i),s=iso(d),ls=data.tasks.filter(t=>t.date===s);let c="calendar-cell";if(d.getMonth()!==m)c+=" other";if(s===iso(today))c+=" today";if(s===iso(selectedDate))c+=" selected";return '<button class="'+c+'" data-date="'+s+'">'+d.getDate()+(ls.length?'<small>'+ls.length+' задач</small>':"")+'</button>'}).join("")+'</div>';
+ box.querySelectorAll("[data-date]").forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.date);calendarDate=new Date(selectedDate);render()});
+}
+function render(){
+ const title="Задачи · "+fmt(selectedDate,{day:"numeric",month:"long"});
+ document.getElementById("greeting").textContent=fmt(selectedDate,{weekday:"long",day:"numeric",month:"long"});
+ document.getElementById("selectedDateTitle").textContent=title;
+ document.getElementById("calendarDayTitle").textContent=title;
+ renderWeek();renderTasks("taskList",iso(selectedDate));renderTasks("calendarTaskList",iso(selectedDate));renderHabits();renderCalendar();
+}
+function openModal(id){
+ editingId=id===undefined?null:id;const t=editingId===null?null:data.tasks.find(x=>x.id===editingId);
+ document.getElementById("modalTitle").textContent=t?"Редактировать задачу":"Новая задача";
+ document.getElementById("taskTitle").value=t?t.title:"";
+ document.getElementById("taskDescription").value=t?t.description||"":"";
+ document.getElementById("taskDate").value=t?t.date:iso(selectedDate);
+ document.getElementById("taskTime").value=t?t.time||"":"";
+ document.getElementById("taskModal").classList.add("open");document.getElementById("taskTitle").focus();
+}
+function closeModal(){document.getElementById("taskModal").classList.remove("open")}
+document.getElementById("addTask").onclick=()=>openModal();
+document.getElementById("addCalendarTask").onclick=()=>openModal();
+document.getElementById("closeModal").onclick=closeModal;
+document.getElementById("cancelModal").onclick=closeModal;
+document.getElementById("taskModal").onclick=e=>{if(e.target.id==="taskModal")closeModal()};
+document.getElementById("taskForm").onsubmit=e=>{
+ e.preventDefault();const task={id:editingId===null?Date.now():editingId,title:document.getElementById("taskTitle").value.trim(),description:document.getElementById("taskDescription").value.trim(),date:document.getElementById("taskDate").value,time:document.getElementById("taskTime").value,done:editingId===null?false:data.tasks.find(t=>t.id===editingId).done};
+ if(editingId===null)data.tasks.push(task);else data.tasks=data.tasks.map(t=>t.id===editingId?task:t);
+ selectedDate=fromISO(task.date);calendarDate=new Date(selectedDate);save();closeModal();render();
+};
+document.getElementById("addHabit").onclick=()=>{const name=prompt("Какую привычку добавить?");if(!name||!name.trim())return;data.habits.push({id:Date.now(),title:name.trim(),icon:"✨",days:[0,1,2,3,4,5,6],done:[]});save();render()};
+document.getElementById("weekPrev").onclick=()=>{selectedDate=addDays(selectedDate,-7);calendarDate=new Date(selectedDate);render()};
+document.getElementById("weekNext").onclick=()=>{selectedDate=addDays(selectedDate,7);calendarDate=new Date(selectedDate);render()};
+document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar()}};
+document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,-7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,-1);else calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};
+document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,1);else calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
+document.querySelectorAll(".nav-button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.view).classList.add("active")});
+render();
+</script></body></html>
