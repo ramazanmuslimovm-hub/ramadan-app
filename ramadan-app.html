@@ -165,6 +165,35 @@ body.modal-open{overflow:hidden}
 .menu-page:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
 #taskPageTitle{font-size:22px;margin:8px 0 12px}.schedule-control:has(input:disabled){opacity:.5;cursor:default}
 #clearTaskDate[hidden]{display:none}
+
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.habit-open{width:100%;text-align:left;color:var(--text);font:inherit;cursor:pointer;background:transparent;border:0}
+.habit-list-icon{flex:none}.habit-open .habit-check{display:grid;place-items:center;font-size:20px}
+#habitModal{z-index:16;padding:0;align-items:center}
+#habitModal .habit-sheet{position:relative;width:min(100%,480px);height:100svh;max-height:100svh;border-radius:26px;background:#87c7a3;color:#173629;padding:24px;scrollbar-gutter:stable;transform:none}
+.habit-top{display:flex;align-items:center;gap:12px;margin-bottom:18px}.habit-back{display:grid;place-items:center;width:40px;height:40px;flex:none;border-radius:50%;border:1px solid #ffffff70;background:#ffffff70;color:inherit;font-size:26px}
+.habit-date{margin-left:auto;font-size:12px;color:inherit}
+#habitMain{min-height:calc(100% - 90px);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px}
+#habitModal [hidden]{display:none!important}.habit-illustration{width:min(60%,230px);margin:10px auto 20px}.habit-illustration svg{display:block;width:100%;height:auto}
+.habit-success-mark{opacity:0;transition:opacity .3s}.habit-is-done .habit-success-mark{opacity:1}
+#habitModal .habit-detail-title{font-size:clamp(22px,6vw,30px);font-weight:600;line-height:1.25;overflow-wrap:anywhere;max-width:100%;margin:0 0 18px}
+#habitSwipeArea{width:100%;margin:8px 0 30px}.habit-swipe-hint{font-size:13px;margin:8px 0 12px}
+.habit-slider{position:relative;width:min(100%,280px);height:60px;border-radius:40px;background:#244e3b40;margin:auto;display:flex;align-items:center;justify-content:center;color:#ffffffa0;letter-spacing:9px;user-select:none;-webkit-user-select:none}
+.habit-thumb{position:absolute;left:4px;top:4px;width:52px;height:52px;border-radius:50%;padding:13px;border:0;background:white;color:#599774;touch-action:none;transform:translateX(var(--slide-x,0px));transition:transform .2s ease;box-shadow:0 2px 6px #1d433323}
+.habit-thumb.dragging{transition:none}.habit-thumb svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#habitCompleted{width:100%}.habit-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:18px 8px;border-radius:18px;background:var(--card);color:var(--text)}
+.habit-stats strong{display:block;font-size:28px;font-weight:650}.habit-stats span{display:block;color:var(--muted);font-size:11px;margin-top:4px}.habit-streak-help{font-size:10px;opacity:.8}
+.habit-note-button,.habit-undo,.habit-skip{border:0;border-radius:12px;padding:12px;background:transparent;color:inherit;font-size:13px}.habit-note-button{background:#ffffff70;width:100%;margin-top:8px}.habit-undo{margin:4px auto}
+.habit-saved-note{padding:12px;margin:12px 0;background:var(--card);color:var(--text);border-radius:12px;text-align:left;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}
+#habitReflection{text-align:center;padding-top:36px}#habitReflection h2{font-size:20px;overflow-wrap:anywhere}.habit-moods{display:flex;justify-content:space-between;gap:7px;margin:25px 0}
+.habit-mood{flex:1;min-width:0;height:48px;border:2px solid transparent;border-radius:14px;background:transparent;font-size:29px;filter:grayscale(1);opacity:.45;transition:opacity .2s,filter .2s,background-color .2s}
+.habit-mood[aria-pressed="true"]{filter:none;opacity:1;background:var(--soft);border-color:var(--blue)}
+#habitComment{width:100%;min-width:0;max-width:100%;padding:14px;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;resize:vertical;min-height:140px;border:0;border-radius:16px;background:var(--surface-soft);color:var(--text)}
+#saveHabitNote{display:block;width:100%;margin:20px 0 8px}#habitModal.is-reflecting .habit-sheet{background:var(--bg);color:var(--text)}
+.habit-error{font-size:12px;white-space:normal;overflow-wrap:anywhere}
+[data-theme="dark"] #habitModal .habit-sheet{background:#285a43;color:#edf8f1}[data-theme="dark"] #habitModal.is-reflecting .habit-sheet{background:var(--bg);color:var(--text)}
+@media(max-width:520px){#habitModal .habit-sheet{border-radius:0;padding:calc(16px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom))}.habit-illustration{width:min(48%,200px)}}
+@media(max-height:650px){.habit-illustration{width:110px!important;margin:0 auto!important}#habitMain{gap:8px}#habitModal .habit-detail-title{font-size:21px;margin-bottom:4px}#habitReflection{padding-top:6px}}
 </style></head>
 <body>
 <div class="app">
@@ -215,13 +244,26 @@ body.modal-open{overflow:hidden}
 <div class="field"><label data-i18n="Цвет">Цвет</label><div class="color-swatches" id="categoryColorSwatches"></div></div>
 <div class="modal-actions"><button class="secondary" data-i18n="Удалить" id="deleteCategoryBtn" style="color:#c94b4b;display:none" type="button">Удалить</button><span style="flex:1"></span><button class="secondary" data-i18n="Отмена" id="cancelCategoryModal" type="button">Отмена</button><button class="primary" data-i18n="Сохранить" id="saveCategoryBtn" type="button">Сохранить</button></div>
 </div></div>
+<div class="backdrop" id="habitModal" role="dialog" aria-modal="true" aria-labelledby="habitTitle">
+<div class="modal habit-sheet">
+<div class="habit-top"><button class="habit-back" type="button" id="closeHabit" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button><span id="habitDate" class="habit-date"></span></div>
+<div id="habitMain">
+<div class="habit-illustration" aria-hidden="true"><svg viewBox="0 0 220 240"><rect x="43" y="33" width="136" height="185" rx="22" fill="#000" opacity=".12"/><rect x="34" y="22" width="136" height="185" rx="22" fill="#fff"/><path d="M56 22h92a22 22 0 0 1 22 22v37H34V44a22 22 0 0 1 22-22" fill="#f8de72"/><circle cx="102" cy="44" r="10" fill="#81b99b"/><path d="M102 13v31" stroke="#edaa8b" stroke-width="8" stroke-linecap="round"/><path d="M55 108h91M55 129h65M55 150h78M55 171h51" stroke="#edf0f3" stroke-width="10" stroke-linecap="round"/><path class="habit-success-mark" d="m126 181 20 20 43-53" fill="none" stroke="#9685ed" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<h2 id="habitTitle" class="habit-detail-title"></h2>
+<div id="habitSwipeArea"><p class="habit-swipe-hint" data-i18n="Проведи вправо">Проведи вправо</p><div class="habit-slider" id="habitSlider"><span aria-hidden="true">› › ›</span><button type="button" class="habit-thumb" id="habitThumb" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Отметить выполнение" data-i18n-aria-label="Отметить выполнение"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-11"/></svg></button></div></div>
+<p id="habitFuture" class="habit-swipe-hint" data-i18n="Выполнение доступно в этот день." hidden>Выполнение доступно в этот день.</p>
+<div id="habitCompleted" hidden><div class="habit-stats"><div><strong id="habitTotal">0</strong><span data-i18n="Всего выполнений">Всего выполнений</span></div><div><strong id="habitBest">0</strong><span data-i18n="Лучшая серия">Лучшая серия</span></div><div><strong id="habitStreak">0</strong><span data-i18n="Текущая серия">Текущая серия</span></div></div><p class="habit-streak-help" data-i18n="Серия считается по дням расписания привычки.">Серия считается по дням расписания привычки.</p><div id="habitSavedNote" class="habit-saved-note" hidden></div><button id="editHabitNote" class="habit-note-button" type="button" data-i18n="Настроение и заметка">Настроение и заметка</button><button id="undoHabit" class="habit-undo" type="button" data-i18n="Отменить выполнение">Отменить выполнение</button></div>
+</div>
+<div id="habitReflection" hidden><h2 id="habitNoteTitle"></h2><p class="muted" data-i18n="Как ты себя чувствуешь?">Как ты себя чувствуешь?</p><div class="habit-moods" id="habitMoods" role="group" aria-label="Настроение и заметка" data-i18n-aria-label="Настроение и заметка"></div><label class="sr-only" for="habitComment" data-i18n="Комментарий">Комментарий</label><textarea id="habitComment" maxlength="2000" rows="5" placeholder="Готово! Какие мысли на этот счёт?" data-i18n-placeholder="Готово! Какие мысли на этот счёт?"></textarea><button class="primary" id="saveHabitNote" type="button" data-i18n="Сохранить">Сохранить</button><button class="habit-skip" id="skipHabitNote" type="button" data-i18n="Пропустить">Пропустить</button></div>
+<p id="habitError" role="status" class="habit-error"></p>
+</div></div>
 <div class="backdrop" id="menuModal" role="dialog" aria-modal="true" aria-labelledby="menuTitle"><div class="modal menu-sheet">
-<div class="modal-head"><h2 id="menuTitle" data-i18n="Меню">Меню</h2><button class="close-button" type="button" id="closeMenu" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button></div><nav class="menu-pages" aria-label="Страницы" data-i18n-aria-label="Страницы"><button type="button" class="menu-page" data-task-page="today"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-11 5h4"/></svg><span data-i18n="Сегодня">Сегодня</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="tomorrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-12 5h6m-2-2 2 2-2 2"/></svg><span data-i18n="Завтра">Завтра</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="week"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18M7 14h1m3 0h1m3 0h1M7 17h1m3 0h1m3 0h1"/></svg><span data-i18n="Вся неделя">Вся неделя</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="inbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 4-3 9v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6l-3-9ZM3 13h5l2 3h4l2-3h5"/></svg><span data-i18n="Входящие">Входящие</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="all"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 1 1 2-3m3 2h12M3 12h3m3 0h12M3 18h3m3 0h12"/></svg><span data-i18n="Все задачи">Все задачи</span><span class="menu-arrow" aria-hidden="true">›</span></button></nav></div></div>
+<div class="modal-head"><h2 id="menuTitle" data-i18n="Меню">Меню</h2><button class="close-button" type="button" id="closeMenu" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button></div><nav class="menu-pages" aria-label="Страницы" data-i18n-aria-label="Страницы"><button type="button" class="menu-page" data-task-page="today"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-11 5h4"/></svg><span data-i18n="Сегодня">Сегодня</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="tomorrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-12 5h6m-2-2 2 2-2 2"/></svg><span data-i18n="Завтра">Завтра</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="week"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18M7 14h1m3 0h1m3 0h1M7 17h1m3 0h1m3 0h1"/></svg><span data-i18n="Вся неделя">Вся неделя</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="inbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 4-3 9v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6l-3-9ZM3 13h5l2 3h4l2-3h5"/></svg><span data-i18n="Входящие">Входящие</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="all"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 1 1 2-3m3 2h12M3 12h3m3 0h12M3 18h3m3 0h12"/></svg><span data-i18n="Все">Все</span><span class="menu-arrow" aria-hidden="true">›</span></button></nav></div></div>
 <div aria-labelledby="settingsTitle" aria-modal="true" class="backdrop" id="settingsModal" role="dialog"><div class="modal">
 <div class="modal-head"><h2 data-i18n="Настройки" id="settingsTitle">Настройки</h2><button aria-label="Закрыть" class="close-button" data-i18n-aria-label="Закрыть" id="closeSettings" type="button">×</button></div>
 <div class="field"><label data-i18n="Тема" for="themeMode">Тема</label><select id="themeMode"><option data-i18n="Как в системе" value="system">Как в системе</option><option data-i18n="Дневная" value="light">Дневная</option><option data-i18n="Ночная" value="dark">Ночная</option></select></div>
 <div class="field"><label data-i18n="Язык" for="appLanguage">Язык</label><select id="appLanguage"><option data-i18n="Русский" value="ru">Русский</option><option value="en">English</option></select></div>
-<div class="field"><label data-i18n="Фон страницы" for="backgroundPage">Фон страницы</label><select id="backgroundPage"><option data-i18n="Сегодня" value="today">Сегодня</option><option data-i18n="Завтра" value="tomorrow">Завтра</option><option data-i18n="Вся неделя" value="week">Вся неделя</option><option data-i18n="Входящие" value="inbox">Входящие</option><option data-i18n="Все задачи" value="all">Все задачи</option><option data-i18n="Привычки на сегодня" value="homeHabits">Привычки на сегодня</option><option data-i18n="Просроченные" value="overdue">Просроченные</option><option data-i18n="Календарь" value="calendarView">Календарь</option><option data-i18n="Привычки" value="habitsView">Привычки</option></select></div>
+<div class="field"><label data-i18n="Фон страницы" for="backgroundPage">Фон страницы</label><select id="backgroundPage"><option data-i18n="Сегодня" value="today">Сегодня</option><option data-i18n="Завтра" value="tomorrow">Завтра</option><option data-i18n="Вся неделя" value="week">Вся неделя</option><option data-i18n="Входящие" value="inbox">Входящие</option><option data-i18n="Все" value="all">Все</option><option data-i18n="Привычки на сегодня" value="homeHabits">Привычки на сегодня</option><option data-i18n="Просроченные" value="overdue">Просроченные</option><option data-i18n="Календарь" value="calendarView">Календарь</option><option data-i18n="Привычки" value="habitsView">Привычки</option></select></div>
 <div aria-hidden="true" class="background-preview" id="backgroundPreview"></div>
 <div class="field"><label data-i18n="Базовые цвета">Базовые цвета</label><div class="color-swatches" id="backgroundColors"></div></div>
 <div class="background-actions"><button class="secondary" data-i18n="Выбрать из галереи" id="chooseBackground" type="button">Выбрать из галереи</button><button class="secondary" data-i18n="Сбросить фон" id="resetBackground" type="button">Сбросить фон</button></div>
@@ -235,7 +277,8 @@ const settingsKey="pro-plan-settings-v1";
 let settings={theme:"system",language:"ru",backgrounds:{}};
 try{const stored=JSON.parse(localStorage.getItem(settingsKey));if(stored&&typeof stored==="object")settings={theme:["light","dark","system"].includes(stored.theme)?stored.theme:"system",language:stored.language==="en"?"en":"ru",backgrounds:stored.backgrounds&&typeof stored.backgrounds==="object"?stored.backgrounds:{}}}catch(e){}
 const EN={"Настройки": "Settings", "Закрыть": "Close", "Тема": "Theme", "Как в системе": "System", "Дневная": "Light", "Ночная": "Dark", "Язык": "Language", "Русский": "Русский", "Фон страницы": "Page background", "Привычки на сегодня": "Today’s habits", "Базовые цвета": "Basic colors", "Выбрать из галереи": "Choose from gallery", "Сбросить фон": "Reset background", "Фон сохраняется отдельно для каждой страницы на этом устройстве.": "Backgrounds are saved separately for each page on this device.", "Сегодня": "Today", "Привычки": "Habits", "Просроченные": "Overdue", "Разделы на сегодня": "Today sections", "Добавить задачу": "Add task", "Планируй заранее": "Plan ahead", "Календарь": "Calendar", "День": "Day", "Неделя": "Week", "Месяц": "Month", "Год": "Year", "Задачи выбранного дня": "Tasks for the selected day", "＋ Задача": "+ Task", "Маленькие шаги каждый день": "Small steps every day", "На выбранный день": "For the selected day", "＋ Добавить": "+ Add", "Новая задача": "New task", "Приоритет": "Priority", "⚪ Без приоритета": "⚪ No priority", "🔵 Низкий": "🔵 Low", "🟡 Средний": "🟡 Medium", "🔴 Высокий": "🔴 High", "Заголовок": "Title", "Что нужно сделать?": "What needs to be done?", "Описание": "Description", "Добавь подробности (необязательно)": "Add details (optional)", "Добавить подзадачу": "Add subtask", "Срок задачи": "Task schedule", "Выбрать дату": "Choose date", "Выбрать время": "Choose time", "Дата": "Date", "Время": "Time", "Дата задачи": "Task date", "Время задачи": "Task time", "Убрать время": "Clear time", "Область": "Area", "Без области": "No area", "Изменить область": "Edit area", "＋ Новая область": "+ New area", "Отмена": "Cancel", "Сохранить": "Save", "Новая область": "New area", "Название": "Name", "Например, Работа": "For example, Work", "Цвет": "Color", "Удалить": "Delete", "Низкий": "Low", "Средний": "Medium", "Высокий": "High", "Выполнено": "Completed", "Завтра": "Tomorrow", "Вчера": "Yesterday", "Время начинать": "Time to start", "Просрочено менее минуты": "Overdue by less than a minute", "Выполненных задач пока нет.": "No completed tasks yet.", "Нет запланированных задач.": "No planned tasks.", "Просроченных задач нет.": "No overdue tasks.", "Запланированные": "Planned", "Выполненные": "Completed", "На этот день задач пока нет.": "No tasks for this day yet.", "На этот день привычек нет.": "No habits for this day.", "Добавить привычку": "Add habit", "Открыть месяц →": "Open month →", "Редактировать задачу": "Edit task", "Название подзадачи": "Subtask title", "Удалить подзадачу": "Delete subtask", "Сначала выберите область в списке.": "Select an area first.", "Удалить эту область? Задачи останутся без области.": "Delete this area? Tasks will remain without an area.", "Какую привычку добавить?": "Which habit would you like to add?", "Загрузка изображения…": "Loading image…", "Фон сохранён.": "Background saved.", "Фон сброшен.": "Background reset.", "Не удалось сохранить настройки. Возможно, память браузера заполнена.": "Could not save settings. Browser storage may be full.", "Выберите изображение размером до 20 МБ.": "Choose an image up to 20 MB.", "Не удалось открыть изображение. Попробуйте JPEG, PNG или WebP.": "Could not open the image. Try JPEG, PNG or WebP.", "Белый": "White", "Голубой": "Blue", "Лавандовый": "Lavender", "Зелёный": "Green", "Песочный": "Sand", "Розовый": "Pink", "Графитовый": "Graphite", "Чёрный": "Black", "Выберите изображение.": "Choose an image.", "Изображение слишком большое. Выберите другое.": "Image is too large. Choose another one.", "Без названия": "Untitled", "Предыдущий период": "Previous period", "Следующий период": "Next period"};
-Object.assign(EN,{"Меню": "Menu", "Страницы": "Pages", "Вся неделя": "This week", "Входящие": "Inbox", "Все задачи": "All tasks", "Без даты": "No date", "Убрать дату": "Clear date", "Задачи без даты": "Tasks without a date"});
+Object.assign(EN,{"Меню": "Menu", "Страницы": "Pages", "Вся неделя": "This week", "Входящие": "Inbox", "Все": "All", "Без даты": "No date", "Убрать дату": "Clear date", "Задачи без даты": "Tasks without a date"});
+Object.assign(EN,{"Открыть привычку": "Open habit", "Проведи вправо": "Slide right", "Отметить выполнение": "Mark complete", "Готово! Какие мысли на этот счёт?": "Done! What are your thoughts?", "Как ты себя чувствуешь?": "How do you feel?", "Настроение и заметка": "Mood and note", "Всего выполнений": "Total completions", "Текущая серия": "Current streak", "Лучшая серия": "Best streak", "Вернуться": "Back", "Пропустить": "Skip", "Отменить выполнение": "Undo completion", "Выполнение доступно в этот день.": "Completion is available on this date.", "Очень плохо": "Very low", "Плохо": "Low", "Нормально": "Okay", "Хорошо": "Good", "Отлично": "Great", "Не удалось сохранить. Проверь свободную память и попробуй снова.": "Could not save. Check available storage and try again.", "Без настроения": "No mood", "Комментарий": "Comment", "Серия считается по дням расписания привычки.": "Streaks follow the habit’s scheduled days."});
 function tr(text){return settings.language==="en"?(EN[text]||text):text}
 function applyTranslations(){
  document.documentElement.lang=settings.language;
@@ -329,7 +372,7 @@ habits:[
 {id:13,title:"Тренировка",icon:"🏋️",days:[0,2,4],done:[]}]};
 let data;try{data=JSON.parse(localStorage.getItem(key))||initial}catch(e){data=initial}
 data.categories=Array.isArray(data.categories)?data.categories:[];
-data.habits=Array.isArray(data.habits)?data.habits:[];
+data.habits=(Array.isArray(data.habits)?data.habits:[]).map(h=>({...h,days:Array.isArray(h.days)?[...new Set(h.days.filter(d=>Number.isInteger(d)&&d>=0&&d<=6))]:[0,1,2,3,4,5,6],done:[...new Set((Array.isArray(h.done)?h.done:[]).filter(d=>typeof d==="string"&&/^\d{4}-\d{2}-\d{2}$/.test(d)))],entries:h.entries&&typeof h.entries==="object"&&!Array.isArray(h.entries)?h.entries:{},createdAt:h.createdAt||null}));
 data.tasks=(Array.isArray(data.tasks)?data.tasks:[]).map(t=>({...t,priority:["none","low","medium","high"].includes(t.priority)?t.priority:"none",category:t.category||"",subtasks:Array.isArray(t.subtasks)?t.subtasks.map((st,i)=>({id:st.id??(t.id+"-sub-"+i),title:st.title||"",done:!!st.done})):[]}));
 if(data.categories.length&&typeof data.categories[0]==="string"){
  const map={};
@@ -339,9 +382,9 @@ if(data.categories.length&&typeof data.categories[0]==="string"){
 const CATEGORY_COLORS=["#73acf5","#89cbb2","#edb77b","#b19ae8","#e99baa","#f2637a","#5cc0c0","#f0b429","#8f9bff","#6bc47d"];
 let editingCategoryId=null,selectedCategoryColor=CATEGORY_COLORS[0];
 let homeSection="today",taskPage="today";
-const taskPageLabels={"today": "Сегодня", "tomorrow": "Завтра", "week": "Вся неделя", "inbox": "Входящие", "all": "Все задачи"};
+const taskPageLabels={"today": "Сегодня", "tomorrow": "Завтра", "week": "Вся неделя", "inbox": "Входящие", "all": "Все"};
 let selectedDate=new Date(today),calendarDate=new Date(today),calendarMode="month",editingId=null,taskView="kanban",editingSubtasks=[];
-function save(){try{localStorage.setItem(key,JSON.stringify(data))}catch(e){}}
+function save(){try{localStorage.setItem(key,JSON.stringify(data));return true}catch(e){return false}}
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
 // Генерируем короткий звук через браузер, без отдельного аудиофайла.
@@ -374,12 +417,16 @@ function isTaskOverdue(task){
  return start!==null&&start<Date.now();
 }
 function minuteWord(n){if(settings.language==="en")return n===1?"minute":"minutes";const v=n%100;return v>=11&&v<=14?"минут":n%10===1?"минуту":n%10>=2&&n%10<=4?"минуты":"минут"}
+function timeWord(n,one,few,many){const v=n%100;return v>=11&&v<=14?many:n%10===1?one:n%10>=2&&n%10<=4?few:many}
 function startCountdown(task){
- if(task.done)return "";
- const start=scheduledTime(task);
- if(start===null||start<Date.now())return "";
- const minutes=Math.ceil((start-Date.now())/60000);
- return '<span class="task-start">'+(minutes?(settings.language==="en"?"Starts in: ":"До начала: ")+minutes+(settings.language==="en"?" min":" мин"):tr("Время начинать"))+'</span>';
+ if(task.done||task.date!==iso(today))return "";
+ const start=scheduledTime(task),diff=start===null?null:start-Date.now();
+ if(diff===null||diff<0)return "";
+ let label;
+ if(diff===0)label=tr("Время начинать");
+ else if(diff<3600000){const n=Math.min(59,Math.ceil(diff/60000));label=settings.language==="en"?n+" "+(n===1?"minute":"minutes")+" left":(n%10===1&&n%100!==11?"Осталась ":"Осталось ")+n+" "+timeWord(n,"минута","минуты","минут")}
+ else{const n=Math.floor(diff/3600000);label=settings.language==="en"?n+" "+(n===1?"hour":"hours")+" left":(n%10===1&&n%100!==11?"Остался ":"Осталось ")+n+" "+timeWord(n,"час","часа","часов")}
+ return '<span class="task-start">'+label+'</span>';
 }
 function dueLabel(task){
  if(!task.date)return '<span class="due-label done-past">'+tr(task.done?"Выполнено":"Без даты")+'</span>';
@@ -434,9 +481,99 @@ function renderTasks(id,dateKey){
 
 function renderHabits(id="habitList",date=selectedDate){
  const day=(date.getDay()+6)%7,dateKey=iso(date),list=data.habits.filter(h=>h.days.includes(day)),box=document.getElementById(id);
- box.innerHTML=list.length?list.map(h=>{const yes=h.done.includes(dateKey);return '<div class="habit-row"><span>'+esc(h.icon)+'</span><span class="habit-name">'+esc(h.title)+'</span><button class="habit-check '+(yes?"done":"")+'" aria-label="'+esc(h.title)+'" aria-pressed="'+yes+'" data-habit="'+h.id+'">'+(yes?"✓":"○")+'</button></div>'}).join(""):'<div class="empty">'+tr("На этот день привычек нет.")+'</div>';
- box.querySelectorAll("[data-habit]").forEach(b=>b.onclick=()=>{const h=data.habits.find(x=>x.id===Number(b.dataset.habit));if(!h)return;const wasDone=h.done.includes(dateKey);h.done=wasDone?h.done.filter(x=>x!==dateKey):h.done.concat(dateKey);if(!wasDone)clickSound();save();render()});
+ box.innerHTML=list.length?list.map(h=>{const yes=h.done.includes(dateKey);return '<button type="button" class="habit-row habit-open" data-habit="'+h.id+'" aria-label="'+esc(h.title)+'"><span class="habit-list-icon">'+esc(h.icon||"✓")+'</span><span class="habit-name">'+esc(h.title)+'</span><span class="habit-check '+(yes?"done":"")+'" aria-hidden="true">'+(yes?"✓":"›")+'</span><span class="sr-only">'+tr(yes?"Выполнено":"Открыть привычку")+'</span></button>'}).join(""):'<div class="empty">'+tr("На этот день привычек нет.")+'</div>';
+ box.querySelectorAll("[data-habit]").forEach(b=>b.onclick=()=>openHabit(Number(b.dataset.habit),dateKey));
 }
+let activeHabitId=null,activeHabitDate='',habitMood=null,habitSlide=0,habitDrag=null;
+const moodFaces=['😢','🙁','😐','🙂','😄'],moodLabels=['Очень плохо','Плохо','Нормально','Хорошо','Отлично'];
+function activeHabit(){return data.habits.find(h=>h.id===activeHabitId)}
+function isScheduledHabitDay(h,d){return h.days.includes((d.getDay()+6)%7)}
+function adjacentHabitDate(h,date,direction){
+ if(!h.days.length)return null;
+ let d=fromISO(date);
+ for(let i=0;i<7;i++){d=addDays(d,direction);if(isScheduledHabitDay(h,d))return iso(d)}return null;
+}
+function habitStats(h){
+ const todayKey=iso(today),done=[...new Set(h.done)].filter(d=>d<=todayKey).sort(),days=new Set(done);
+ let best=0,run=0,previous=null;
+ for(const date of done){if(!isScheduledHabitDay(h,fromISO(date)))continue;run=previous&&adjacentHabitDate(h,previous,1)===date?run+1:1;best=Math.max(best,run);previous=date}
+ let anchor=todayKey,current=0;
+ if(!isScheduledHabitDay(h,today)||!days.has(anchor))anchor=adjacentHabitDate(h,anchor,-1);
+ while(anchor&&days.has(anchor)){current++;anchor=adjacentHabitDate(h,anchor,-1)}
+ return {total:done.length,best,current};
+}
+function setHabitError(message=''){document.getElementById('habitError').textContent=message?tr(message):''}
+function setHabitSlide(value){
+ habitSlide=Math.max(0,Math.min(100,value));
+ const track=document.getElementById('habitSlider'),thumb=document.getElementById('habitThumb');
+ const travel=Math.max(0,track.clientWidth-thumb.offsetWidth-8);
+ thumb.style.setProperty('--slide-x',travel*habitSlide/100+'px');thumb.setAttribute('aria-valuenow',String(Math.round(habitSlide)));
+}
+function refreshHabitDetail(){
+ const h=activeHabit();if(!h)return;
+ const completed=h.done.includes(activeHabitDate),future=activeHabitDate>iso(today),stats=habitStats(h);
+ document.getElementById('habitTitle').textContent=h.title;document.getElementById('habitNoteTitle').textContent=h.title;
+ document.getElementById('habitDate').textContent=fmt(fromISO(activeHabitDate),{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+ document.getElementById('habitModal').classList.toggle('habit-is-done',completed);
+ document.getElementById('habitSwipeArea').hidden=completed||future;
+ document.getElementById('habitFuture').hidden=!future;
+ document.getElementById('habitCompleted').hidden=!completed;
+ document.getElementById('habitTotal').textContent=stats.total;document.getElementById('habitBest').textContent=stats.best;document.getElementById('habitStreak').textContent=stats.current;
+ const entry=h.entries[activeHabitDate]||{},note=document.getElementById('habitSavedNote');
+ const mood=Number.isInteger(entry.mood)&&entry.mood>=1&&entry.mood<=5?moodFaces[entry.mood-1]+' ':'';
+ note.textContent=mood+(entry.comment||'');note.hidden=!note.textContent;
+ applyTranslations();setHabitSlide(0);
+}
+function openHabit(id,date){
+ if(!data.habits.some(h=>h.id===id))return;
+ activeHabitId=id;activeHabitDate=date;habitDrag=null;
+ const modal=document.getElementById('habitModal');modal.classList.remove('is-reflecting');document.getElementById('habitMain').hidden=false;document.getElementById('habitReflection').hidden=true;
+ setHabitError();refreshHabitDetail();modal.classList.add('open');
+}
+function closeHabit(){habitDrag=null;setHabitSlide(0);document.getElementById('habitModal').classList.remove('open')}
+function renderHabitMoods(){
+ const box=document.getElementById('habitMoods');
+ box.innerHTML=moodFaces.map((face,i)=>'<button type="button" class="habit-mood" data-mood="'+(i+1)+'" aria-pressed="'+(habitMood===i+1)+'" aria-label="'+esc(tr(moodLabels[i]))+'">'+face+'</button>').join('');
+ box.querySelectorAll('[data-mood]').forEach(button=>button.onclick=()=>{const value=Number(button.dataset.mood);habitMood=habitMood===value?null:value;box.querySelectorAll('[data-mood]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.mood)===habitMood))) });
+}
+function openHabitReflection(){
+ const h=activeHabit();if(!h||!h.done.includes(activeHabitDate))return;
+ const entry=h.entries[activeHabitDate]||{};habitMood=Number.isInteger(entry.mood)&&entry.mood>=1&&entry.mood<=5?entry.mood:null;
+ document.getElementById('habitComment').value=entry.comment||'';
+ document.getElementById('habitMain').hidden=true;document.getElementById('habitReflection').hidden=false;document.getElementById('habitModal').classList.add('is-reflecting');document.querySelector('#habitModal .habit-sheet').scrollTop=0;renderHabitMoods();setHabitError();
+}
+function showHabitResult(){document.getElementById('habitMain').hidden=false;document.getElementById('habitReflection').hidden=true;document.getElementById('habitModal').classList.remove('is-reflecting');refreshHabitDetail();document.querySelector('#habitModal .habit-sheet').scrollTop=0;setHabitError()}
+function completeHabit(){
+ const h=activeHabit();if(!h||activeHabitDate>iso(today)||!isScheduledHabitDay(h,fromISO(activeHabitDate))){setHabitSlide(0);return}
+ if(h.done.includes(activeHabitDate)){setHabitSlide(0);return}
+ const previous=h.done.slice();h.done.push(activeHabitDate);
+ if(!save()){h.done=previous;setHabitSlide(0);setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
+ clickSound();render();refreshHabitDetail();openHabitReflection();
+}
+function initHabitDetails(){
+ const modal=document.getElementById('habitModal'),thumb=document.getElementById('habitThumb');
+ document.getElementById('closeHabit').onclick=closeHabit;modal.onclick=e=>{if(e.target===modal)closeHabit()};
+ document.getElementById('editHabitNote').onclick=openHabitReflection;
+ document.getElementById('skipHabitNote').onclick=showHabitResult;
+ document.getElementById('saveHabitNote').onclick=()=>{
+  const h=activeHabit();if(!h||!h.done.includes(activeHabitDate))return;
+  const previous=h.entries[activeHabitDate];h.entries[activeHabitDate]={mood:habitMood,comment:document.getElementById('habitComment').value.trim()};
+  if(!save()){if(previous)h.entries[activeHabitDate]=previous;else delete h.entries[activeHabitDate];setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
+  showHabitResult();render();
+ };
+ document.getElementById('undoHabit').onclick=()=>{
+  const h=activeHabit();if(!h)return;const done=h.done.slice(),entry=h.entries[activeHabitDate];h.done=h.done.filter(d=>d!==activeHabitDate);delete h.entries[activeHabitDate];
+  if(!save()){h.done=done;if(entry)h.entries[activeHabitDate]=entry;setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
+  render();showHabitResult();
+ };
+ thumb.onpointerdown=e=>{if(e.button!==0||habitDrag)return;habitDrag={id:e.pointerId,start:e.clientX};thumb.classList.add('dragging');try{thumb.setPointerCapture(e.pointerId)}catch(err){};e.preventDefault()};
+ thumb.onpointermove=e=>{if(!habitDrag||habitDrag.id!==e.pointerId)return;const travel=document.getElementById('habitSlider').clientWidth-thumb.offsetWidth-8;if(travel>0)setHabitSlide((e.clientX-habitDrag.start)/travel*100)};
+ const finish=(e,cancel)=>{if(!habitDrag||habitDrag.id!==e.pointerId)return;const complete=!cancel&&habitSlide>=95;habitDrag=null;thumb.classList.remove('dragging');try{thumb.releasePointerCapture(e.pointerId)}catch(err){};if(complete)completeHabit();else setHabitSlide(0)};
+ thumb.onpointerup=e=>finish(e,false);thumb.onpointercancel=e=>finish(e,true);thumb.onlostpointercapture=e=>finish(e,true);
+ thumb.onkeydown=e=>{if(!['ArrowRight','ArrowLeft','Home','End','Enter',' '].includes(e.key))return;e.preventDefault();if(e.key==='Home')setHabitSlide(0);else if(e.key==='ArrowLeft')setHabitSlide(habitSlide-10);else if(e.key==='ArrowRight')setHabitSlide(habitSlide+10);else setHabitSlide(100);if(habitSlide>=100)completeHabit()};
+ window.addEventListener('resize',()=>{habitDrag=null;thumb.classList.remove('dragging');setHabitSlide(0)});
+}
+
 function matchesTaskPage(task){
  if(taskPage==="all")return true;
  if(taskPage==="inbox")return !task.date;
@@ -572,7 +709,7 @@ document.getElementById("taskForm").onsubmit=e=>{
  if(editingId===null)data.tasks.push(task);else data.tasks=data.tasks.map(t=>t.id===editingId?task:t);
  if(task.date){selectedDate=fromISO(task.date);calendarDate=new Date(selectedDate)}else task.time="";save();closeModal();render();
 };
-function addHabit(){const name=prompt(tr("Какую привычку добавить?"));if(!name||!name.trim())return;data.habits.push({id:Date.now(),title:name.trim(),icon:"✨",days:[0,1,2,3,4,5,6],done:[]});save();render()}
+function addHabit(){const name=prompt(tr("Какую привычку добавить?"));if(!name||!name.trim())return;data.habits.push({id:Date.now(),title:name.trim(),icon:"✨",days:[0,1,2,3,4,5,6],done:[],entries:{},createdAt:iso(today)});save();render()}
 document.getElementById("addHabit").onclick=addHabit;
 document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar()}};
 document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,-7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,-1);else calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};
@@ -595,7 +732,7 @@ function initMenu(){
   closeMenu();render();
  });
 }
-initAppearanceControls();initMenu();
+initAppearanceControls();initMenu();initHabitDetails();
 render();
 // Обновляем на границе минуты, чтобы отсчёт совпадал с часами.
 function scheduleMinuteRefresh(){setTimeout(()=>{render();scheduleMinuteRefresh()},60000-Date.now()%60000+25)}
