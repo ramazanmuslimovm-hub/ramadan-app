@@ -121,7 +121,7 @@ body:not(.custom-background) .page-wallpaper::after{display:none}
 body.modal-open{overflow:hidden}
 .backdrop{align-items:flex-start;padding:16px;overscroll-behavior:contain}
 .modal{flex:none;width:min(100%,440px);min-width:0;max-width:100%;max-height:calc(100svh - 32px);scrollbar-gutter:stable;overscroll-behavior:contain;overflow-x:hidden;background:var(--card)}
-#taskModal .modal{height:min(760px,calc(100svh - 32px));transform:none!important;transition:opacity .2s ease}
+#taskModal .modal{height:min(760px,calc(100svh - 32px))}
 #taskModal .field input,#taskModal .field textarea,#taskModal .field select,#categoryModal input,#settingsModal select{font-size:16px}
 .subtask-editor{grid-template-columns:20px minmax(0,1fr) 28px;min-width:0;max-width:100%}
 .subtask-editor input[type=text]{min-width:0;width:100%;font-size:16px}
@@ -234,6 +234,27 @@ html.telegram-app{padding-top:var(--pro-safe-top,0px);padding-bottom:var(--pro-s
 .telegram-app #menuModal .modal{max-height:calc(100dvh - 76px - var(--pro-safe-top,0px) - var(--pro-safe-bottom,0px))}
 .telegram-app #habitModal{padding:0}
 .telegram-app #habitModal .habit-sheet{height:100dvh;max-height:100dvh;padding:calc(16px + var(--pro-safe-top,0px)) calc(20px + var(--pro-safe-right,0px)) calc(16px + var(--pro-safe-bottom,0px)) calc(20px + var(--pro-safe-left,0px))}
+
+/* Короткие переходы без изменения размеров карточек и без перехвата прокрутки. */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-time:240ms}
+html{scroll-behavior:smooth}
+.modal{ -webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.backdrop{transition:opacity 220ms ease,visibility 220ms ease}
+.backdrop .modal,#taskModal .modal,#habitModal .habit-sheet{opacity:0;transform:translateY(12px);transition:opacity 200ms ease,transform 280ms var(--motion-ease)}
+.backdrop.open .modal,#taskModal.backdrop.open .modal,.backdrop.open#habitModal .habit-sheet{opacity:1;transform:translateY(0)}
+.view.active{animation:pro-page-in 220ms ease both}
+@keyframes pro-page-in{from{opacity:.35}to{opacity:1}}
+button{transition:background-color 180ms ease,color 180ms ease,opacity 140ms ease,transform 180ms var(--motion-ease)}
+button:active{opacity:.8}
+.primary:active,.secondary:active,.icon-button:active,.close-button:active,.floating-add:active{transform:translateY(1px)}
+.task-check{transition:background-color 180ms ease,border-color 180ms ease}
+.task-title{transition:color 200ms ease}
+.subtask-progress b{transition:width 260ms var(--motion-ease)}
+.habit-result{transition:color 200ms ease,background-color 200ms ease}
+.habit-thumb{transition:transform 240ms var(--motion-ease)}
+.habit-thumb.dragging,.swipe-active{transition:none!important}
+[data-edit],.habit-card{transition:transform 240ms var(--motion-ease),background-color 180ms ease}
+@media(prefers-reduced-motion:reduce){.view.active{animation:none}.backdrop .modal,#taskModal .modal,#habitModal .habit-sheet{transform:none}*{scroll-behavior:auto!important}}
 </style></head>
 <body>
 <div class="app">
@@ -407,7 +428,8 @@ function initAppearanceControls(){
  const onSystemTheme=()=>{if(settings.theme==='system')applyAppearance()};
  if(systemTheme.addEventListener)systemTheme.addEventListener('change',onSystemTheme);else if(systemTheme.addListener)systemTheme.addListener(onSystemTheme);
  // Lock page scrolling without changing modal width when its content grows.
- const syncLock=()=>document.body.classList.toggle('modal-open',!!document.querySelector('.backdrop.open'));
+ let unlockTimer;
+ const syncLock=()=>{clearTimeout(unlockTimer);if(document.querySelector('.backdrop.open'))document.body.classList.add('modal-open');else unlockTimer=setTimeout(()=>{if(!document.querySelector('.backdrop.open'))document.body.classList.remove('modal-open')},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:240)};
  const observer=new MutationObserver(syncLock);document.querySelectorAll('.backdrop').forEach(el=>observer.observe(el,{attributes:true,attributeFilter:['class']}));
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const open=[...document.querySelectorAll('.backdrop.open')].pop();if(open?.id==='menuModal')closeMenu();else if(open)open.classList.remove('open')}});
  document.querySelectorAll('.close-button').forEach(b=>{b.dataset.i18nAriaLabel='Закрыть';b.setAttribute('aria-label',tr('Закрыть'))});
@@ -911,12 +933,57 @@ function initMenu(){
   closeMenu();render();
  });
 }
-initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();
+
+// Сохраняем DOM при неизменных данных, чтобы не сбивать фокус, жесты и инерцию.
+function initMotion(){
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+ let lastAction=-Infinity,lastScroll=-Infinity,pointerDown=false;
+ document.addEventListener('pointerdown',()=>{pointerDown=true;lastAction=performance.now()},{passive:true});
+ for(const event of ['pointerup','pointercancel'])document.addEventListener(event,()=>{pointerDown=false},{passive:true});
+ document.addEventListener('keydown',()=>{lastAction=performance.now()},{passive:true});
+ document.addEventListener('click',()=>{lastAction=performance.now()},{capture:true,passive:true});
+ document.addEventListener('scroll',()=>{lastScroll=performance.now()},{capture:true,passive:true});
+ const visible=el=>el&&el.getClientRects().length&&!document.hidden;
+ const animate=(el,frames,duration=240)=>{if(!reduced.matches&&typeof el.animate==='function')el.animate(frames,{duration,easing:'cubic-bezier(.22,1,.36,1)'})};
+ const cache=new Map();
+ const wrap=(name,fn,signature,container)=>function(...args){
+  const key=name+':'+(args[0]||''),next=JSON.stringify(signature(...args));
+  if(cache.get(key)===next)return;
+  const box=container(...args),moving=visible(box)&&!reduced.matches&&performance.now()-lastAction<700&&performance.now()-lastScroll>100;
+  const selector='[data-edit],[data-habit-swipe]',identity=el=>el.hasAttribute('data-edit')?'task-'+el.dataset.edit:'habit-'+el.dataset.habitSwipe;
+  const previous=new Map();
+  if(moving){for(const el of box.querySelectorAll(selector)){const r=el.getBoundingClientRect();if(r.bottom>0&&r.top<innerHeight&&previous.size<36)previous.set(identity(el),r)}}
+  fn(...args);cache.set(key,next);
+  if(!moving||!visible(box))return;
+  const cards=[...box.querySelectorAll(selector)];
+  if(!cards.length){animate(box,[{opacity:.4},{opacity:1}],180);return}
+  let count=0;
+  for(const el of cards){
+   const r=el.getBoundingClientRect();if(r.bottom<0||r.top>innerHeight||count++>=36)continue;
+   const old=previous.get(identity(el)),dy=old?old.top-r.top:0;
+   if(old&&Math.abs(dy)>1&&Math.abs(dy)<320)animate(el,[{transform:'translateY('+dy+'px)'},{transform:'translateY(0)'}],280);
+   else if(!old||Math.abs(dy)>=320)animate(el,[{opacity:.2},{opacity:1}],200);
+  }
+ };
+ const language=()=>settings.language;
+ renderTasks=wrap('tasks',renderTasks,(id,date)=>[id,date,taskPage,homeSection,taskView,language(),data.tasks,data.categories,iso(today),data.tasks.map(t=>dueLabel(t))],id=>document.getElementById(id));
+ renderHabits=wrap('habits',renderHabits,(id='habitList',date=habitBrowseDate)=>[id,iso(date),habitArchiveView,language(),data.habits,iso(today)],(id='habitList')=>document.getElementById(id));
+ renderHabitPageTools=wrap('habitTools',renderHabitPageTools,()=>[iso(habitBrowseDate),habitArchiveView,language(),data.habits,iso(today)],()=>document.getElementById('habitSharedCalendar'));
+ renderCalendar=wrap('calendar',renderCalendar,()=>[iso(calendarDate),iso(selectedDate),calendarMode,language(),data.tasks,iso(today)],()=>document.getElementById('calendarContent'));
+ // Фоновое обновление не должно перестраивать страницу во время движения пальца.
+ window.refreshPlannerWhenIdle=function(){
+  if(document.hidden)return;
+  if(pointerDown||performance.now()-lastScroll<220){setTimeout(window.refreshPlannerWhenIdle,250);return}
+  render();
+ };
+}
+
+initMotion();initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();
 render();
 // Обновляем на границе минуты, чтобы отсчёт совпадал с часами.
-function scheduleMinuteRefresh(){setTimeout(()=>{render();scheduleMinuteRefresh()},60000-Date.now()%60000+25)}
+function scheduleMinuteRefresh(){setTimeout(()=>{window.refreshPlannerWhenIdle();scheduleMinuteRefresh()},60000-Date.now()%60000+25)}
 scheduleMinuteRefresh();
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)window.refreshPlannerWhenIdle()});
 document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
 document.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});
 document.addEventListener("touchmove",e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
