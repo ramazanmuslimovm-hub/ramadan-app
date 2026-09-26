@@ -154,14 +154,25 @@ body.modal-open{overflow:hidden}
 .custom-background header,.custom-background .heading{background:var(--nav-surface);border-radius:14px;padding:10px 12px;backdrop-filter:blur(10px)}
 .custom-background .task-group-title{width:fit-content;max-width:100%;padding:6px 9px;border-radius:9px;background:var(--nav-surface)}
 .custom-background .today-groups>.empty,.custom-background #todayHabitList>.empty,.custom-background .task-group>.empty{padding:12px!important;border-radius:12px;background:var(--card)}
+
+.header-actions{display:flex;align-items:center;gap:8px;flex:none}
+.settings-open svg{stroke-linecap:round}
+#menuModal{z-index:18;justify-content:center;align-items:flex-start;padding-top:max(70px,calc(env(safe-area-inset-top) + 64px))}
+#menuModal .menu-sheet{width:min(100%,360px);height:auto;padding:16px;max-height:calc(100svh - 100px)}
+.menu-pages{display:grid;gap:5px}.menu-page{display:flex;align-items:center;gap:12px;min-height:48px;width:100%;padding:11px 12px;border:0;border-radius:12px;background:transparent;color:var(--text);font-size:14px;text-align:left}
+.menu-page svg{flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.menu-page[aria-current="page"]{background:var(--soft);color:var(--blue)}.menu-arrow{margin-left:auto;color:var(--muted);font-size:20px}
+.menu-page:focus-visible{outline:2px solid var(--blue);outline-offset:1px}
+#taskPageTitle{font-size:22px;margin:8px 0 12px}.schedule-control:has(input:disabled){opacity:.5;cursor:default}
+#clearTaskDate[hidden]{display:none}
 </style></head>
 <body>
 <div class="app">
-<header><div class="brand"><div class="brand-icon">✓</div> Pro plan</div><button aria-label="Настройки" class="settings-open" data-i18n-aria-label="Настройки" data-i18n-title="Настройки" id="openSettings" title="Настройки" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 3-.7 2.2-2 .9-2.1-.4-1.5 2.6 1.4 1.8v2.3l-1.4 1.8 1.5 2.6 2.2-.4 1.9 1L9 20h3l.8-2.2 1.9-1 2.2.4 1.5-2.6-1.4-1.8v-2.3l1.4-1.8-1.5-2.6-2.1.4-2-.9L12 3Z"></path><circle cx="10.5" cy="11.5" r="3"></circle></svg></button></header>
+<header><div class="brand"><div class="brand-icon">✓</div> Pro plan</div><div class="header-actions"><button id="openMenu" class="settings-open" type="button" aria-label="Меню" data-i18n-aria-label="Меню" aria-haspopup="dialog" aria-controls="menuModal" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><button aria-label="Настройки" class="settings-open" data-i18n-aria-label="Настройки" data-i18n-title="Настройки" id="openSettings" title="Настройки" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 3-.7 2.2-2 .9-2.1-.4-1.5 2.6 1.4 1.8v2.3l-1.4 1.8 1.5 2.6 2.2-.4 1.9 1L9 20h3l.8-2.2 1.9-1 2.2.4 1.5-2.6-1.4-1.8v-2.3l1.4-1.8-1.5-2.6-2.1.4-2-.9L12 3Z"></path><circle cx="10.5" cy="11.5" r="3"></circle></svg></button></div></header>
 <main>
 <section class="view active" id="todayView">
 <div class="heading"><p class="muted" id="greeting"></p>
-<div aria-label="Разделы на сегодня" class="home-tabs" data-i18n-aria-label="Разделы на сегодня" role="tablist">
+<h1 id="taskPageTitle" hidden></h1><div id="homeTabs" aria-label="Разделы на сегодня" class="home-tabs" data-i18n-aria-label="Разделы на сегодня" role="tablist">
 <button aria-controls="homeContent" aria-selected="true" data-home="today" data-i18n="Сегодня" id="homeTodayTab" role="tab" type="button">Сегодня</button>
 <button aria-controls="homeContent" aria-selected="false" data-home="habits" data-i18n="Привычки" id="homeHabitsTab" role="tab" tabindex="-1" type="button">Привычки</button>
 <button aria-controls="homeContent" aria-selected="false" data-home="overdue" data-i18n="Просроченные" id="homeOverdueTab" role="tab" tabindex="-1" type="button">Просроченные</button>
@@ -189,7 +200,9 @@ body.modal-open{overflow:hidden}
 <div class="field"><label data-i18n="Заголовок" for="taskTitle">Заголовок</label><input data-i18n-placeholder="Что нужно сделать?" id="taskTitle" maxlength="120" placeholder="Что нужно сделать?" required=""/></div>
 <div class="field description-field"><label data-i18n="Описание" for="taskDescription">Описание</label><textarea data-i18n-placeholder="Добавь подробности (необязательно)" id="taskDescription" placeholder="Добавь подробности (необязательно)" rows="3"></textarea><div class="subtask-inline-bar"><button class="subtask-add-icon" id="addSubtask" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m3 6 2 2 3-4M11 6h10M3 13h4m4 0h10M3 20h4m4 0h10"></path></svg><span data-i18n="Добавить подзадачу">Добавить подзадачу</span></button><span class="muted" id="subtaskProgressText"></span></div><div id="subtaskList"></div></div>
 <div aria-label="Срок задачи" class="task-schedule" data-i18n-aria-label="Срок задачи">
-<label class="schedule-control" data-i18n-title="Выбрать дату" title="Выбрать дату"><svg aria-hidden="true" viewBox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M7 3v4m10-4v4M3 10h18"></path></svg><span id="taskDateLabel">Дата</span><input aria-label="Дата задачи" data-i18n-aria-label="Дата задачи" id="taskDate" required="" type="date"/></label>
+<label class="schedule-control" data-i18n-title="Выбрать дату" title="Выбрать дату"><svg aria-hidden="true" viewBox="0 0 24 24"><rect height="16" rx="3" width="18" x="3" y="5"></rect><path d="M7 3v4m10-4v4M3 10h18"></path></svg><span id="taskDateLabel">Дата</span><input aria-label="Дата задачи" data-i18n-aria-label="Дата задачи" id="taskDate" type="date"/></label>
+<button type="button" class="clear-time" id="clearTaskDate" aria-label="Убрать дату" data-i18n-aria-label="Убрать дату" title="Убрать дату" data-i18n-title="Убрать дату" hidden>×</button>
+
 <label class="schedule-control" data-i18n-title="Выбрать время" title="Выбрать время"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg><span id="taskTimeLabel">Время</span><input aria-label="Время задачи" data-i18n-aria-label="Время задачи" id="taskTime" type="time"/></label>
 <button aria-label="Убрать время" class="clear-time" data-i18n-aria-label="Убрать время" data-i18n-title="Убрать время" hidden="" id="clearTaskTime" title="Убрать время" type="button">×</button>
 </div>
@@ -202,11 +215,13 @@ body.modal-open{overflow:hidden}
 <div class="field"><label data-i18n="Цвет">Цвет</label><div class="color-swatches" id="categoryColorSwatches"></div></div>
 <div class="modal-actions"><button class="secondary" data-i18n="Удалить" id="deleteCategoryBtn" style="color:#c94b4b;display:none" type="button">Удалить</button><span style="flex:1"></span><button class="secondary" data-i18n="Отмена" id="cancelCategoryModal" type="button">Отмена</button><button class="primary" data-i18n="Сохранить" id="saveCategoryBtn" type="button">Сохранить</button></div>
 </div></div>
+<div class="backdrop" id="menuModal" role="dialog" aria-modal="true" aria-labelledby="menuTitle"><div class="modal menu-sheet">
+<div class="modal-head"><h2 id="menuTitle" data-i18n="Меню">Меню</h2><button class="close-button" type="button" id="closeMenu" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button></div><nav class="menu-pages" aria-label="Страницы" data-i18n-aria-label="Страницы"><button type="button" class="menu-page" data-task-page="today"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-11 5h4"/></svg><span data-i18n="Сегодня">Сегодня</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="tomorrow"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18m-12 5h6m-2-2 2 2-2 2"/></svg><span data-i18n="Завтра">Завтра</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="week"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18M7 14h1m3 0h1m3 0h1M7 17h1m3 0h1m3 0h1"/></svg><span data-i18n="Вся неделя">Вся неделя</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="inbox"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 4-3 9v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-6l-3-9ZM3 13h5l2 3h4l2-3h5"/></svg><span data-i18n="Входящие">Входящие</span><span class="menu-arrow" aria-hidden="true">›</span></button><button type="button" class="menu-page" data-task-page="all"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 1 1 2-3m3 2h12M3 12h3m3 0h12M3 18h3m3 0h12"/></svg><span data-i18n="Все задачи">Все задачи</span><span class="menu-arrow" aria-hidden="true">›</span></button></nav></div></div>
 <div aria-labelledby="settingsTitle" aria-modal="true" class="backdrop" id="settingsModal" role="dialog"><div class="modal">
 <div class="modal-head"><h2 data-i18n="Настройки" id="settingsTitle">Настройки</h2><button aria-label="Закрыть" class="close-button" data-i18n-aria-label="Закрыть" id="closeSettings" type="button">×</button></div>
 <div class="field"><label data-i18n="Тема" for="themeMode">Тема</label><select id="themeMode"><option data-i18n="Как в системе" value="system">Как в системе</option><option data-i18n="Дневная" value="light">Дневная</option><option data-i18n="Ночная" value="dark">Ночная</option></select></div>
 <div class="field"><label data-i18n="Язык" for="appLanguage">Язык</label><select id="appLanguage"><option data-i18n="Русский" value="ru">Русский</option><option value="en">English</option></select></div>
-<div class="field"><label data-i18n="Фон страницы" for="backgroundPage">Фон страницы</label><select id="backgroundPage"><option data-i18n="Сегодня" value="today">Сегодня</option><option data-i18n="Привычки на сегодня" value="homeHabits">Привычки на сегодня</option><option data-i18n="Просроченные" value="overdue">Просроченные</option><option data-i18n="Календарь" value="calendarView">Календарь</option><option data-i18n="Привычки" value="habitsView">Привычки</option></select></div>
+<div class="field"><label data-i18n="Фон страницы" for="backgroundPage">Фон страницы</label><select id="backgroundPage"><option data-i18n="Сегодня" value="today">Сегодня</option><option data-i18n="Завтра" value="tomorrow">Завтра</option><option data-i18n="Вся неделя" value="week">Вся неделя</option><option data-i18n="Входящие" value="inbox">Входящие</option><option data-i18n="Все задачи" value="all">Все задачи</option><option data-i18n="Привычки на сегодня" value="homeHabits">Привычки на сегодня</option><option data-i18n="Просроченные" value="overdue">Просроченные</option><option data-i18n="Календарь" value="calendarView">Календарь</option><option data-i18n="Привычки" value="habitsView">Привычки</option></select></div>
 <div aria-hidden="true" class="background-preview" id="backgroundPreview"></div>
 <div class="field"><label data-i18n="Базовые цвета">Базовые цвета</label><div class="color-swatches" id="backgroundColors"></div></div>
 <div class="background-actions"><button class="secondary" data-i18n="Выбрать из галереи" id="chooseBackground" type="button">Выбрать из галереи</button><button class="secondary" data-i18n="Сбросить фон" id="resetBackground" type="button">Сбросить фон</button></div>
@@ -220,6 +235,7 @@ const settingsKey="pro-plan-settings-v1";
 let settings={theme:"system",language:"ru",backgrounds:{}};
 try{const stored=JSON.parse(localStorage.getItem(settingsKey));if(stored&&typeof stored==="object")settings={theme:["light","dark","system"].includes(stored.theme)?stored.theme:"system",language:stored.language==="en"?"en":"ru",backgrounds:stored.backgrounds&&typeof stored.backgrounds==="object"?stored.backgrounds:{}}}catch(e){}
 const EN={"Настройки": "Settings", "Закрыть": "Close", "Тема": "Theme", "Как в системе": "System", "Дневная": "Light", "Ночная": "Dark", "Язык": "Language", "Русский": "Русский", "Фон страницы": "Page background", "Привычки на сегодня": "Today’s habits", "Базовые цвета": "Basic colors", "Выбрать из галереи": "Choose from gallery", "Сбросить фон": "Reset background", "Фон сохраняется отдельно для каждой страницы на этом устройстве.": "Backgrounds are saved separately for each page on this device.", "Сегодня": "Today", "Привычки": "Habits", "Просроченные": "Overdue", "Разделы на сегодня": "Today sections", "Добавить задачу": "Add task", "Планируй заранее": "Plan ahead", "Календарь": "Calendar", "День": "Day", "Неделя": "Week", "Месяц": "Month", "Год": "Year", "Задачи выбранного дня": "Tasks for the selected day", "＋ Задача": "+ Task", "Маленькие шаги каждый день": "Small steps every day", "На выбранный день": "For the selected day", "＋ Добавить": "+ Add", "Новая задача": "New task", "Приоритет": "Priority", "⚪ Без приоритета": "⚪ No priority", "🔵 Низкий": "🔵 Low", "🟡 Средний": "🟡 Medium", "🔴 Высокий": "🔴 High", "Заголовок": "Title", "Что нужно сделать?": "What needs to be done?", "Описание": "Description", "Добавь подробности (необязательно)": "Add details (optional)", "Добавить подзадачу": "Add subtask", "Срок задачи": "Task schedule", "Выбрать дату": "Choose date", "Выбрать время": "Choose time", "Дата": "Date", "Время": "Time", "Дата задачи": "Task date", "Время задачи": "Task time", "Убрать время": "Clear time", "Область": "Area", "Без области": "No area", "Изменить область": "Edit area", "＋ Новая область": "+ New area", "Отмена": "Cancel", "Сохранить": "Save", "Новая область": "New area", "Название": "Name", "Например, Работа": "For example, Work", "Цвет": "Color", "Удалить": "Delete", "Низкий": "Low", "Средний": "Medium", "Высокий": "High", "Выполнено": "Completed", "Завтра": "Tomorrow", "Вчера": "Yesterday", "Время начинать": "Time to start", "Просрочено менее минуты": "Overdue by less than a minute", "Выполненных задач пока нет.": "No completed tasks yet.", "Нет запланированных задач.": "No planned tasks.", "Просроченных задач нет.": "No overdue tasks.", "Запланированные": "Planned", "Выполненные": "Completed", "На этот день задач пока нет.": "No tasks for this day yet.", "На этот день привычек нет.": "No habits for this day.", "Добавить привычку": "Add habit", "Открыть месяц →": "Open month →", "Редактировать задачу": "Edit task", "Название подзадачи": "Subtask title", "Удалить подзадачу": "Delete subtask", "Сначала выберите область в списке.": "Select an area first.", "Удалить эту область? Задачи останутся без области.": "Delete this area? Tasks will remain without an area.", "Какую привычку добавить?": "Which habit would you like to add?", "Загрузка изображения…": "Loading image…", "Фон сохранён.": "Background saved.", "Фон сброшен.": "Background reset.", "Не удалось сохранить настройки. Возможно, память браузера заполнена.": "Could not save settings. Browser storage may be full.", "Выберите изображение размером до 20 МБ.": "Choose an image up to 20 MB.", "Не удалось открыть изображение. Попробуйте JPEG, PNG или WebP.": "Could not open the image. Try JPEG, PNG or WebP.", "Белый": "White", "Голубой": "Blue", "Лавандовый": "Lavender", "Зелёный": "Green", "Песочный": "Sand", "Розовый": "Pink", "Графитовый": "Graphite", "Чёрный": "Black", "Выберите изображение.": "Choose an image.", "Изображение слишком большое. Выберите другое.": "Image is too large. Choose another one.", "Без названия": "Untitled", "Предыдущий период": "Previous period", "Следующий период": "Next period"};
+Object.assign(EN,{"Меню": "Menu", "Страницы": "Pages", "Вся неделя": "This week", "Входящие": "Inbox", "Все задачи": "All tasks", "Без даты": "No date", "Убрать дату": "Clear date", "Задачи без даты": "Tasks without a date"});
 function tr(text){return settings.language==="en"?(EN[text]||text):text}
 function applyTranslations(){
  document.documentElement.lang=settings.language;
@@ -228,7 +244,7 @@ function applyTranslations(){
 }
 
 const systemTheme=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):{matches:false};
-function currentBackgroundPage(){const view=document.querySelector('.view.active')?.id||'todayView';return view==='todayView'?(homeSection==='habits'?'homeHabits':homeSection):view}
+function currentBackgroundPage(){const view=document.querySelector('.view.active')?.id||'todayView';return view==='todayView'?(taskPage!=='today'?taskPage:homeSection==='habits'?'homeHabits':homeSection):view}
 function backgroundFor(page){const bg=settings.backgrounds[page];if(bg?.type==='color'&&/^#[0-9a-f]{6}$/i.test(bg.value))return bg;if(bg?.type==='image'&&/^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(bg.value))return bg;return null}
 function paintBackground(el,bg){el.style.backgroundColor=bg?.type==='color'?bg.value:'';el.style.backgroundImage=bg?.type==='image'?'url("'+bg.value+'")':''}
 function applyAppearance(){
@@ -288,7 +304,7 @@ function initAppearanceControls(){
  // Lock page scrolling without changing modal width when its content grows.
  const syncLock=()=>document.body.classList.toggle('modal-open',!!document.querySelector('.backdrop.open'));
  const observer=new MutationObserver(syncLock);document.querySelectorAll('.backdrop').forEach(el=>observer.observe(el,{attributes:true,attributeFilter:['class']}));
- document.addEventListener('keydown',e=>{if(e.key==='Escape'){const open=[...document.querySelectorAll('.backdrop.open')].pop();if(open)open.classList.remove('open')}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){const open=[...document.querySelectorAll('.backdrop.open')].pop();if(open?.id==='menuModal')closeMenu();else if(open)open.classList.remove('open')}});
  document.querySelectorAll('.close-button').forEach(b=>{b.dataset.i18nAriaLabel='Закрыть';b.setAttribute('aria-label',tr('Закрыть'))});
  document.getElementById('periodPrev').dataset.i18nAriaLabel='Предыдущий период';document.getElementById('periodNext').dataset.i18nAriaLabel='Следующий период';
 }
@@ -322,7 +338,8 @@ if(data.categories.length&&typeof data.categories[0]==="string"){
 }
 const CATEGORY_COLORS=["#73acf5","#89cbb2","#edb77b","#b19ae8","#e99baa","#f2637a","#5cc0c0","#f0b429","#8f9bff","#6bc47d"];
 let editingCategoryId=null,selectedCategoryColor=CATEGORY_COLORS[0];
-let homeSection="today";
+let homeSection="today",taskPage="today";
+const taskPageLabels={"today": "Сегодня", "tomorrow": "Завтра", "week": "Вся неделя", "inbox": "Входящие", "all": "Все задачи"};
 let selectedDate=new Date(today),calendarDate=new Date(today),calendarMode="month",editingId=null,taskView="kanban",editingSubtasks=[];
 function save(){try{localStorage.setItem(key,JSON.stringify(data))}catch(e){}}
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -337,6 +354,7 @@ function categoryColor(category){const colors=["#73acf5","#89cbb2","#edb77b","#b
 function categoryTag(id){const c=getCategory(id);return c?'<span class="category-tag"><i class="category-dot" style="background:'+c.color+'"></i><span class="category-name">'+esc(c.name)+'</span></span>':""}
 function firstLine(text){return String(text||"").split("\n")[0]}
 function dayLabel(dateValue,done=false){
+ if(!dateValue)return done?tr("Выполнено"):tr("Без даты");
  const d=fromISO(dateValue),delta=Math.round((d-today)/86400000);
  if(done)return tr("Выполнено");
  if(delta===0)return tr("Сегодня");if(delta===1)return tr("Завтра");if(delta===-1)return tr("Вчера");
@@ -350,7 +368,7 @@ function scheduledTime(task){
  return Number.isFinite(d.getTime())?d.getTime():null;
 }
 function isTaskOverdue(task){
- if(task.done)return false;
+ if(task.done||!task.date)return false;
  if(task.date<iso(today))return true;
  const start=scheduledTime(task);
  return start!==null&&start<Date.now();
@@ -364,6 +382,7 @@ function startCountdown(task){
  return '<span class="task-start">'+(minutes?(settings.language==="en"?"Starts in: ":"До начала: ")+minutes+(settings.language==="en"?" min":" мин"):tr("Время начинать"))+'</span>';
 }
 function dueLabel(task){
+ if(!task.date)return '<span class="due-label done-past">'+tr(task.done?"Выполнено":"Без даты")+'</span>';
  const delta=Math.round((fromISO(task.date)-today)/86400000);
  let label=dayLabel(task.date,task.done),overdue=isTaskOverdue(task);
  // Для прошлых дней сохраняем «Вчера», «2 дня» и т. д.
@@ -387,13 +406,13 @@ function renderCategoryOptions(selected){
 
 function renderTasks(id,dateKey){
  const box=document.getElementById(id),isToday=id==="taskList";
- let list=data.tasks.filter(t=>isToday&&homeSection==="overdue"?isTaskOverdue(t):t.date===dateKey).sort((a,b)=>a.date.localeCompare(b.date)||(a.time||"99:99").localeCompare(b.time||"99:99"));
+ let list=data.tasks.filter(t=>isToday?matchesTaskPage(t):t.date===dateKey).sort((a,b)=>(a.date||"9999-12-31").localeCompare(b.date||"9999-12-31")||(a.time||"99:99").localeCompare(b.time||"99:99"));
  if(isToday){
   const planned=list.filter(t=>!t.done),completed=list.filter(t=>t.done);
   const section=(title,items,done)=>'<section class="task-group '+(done?"completed-group":"planned-group")+'"><h3 class="task-group-title">'+title+'<span>'+items.length+'</span></h3>'+ (items.length?items.map(t=>taskMarkup(t)).join(""):'<div class="empty">'+(done?tr("Выполненных задач пока нет."):tr("Нет запланированных задач."))+'</div>')+'</section>';
   if(taskView==="kanban"){
    box.className="today-groups kanban-view";
-   box.innerHTML=homeSection==="overdue"?(planned.length?planned.map(t=>taskMarkup(t)).join(""):'<div class="empty">'+tr("Просроченных задач нет.")+'</div>'):section(tr("Запланированные"),planned,false)+section(tr("Выполненные"),completed,true);
+   box.innerHTML=taskPage==="today"&&homeSection==="overdue"?(planned.length?planned.map(t=>taskMarkup(t)).join(""):'<div class="empty">'+tr("Просроченных задач нет.")+'</div>'):section(tr("Запланированные"),planned,false)+section(tr("Выполненные"),completed,true);
   }else{
    box.className="ticktick-list";
    const groups=new Map();planned.forEach(t=>{const label=dayLabel(t.date,false);if(!groups.has(label))groups.set(label,[]);groups.get(label).push(t)});
@@ -418,9 +437,22 @@ function renderHabits(id="habitList",date=selectedDate){
  box.innerHTML=list.length?list.map(h=>{const yes=h.done.includes(dateKey);return '<div class="habit-row"><span>'+esc(h.icon)+'</span><span class="habit-name">'+esc(h.title)+'</span><button class="habit-check '+(yes?"done":"")+'" aria-label="'+esc(h.title)+'" aria-pressed="'+yes+'" data-habit="'+h.id+'">'+(yes?"✓":"○")+'</button></div>'}).join(""):'<div class="empty">'+tr("На этот день привычек нет.")+'</div>';
  box.querySelectorAll("[data-habit]").forEach(b=>b.onclick=()=>{const h=data.habits.find(x=>x.id===Number(b.dataset.habit));if(!h)return;const wasDone=h.done.includes(dateKey);h.done=wasDone?h.done.filter(x=>x!==dateKey):h.done.concat(dateKey);if(!wasDone)clickSound();save();render()});
 }
+function matchesTaskPage(task){
+ if(taskPage==="all")return true;
+ if(taskPage==="inbox")return !task.date;
+ if(taskPage==="tomorrow")return task.date===iso(addDays(today,1));
+ if(taskPage==="week"){const start=mondayOf(today);return !!task.date&&task.date>=iso(start)&&task.date<=iso(addDays(start,6))}
+ return homeSection==="overdue"?isTaskOverdue(task):task.date===iso(today);
+}
 function renderHome(){
- document.querySelectorAll("[data-home]").forEach(b=>{const active=b.dataset.home===homeSection;b.setAttribute("aria-selected",String(active));b.tabIndex=active?0:-1;if(active)document.getElementById("homeContent").setAttribute("aria-labelledby",b.id)});
- const habits=homeSection==="habits";
+ const isToday=taskPage==="today";
+ document.getElementById("homeTabs").hidden=!isToday;
+ const pageTitle=document.getElementById("taskPageTitle");pageTitle.hidden=isToday;pageTitle.textContent=tr(taskPageLabels[taskPage]);
+ const content=document.getElementById("homeContent");content.setAttribute("role",isToday?"tabpanel":"region");
+ if(!isToday)content.setAttribute("aria-labelledby","taskPageTitle");
+ document.querySelectorAll("[data-task-page]").forEach(b=>{if(b.dataset.taskPage===taskPage&&document.getElementById("todayView").classList.contains("active"))b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+ document.querySelectorAll("[data-home]").forEach(b=>{const active=b.dataset.home===homeSection;b.setAttribute("aria-selected",String(active));b.tabIndex=active?0:-1;if(active&&isToday)document.getElementById("homeContent").setAttribute("aria-labelledby",b.id)});
+ const habits=isToday&&homeSection==="habits";
  document.getElementById("taskList").hidden=habits;
  document.getElementById("todayHabitList").hidden=!habits;
  document.getElementById("addTask").setAttribute("aria-label",habits?tr("Добавить привычку"):tr("Добавить задачу"));
@@ -445,7 +477,7 @@ function renderCalendar(){
 function render(){
  const now=new Date();today.setTime(now.getTime());today.setHours(0,0,0,0);
  const title=(settings.language==="en"?"Tasks · ":"Задачи · ")+fmt(selectedDate,{day:"numeric",month:"long"});
- document.getElementById("greeting").textContent=fmt(today,{weekday:"long",day:"numeric",month:"long"});document.getElementById("todayNavDate").textContent=String(today.getDate());
+ document.getElementById("greeting").textContent=taskPage==="week"?fmt(mondayOf(today),{day:"numeric",month:"short"})+" — "+fmt(addDays(mondayOf(today),6),{day:"numeric",month:"short"}):taskPage==="inbox"?tr("Задачи без даты"):fmt(taskPage==="tomorrow"?addDays(today,1):today,{weekday:"long",day:"numeric",month:"long"});document.getElementById("todayNavDate").textContent=String(today.getDate());
  document.getElementById("calendarDayTitle").textContent=title;
  renderHome();renderTasks("calendarTaskList",iso(selectedDate));renderHabits();renderCalendar();applyTranslations();applyAppearance();
 }
@@ -455,7 +487,7 @@ function openModal(id,defaultDate){
  document.getElementById("modalTitle").textContent=t?tr("Редактировать задачу"):tr("Новая задача");
  document.getElementById("taskTitle").value=t?t.title:"";
  document.getElementById("taskDescription").value=t?t.description||"":"";
- document.getElementById("taskDate").value=t?t.date:(defaultDate||iso(selectedDate));
+ document.getElementById("taskDate").value=t?t.date:(defaultDate!==undefined?defaultDate:iso(selectedDate));
  document.getElementById("taskTime").value=t?t.time||"":"";
  renderCategoryOptions(t?t.category||"":"");renderSubtasks();document.getElementById("taskPriority").value=t?t.priority||"none":"none";document.getElementById("taskCategory").value=t?t.category||"":"";
  updatePriorityFlagIcon();updateScheduleLabels();
@@ -477,15 +509,18 @@ function updatePriorityFlagIcon(){
 document.getElementById("taskPriority").addEventListener("change",updatePriorityFlagIcon);
 function updateScheduleLabels(){
  const date=document.getElementById("taskDate").value,time=document.getElementById("taskTime").value;
- document.getElementById("taskDateLabel").textContent=date?fmt(fromISO(date),{day:"numeric",month:"short"}):tr("Дата");
+ document.getElementById("taskDateLabel").textContent=date?fmt(fromISO(date),{day:"numeric",month:"short"}):tr("Без даты");
  document.getElementById("taskTimeLabel").textContent=time||tr("Время");
  document.getElementById("clearTaskTime").hidden=!time;
+ document.getElementById("clearTaskDate").hidden=!date;
+ document.getElementById("taskTime").disabled=!date;
 }
 for(const id of ["taskDate","taskTime"]){
  const input=document.getElementById(id);
- input.addEventListener("change",updateScheduleLabels);
+ input.addEventListener("change",()=>{if(id==="taskDate"&&!input.value)document.getElementById("taskTime").value="";updateScheduleLabels()});
  input.addEventListener("click",()=>{try{if(input.showPicker)input.showPicker()}catch(e){}});
 }
+document.getElementById("clearTaskDate").onclick=()=>{document.getElementById("taskDate").value="";document.getElementById("taskTime").value="";updateScheduleLabels()};
 document.getElementById("clearTaskTime").onclick=()=>{document.getElementById("taskTime").value="";updateScheduleLabels()};
 function renderColorSwatches(){
  const box=document.getElementById("categoryColorSwatches");
@@ -525,7 +560,7 @@ document.getElementById("deleteCategoryBtn").onclick=()=>{
 };
 
 function closeModal(){document.getElementById("taskModal").classList.remove("open")}
-document.getElementById("addTask").onclick=()=>homeSection==="habits"?addHabit():openModal(undefined,iso(today));
+document.getElementById("addTask").onclick=()=>taskPage==="today"&&homeSection==="habits"?addHabit():openModal(undefined,taskPage==="inbox"?"":iso(taskPage==="tomorrow"?addDays(today,1):today));
 document.getElementById("addCategoryInline").onclick=()=>openCategoryModal(null);
 document.getElementById("addSubtask").onclick=()=>{editingSubtasks.push({id:Date.now()+Math.random(),title:"",done:false});renderSubtasks()};
 document.getElementById("addCalendarTask").onclick=()=>openModal(undefined,iso(selectedDate));
@@ -535,19 +570,32 @@ document.getElementById("taskModal").onclick=e=>{if(e.target.id==="taskModal")cl
 document.getElementById("taskForm").onsubmit=e=>{
  e.preventDefault();const previous=editingId===null?null:data.tasks.find(t=>t.id===editingId);const task={id:editingId===null?Date.now():editingId,subtasks:editingSubtasks.filter(x=>x.title.trim()).map(x=>({...x,title:x.title.trim()})),title:document.getElementById("taskTitle").value.trim(),description:document.getElementById("taskDescription").value.trim(),date:document.getElementById("taskDate").value,time:document.getElementById("taskTime").value,priority:document.getElementById("taskPriority").value,category:document.getElementById("taskCategory").value,done:previous?previous.done:false};
  if(editingId===null)data.tasks.push(task);else data.tasks=data.tasks.map(t=>t.id===editingId?task:t);
- selectedDate=fromISO(task.date);calendarDate=new Date(selectedDate);save();closeModal();render();
+ if(task.date){selectedDate=fromISO(task.date);calendarDate=new Date(selectedDate)}else task.time="";save();closeModal();render();
 };
 function addHabit(){const name=prompt(tr("Какую привычку добавить?"));if(!name||!name.trim())return;data.habits.push({id:Date.now(),title:name.trim(),icon:"✨",days:[0,1,2,3,4,5,6],done:[]});save();render()}
 document.getElementById("addHabit").onclick=addHabit;
 document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar()}};
 document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,-7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,-1);else calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};
 document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,1);else calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
-document.querySelectorAll(".nav-button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.view).classList.add("active");applyAppearance()});
+document.querySelectorAll(".nav-button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.view).classList.add("active");if(b.dataset.view==="todayView"){taskPage="today";homeSection="today"}render()});
 document.querySelectorAll("[data-home]").forEach((button,index,buttons)=>{
  button.onclick=()=>{homeSection=button.dataset.home;render()};
  button.onkeydown=e=>{let next;if(e.key==="ArrowRight")next=(index+1)%buttons.length;else if(e.key==="ArrowLeft")next=(index+buttons.length-1)%buttons.length;else if(e.key==="Home")next=0;else if(e.key==="End")next=buttons.length-1;else return;e.preventDefault();buttons[next].focus();buttons[next].click()};
 });
-initAppearanceControls();
+function closeMenu(){document.getElementById("menuModal").classList.remove("open");document.getElementById("openMenu").setAttribute("aria-expanded","false");document.getElementById("openMenu").focus({preventScroll:true})}
+function initMenu(){
+ const modal=document.getElementById("menuModal"),trigger=document.getElementById("openMenu");
+ trigger.onclick=()=>{renderHome();modal.classList.add("open");trigger.setAttribute("aria-expanded","true");(modal.querySelector('[aria-current="page"]')||modal.querySelector("[data-task-page]")).focus({preventScroll:true})};
+ document.getElementById("closeMenu").onclick=closeMenu;modal.onclick=e=>{if(e.target===modal)closeMenu()};
+ modal.onkeydown=e=>{if(e.key!=="Tab")return;const buttons=[...modal.querySelectorAll("button")],first=buttons[0],last=buttons[buttons.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}};
+ document.querySelectorAll("[data-task-page]").forEach(button=>button.onclick=()=>{
+  taskPage=button.dataset.taskPage;homeSection="today";
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="todayView"));
+  document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.dataset.view==="todayView"));
+  closeMenu();render();
+ });
+}
+initAppearanceControls();initMenu();
 render();
 // Обновляем на границе минуты, чтобы отсчёт совпадал с часами.
 function scheduleMinuteRefresh(){setTimeout(()=>{render();scheduleMinuteRefresh()},60000-Date.now()%60000+25)}
