@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8"/><meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
 <meta content="#f7f8fc" name="theme-color"/><title>Pro plan</title>
+<script defer src="https://telegram.org/js/telegram-web-app.js?63"></script>
 <style>
 :root{--bg:#f7f8fc;--card:#fff;--text:#232638;--muted:#858b9e;--line:#e9ebf2;--blue:#5269e8;--soft:#eef0ff;--green:#338b5d;--green-soft:#e8f6ee;--flag-none:#b7bcc9;--flag-low:#4f8dfd;--flag-medium:#f0b429;--flag-high:#ef5350;--r:18px;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}html,body{width:100%;max-width:100%;overflow-x:hidden;overscroll-behavior:none;touch-action:pan-y}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}.app,main,.view{min-width:0;max-width:100%}
@@ -221,6 +222,18 @@ body.modal-open{overflow:hidden}
 .habit-calendar-day{border:1px solid transparent;border-radius:9px;min-height:42px;padding:4px 0;background:transparent;color:var(--text);font-size:12px}.habit-calendar-day small{display:block;font-size:9px;color:var(--muted);margin-top:2px}.habit-calendar-day.selected{border-color:var(--blue);background:var(--soft)}.habit-calendar-day.all-done small{color:var(--green)}
 .habit-result{flex:none;width:35px;height:35px;border:1px solid var(--line);border-radius:11px;font-size:20px;background:var(--card)}.habit-result.done{background:var(--green-soft);color:var(--green);border-color:var(--green)}.habit-result.missed{color:#d66e74;background:#d66e740b}.habit-result.pending{color:var(--muted)}
 .habit-card-icon{display:inline-block;font-size:17px;margin:0 8px 0 0}.habit-card-name{font-size:13px}.habit-card-schedule{margin-top:6px}.habit-week-hint,#habitDaySummary{font-size:11px}.habit-week-toolbar{margin-top:10px;margin-bottom:8px}
+
+/* Отступы для системных кнопок Telegram в полноэкранном режиме. */
+html.telegram-app{padding-top:var(--pro-safe-top,0px);padding-bottom:var(--pro-safe-bottom,0px);scroll-padding-top:var(--pro-safe-top,0px)}
+.telegram-app .app{padding-left:calc(13px + var(--pro-safe-left,0px));padding-right:calc(13px + var(--pro-safe-right,0px))}
+.telegram-app .bottom-nav{padding-bottom:calc(9px + var(--pro-safe-bottom,0px));left:var(--pro-safe-left,0px);right:var(--pro-safe-right,0px)}
+.telegram-app .floating-add,.telegram-app #todayView .floating-add{bottom:calc(88px + var(--pro-safe-bottom,0px));right:calc(18px + var(--pro-safe-right,0px))}
+.telegram-app .backdrop{padding:calc(12px + var(--pro-safe-top,0px)) calc(12px + var(--pro-safe-right,0px)) calc(12px + var(--pro-safe-bottom,0px)) calc(12px + var(--pro-safe-left,0px))}
+.telegram-app .backdrop .modal{max-height:calc(100dvh - 24px - var(--pro-safe-top,0px) - var(--pro-safe-bottom,0px));overscroll-behavior-y:contain}
+.telegram-app #menuModal{padding-top:calc(64px + var(--pro-safe-top,0px))}
+.telegram-app #menuModal .modal{max-height:calc(100dvh - 76px - var(--pro-safe-top,0px) - var(--pro-safe-bottom,0px))}
+.telegram-app #habitModal{padding:0}
+.telegram-app #habitModal .habit-sheet{height:100dvh;max-height:100dvh;padding:calc(16px + var(--pro-safe-top,0px)) calc(20px + var(--pro-safe-right,0px)) calc(16px + var(--pro-safe-bottom,0px)) calc(20px + var(--pro-safe-left,0px))}
 </style></head>
 <body>
 <div class="app">
@@ -907,4 +920,39 @@ document.addEventListener("visibilitychange",()=>{if(!document.hidden)render()})
 document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
 document.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});
 document.addEventListener("touchmove",e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+
+// Telegram управляет своим окном отдельно от прокрутки HTML-страницы.
+function initTelegramMiniApp(){
+ const tg=window.Telegram?.WebApp;
+ if(!tg||!tg.platform||tg.platform==='unknown')return;
+ const root=document.documentElement;
+ root.classList.add('telegram-app');
+ const supports=v=>typeof tg.isVersionAtLeast==='function'&&tg.isVersionAtLeast(v);
+ const call=(name,...args)=>{try{if(typeof tg[name]==='function')tg[name](...args)}catch(error){console.warn('Telegram '+name+' unavailable')}};
+ const syncInsets=()=>{
+  for(const side of ['top','bottom','left','right']){
+   const device=Math.max(0,Number(tg.safeAreaInset?.[side])||0);
+   const controls=Math.max(0,Number(tg.contentSafeAreaInset?.[side])||0);
+   root.style.setProperty('--pro-safe-'+side,(device+controls)+'px');
+  }
+ };
+ const syncHeader=()=>{
+  if(!supports('6.1'))return;
+  const color=getComputedStyle(root).getPropertyValue('--bg').trim();
+  if(supports('6.9')&&/^#[0-9a-f]{6}$/i.test(color))call('setHeaderColor',color);
+  else call('setHeaderColor','bg_color');
+ };
+ const protectScrolling=()=>{if(supports('7.7'))call('disableVerticalSwipes')};
+ syncInsets();syncHeader();protectScrolling();call('ready');call('expand');
+ if(typeof tg.onEvent==='function'){
+  for(const event of ['safeAreaChanged','contentSafeAreaChanged','fullscreenChanged'])tg.onEvent(event,syncInsets);
+  tg.onEvent('fullscreenFailed',()=>{call('expand');syncInsets()});
+  tg.onEvent('activated',()=>{protectScrolling();syncInsets()});
+ }
+ new MutationObserver(syncHeader).observe(root,{attributes:true,attributeFilter:['data-theme']});
+ if(supports('8.0')&&!tg.isFullscreen)call('requestFullscreen');
+}
+// defer SDK завершает загрузку до DOMContentLoaded; локальный HTML работает и без него.
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initTelegramMiniApp,{once:true});
+else initTelegramMiniApp();
 </script></body></html>
