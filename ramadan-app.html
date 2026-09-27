@@ -257,10 +257,7 @@ button:active{opacity:.8}
 @media(prefers-reduced-motion:reduce){.view.active{animation:none}.backdrop .modal,#taskModal .modal,#habitModal .habit-sheet{transform:none}*{scroll-behavior:auto!important}}
 
 /* September update: compact task sheet, left drawer, four-page navigation. */
-.app:has(#todayView.active) header{justify-content:flex-end;margin-bottom:6px}
-.app:has(#todayView.active) header .brand{display:none}
-.app:has(#todayView.active) #openSettings{order:1}
-.app:has(#todayView.active) #openMenu{order:2}
+.app:has(#todayView.active) header{justify-content:space-between;margin-bottom:12px}
 .task-swipe-shell{position:relative;overflow:hidden;border-radius:16px;margin-bottom:7px;isolation:isolate}
 .task-swipe-shell>.kanban-card,#todayView .task-swipe-shell>.kanban-card{position:relative;z-index:1;margin:0;background:var(--card)}
 .task-delete-reveal{position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding-right:27px;background:#e85863;color:white;opacity:0;transition:opacity 100ms ease}
@@ -312,10 +309,34 @@ button:active{opacity:.8}
 .ai-status{font-size:11px;color:var(--muted)}
 @media(max-width:350px){#taskModal .modal{padding-left:14px;padding-right:14px}#menuModal .menu-page{gap:7px;font-size:12px}.kanban-meta{flex-wrap:wrap!important}.kanban-meta .category-tag{max-width:100%}}
 @media(prefers-reduced-motion:reduce){#menuModal .menu-sheet,#taskModal .modal{transition:none}.task-group[open]>.task-group-items{animation:none}}
+
+/* Единая компактная шапка: меню слева, настройки справа. */
+.app header{margin-bottom:12px;justify-content:space-between;min-height:44px}
+.app header .header-actions{width:100%;flex:1;justify-content:space-between;gap:16px}
+.custom-background .app header{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;backdrop-filter:none}
+.header-actions .settings-open{width:44px;height:44px}
+.header-actions #openMenu{order:0;position:relative;border:1px solid rgba(255,255,255,.9);border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.94),rgba(238,241,253,.55));box-shadow:inset 0 1px 1px #ffffff,0 2px 8px #27396812,0 0 0 1px #7181ae18;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--text)}
+.header-actions #openMenu svg{width:21px;height:21px;stroke-width:1.5}
+.header-actions #openSettings{order:1;background:transparent;border:0;border-radius:50%;color:var(--text)}
+.header-actions #openSettings svg{width:22px;height:22px}
+[data-theme="dark"] .header-actions #openMenu{border-color:#ffffff26;background:linear-gradient(145deg,#ffffff26,#ffffff08);box-shadow:inset 0 1px 1px #ffffff22,0 2px 8px #00000020}
+/* Заголовки групп без подложек; стрелка на правом краю. */
+#todayView .today-panel{background:transparent;border:0;box-shadow:none;padding:0;margin:0}
+#todayView .task-group{background:transparent;border:0;box-shadow:none}
+.app #todayView .task-group-title{width:100%;max-width:100%;min-height:44px;margin:0 0 5px;padding:8px 2px;border:0;border-radius:0;box-shadow:none;background:transparent;color:var(--muted);font-size:12px;font-weight:500;gap:7px}
+.app #todayView .task-group-title .task-group-count{display:inline;min-width:0;height:auto;padding:0;border:0;border-radius:0;background:transparent;font-size:11px;font-weight:400;color:var(--muted)}
+.app #todayView .task-group-title .group-chevron{width:13px;height:13px;flex:none;margin-left:auto;margin-right:3px}
+.task-group-title:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+/* Размер полей ввода оставлен удобным для мобильной клавиатуры. */
+.task-title,.kanban-card .task-title,#todayView .kanban-card .task-title,#todayView .date-group-card .task-title{font-size:13px;font-weight:400;line-height:1.45;letter-spacing:0}
+.task-description,#todayView .kanban-card .task-description{font-size:11px;font-weight:400;line-height:1.45}
+.habit-card-name{font-size:13px;font-weight:400;line-height:1.45}
+.due-label,.due-label.overdue,#todayView .kanban-card .due-label{font-size:11px;font-weight:400}
+.task-group-title,.habit-period-title{font-weight:500}
 </style></head>
 <body>
 <div class="app">
-<header><div class="brand"><div class="brand-icon">✓</div> Pro plan</div><div class="header-actions"><button id="openMenu" class="settings-open" type="button" aria-label="Меню" data-i18n-aria-label="Меню" aria-haspopup="dialog" aria-controls="menuModal" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><button aria-label="Настройки" class="settings-open" data-i18n-aria-label="Настройки" data-i18n-title="Настройки" id="openSettings" title="Настройки" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 3-.7 2.2-2 .9-2.1-.4-1.5 2.6 1.4 1.8v2.3l-1.4 1.8 1.5 2.6 2.2-.4 1.9 1L9 20h3l.8-2.2 1.9-1 2.2.4 1.5-2.6-1.4-1.8v-2.3l1.4-1.8-1.5-2.6-2.1.4-2-.9L12 3Z"></path><circle cx="10.5" cy="11.5" r="3"></circle></svg></button></div></header>
+<header><div class="header-actions"><button id="openMenu" class="settings-open" type="button" aria-label="Меню" data-i18n-aria-label="Меню" aria-haspopup="dialog" aria-controls="menuModal" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><button aria-label="Настройки" class="settings-open" data-i18n-aria-label="Настройки" data-i18n-title="Настройки" id="openSettings" title="Настройки" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 3-.7 2.2-2 .9-2.1-.4-1.5 2.6 1.4 1.8v2.3l-1.4 1.8 1.5 2.6 2.2-.4 1.9 1L9 20h3l.8-2.2 1.9-1 2.2.4 1.5-2.6-1.4-1.8v-2.3l1.4-1.8-1.5-2.6-2.1.4-2-.9L12 3Z"></path><circle cx="10.5" cy="11.5" r="3"></circle></svg></button></div></header>
 <main>
 <section class="view active" id="todayView">
 <div class="heading"><p class="muted" id="greeting"></p>
@@ -599,7 +620,7 @@ function renderTasks(id,dateKey){
  let list=data.tasks.filter(t=>isToday?matchesTaskPage(t):t.date===dateKey).sort((a,b)=>(a.date||"9999-12-31").localeCompare(b.date||"9999-12-31")||(a.time||"99:99").localeCompare(b.time||"99:99"));
  if(isToday){
   const planned=list.filter(t=>!t.done),completed=list.filter(t=>t.done);
-  const section=(title,items,done)=>{const group=done?'completed':'planned',opened=taskGroupState[taskGroupKey(group)]!==false;return '<details class="task-group '+(done?'completed-group':'planned-group')+'" data-task-group="'+group+'" '+(opened?'open':'')+'><summary class="task-group-title"><svg class="group-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>'+title+'<span>'+items.length+'</span></summary><div class="task-group-items">'+(items.length?items.map(t=>taskMarkup(t)).join(''):'<div class="empty">'+(done?tr('Выполненных задач пока нет.'):tr('Нет запланированных задач.'))+'</div>')+'</div></details>'};
+  const section=(title,items,done)=>{const group=done?'completed':'planned',opened=taskGroupState[taskGroupKey(group)]!==false;return '<details class="task-group '+(done?'completed-group':'planned-group')+'" data-task-group="'+group+'" '+(opened?'open':'')+'><summary class="task-group-title">'+title+'<span class="task-group-count">'+items.length+'</span><svg class="group-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></summary><div class="task-group-items">'+(items.length?items.map(t=>taskMarkup(t)).join(''):'<div class="empty">'+(done?tr('Выполненных задач пока нет.'):tr('Нет запланированных задач.'))+'</div>')+'</div></details>'};
   if(taskView==="kanban"){
    box.className="today-groups kanban-view";
    box.innerHTML=taskPage==="today"&&homeSection==="overdue"?(planned.length?planned.map(t=>taskMarkup(t)).join(""):'<div class="empty">'+tr("Просроченных задач нет.")+'</div>'):section(tr("Запланированные"),planned,false)+section(tr("Выполненные"),completed,true);
