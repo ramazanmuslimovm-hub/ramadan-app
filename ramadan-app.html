@@ -375,6 +375,18 @@ button:active{opacity:.8}
 #menuModal .menu-sheet,.telegram-app #menuModal .menu-sheet{transition:transform 330ms var(--motion-ease),opacity 250ms ease}
 .home-tabs button::after,.group-chevron,.habit-card,.task-swipe-shell,.kanban-card,.menu-page,.nav-button,.habit-calendar-day,.calendar-cell{transition-duration:240ms}
 @media(prefers-reduced-motion:reduce){.view.active{animation:none!important}#menuModal .menu-sheet,#taskModal .modal,.backdrop .modal{transition-duration:.01ms!important}}
+
+/* Редактор занимает только видимую часть экрана, в том числе над клавиатурой iOS. */
+#taskModal,.telegram-app #taskModal{
+ inset:auto;top:var(--task-visible-top,0px);left:var(--task-visible-left,0px);
+ width:var(--task-visible-width,100vw);height:var(--task-visible-height,100dvh);
+ padding:0;align-items:flex-end;overflow:hidden;
+}
+#taskModal .modal,.telegram-app #taskModal .modal{
+ width:min(100%,520px);height:min(540px,calc(100% - max(24px,var(--pro-safe-top,0px))));
+ min-height:0;max-height:calc(100% - max(24px,var(--pro-safe-top,0px)));flex:none;
+ overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable;
+}
 </style></head>
 <body>
 <div class="app">
@@ -1140,8 +1152,15 @@ function initMotion(){
 
 function initTaskSheetViewport(){
  const viewport=window.visualViewport;if(!viewport)return;
- const sync=()=>{const keyboard=Math.max(0,Math.round(innerHeight-viewport.height));document.documentElement.style.setProperty('--composer-keyboard',keyboard>120?keyboard+'px':'0px')};
- viewport.addEventListener('resize',sync);window.addEventListener('orientationchange',sync);sync();
+ const root=document.documentElement;
+ const sync=()=>{
+  root.style.setProperty('--task-visible-top',Math.max(0,Math.round(viewport.offsetTop))+'px');
+  root.style.setProperty('--task-visible-left',Math.max(0,Math.round(viewport.offsetLeft))+'px');
+  root.style.setProperty('--task-visible-width',Math.round(viewport.width)+'px');
+  root.style.setProperty('--task-visible-height',Math.round(viewport.height)+'px');
+ };
+ viewport.addEventListener('resize',sync);viewport.addEventListener('scroll',sync);
+ window.addEventListener('orientationchange',sync);sync();
 }
 initTaskSheetViewport();
 initMotion();initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();
@@ -1188,4 +1207,3 @@ function initTelegramMiniApp(){
 // defer SDK завершает загрузку до DOMContentLoaded; локальный HTML работает и без него.
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initTelegramMiniApp,{once:true});
 else initTelegramMiniApp();
-</script></body></html>
