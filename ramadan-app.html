@@ -333,10 +333,25 @@ button:active{opacity:.8}
 .habit-card-name{font-size:13px;font-weight:400;line-height:1.45}
 .due-label,.due-label.overdue,#todayView .kanban-card .due-label{font-size:11px;font-weight:400}
 .task-group-title,.habit-period-title{font-weight:500}
+
+/* Круговой прогресс занимает строку заголовка задачи. */
+.task-main-line{display:flex;align-items:flex-start;gap:8px;min-width:0}
+.task-main-line .task-title{min-width:0;flex:1}
+.subtask-ring{position:relative;display:grid;place-items:center;flex:none;width:36px;height:36px;margin-top:-4px;color:var(--blue);font-size:9px;font-weight:600;line-height:1}
+.subtask-ring svg{position:absolute;inset:0;width:100%;height:100%;fill:none;stroke-width:2.6;transform:rotate(-90deg)}
+.subtask-ring .ring-track{stroke:var(--line)}.subtask-ring .ring-fill{stroke:var(--blue);stroke-linecap:round;transition:stroke-dasharray 260ms var(--motion-ease)}
+.subtask-ring>span{position:relative;white-space:nowrap}
+/* Языки рядом с настройками; меню остается слева. */
+.app header .header-right{display:flex;align-items:center;gap:5px;flex:none}
+.language-toggle{display:flex;align-items:center;justify-content:center;gap:2px;min-width:62px;height:44px;padding:0 4px;border:0;border-radius:12px;background:transparent;color:var(--text)}
+.language-flag{display:block;width:23px;height:16px;line-height:0;opacity:.46;filter:saturate(.7);transform:scale(.88);transition:opacity 180ms,transform 180ms,filter 180ms}.language-flag svg{width:100%;height:100%;border-radius:2px;box-shadow:0 0 0 1px #66739922}
+.language-flag.active{opacity:1;filter:none;transform:scale(1.05)}
+.language-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+@media(max-width:350px){.app header .header-right{gap:0}.language-toggle{min-width:58px}}
 </style></head>
 <body>
 <div class="app">
-<header><div class="header-actions"><button id="openMenu" class="settings-open" type="button" aria-label="Меню" data-i18n-aria-label="Меню" aria-haspopup="dialog" aria-controls="menuModal" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><button aria-label="Настройки" class="settings-open" data-i18n-aria-label="Настройки" data-i18n-title="Настройки" id="openSettings" title="Настройки" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 3-.7 2.2-2 .9-2.1-.4-1.5 2.6 1.4 1.8v2.3l-1.4 1.8 1.5 2.6 2.2-.4 1.9 1L9 20h3l.8-2.2 1.9-1 2.2.4 1.5-2.6-1.4-1.8v-2.3l1.4-1.8-1.5-2.6-2.1.4-2-.9L12 3Z"></path><circle cx="10.5" cy="11.5" r="3"></circle></svg></button></div></header>
+<header><div class="header-actions"><button id="openMenu" class="settings-open" type="button" aria-label="Меню" data-i18n-aria-label="Меню" aria-haspopup="dialog" aria-controls="menuModal" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><div class="header-right"><button id="toggleLanguage" class="language-toggle" type="button"><span class="language-flag" data-lang="ru" aria-hidden="true"><svg viewBox="0 0 24 16"><path fill="#fff" d="M0 0h24v16H0z"/><path fill="#3159a6" d="M0 5.33h24v5.34H0z"/><path fill="#dc3d45" d="M0 10.67h24V16H0z"/></svg></span><span class="language-flag" data-lang="en" aria-hidden="true"><svg viewBox="0 0 24 16"><defs><clipPath id="ukFlagClip"><rect width="24" height="16" rx="1.5"/></clipPath></defs><g clip-path="url(#ukFlagClip)"><path fill="#22366f" d="M0 0h24v16H0z"/><path stroke="#fff" stroke-width="4" d="M-2-2 26 18M26-2-2 18"/><path stroke="#ce3146" stroke-width="1.5" d="M-2-2 26 18M26-2-2 18"/><path stroke="#fff" stroke-width="6" d="M12 0v16M0 8h24"/><path stroke="#ce3146" stroke-width="3" d="M12 0v16M0 8h24"/></g></svg></span></button><button aria-label="Настройки" class="settings-open" data-i18n-aria-label="Настройки" data-i18n-title="Настройки" id="openSettings" title="Настройки" type="button"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 3-.7 2.2-2 .9-2.1-.4-1.5 2.6 1.4 1.8v2.3l-1.4 1.8 1.5 2.6 2.2-.4 1.9 1L9 20h3l.8-2.2 1.9-1 2.2.4 1.5-2.6-1.4-1.8v-2.3l1.4-1.8-1.5-2.6-2.1.4-2-.9L12 3Z"></path><circle cx="10.5" cy="11.5" r="3"></circle></svg></button></div></div></header>
 <main>
 <section class="view active" id="todayView">
 <div class="heading"><p class="muted" id="greeting"></p>
@@ -445,7 +460,15 @@ EN["Днём"]="Afternoon";EN["Любое"]="Anytime";
 Object.assign(EN,{"Вы хотите удалить задачу?": "Do you want to delete this task?", "Да": "Yes", "Нет": "No", "Часы": "Hours", "Минуты": "Minutes", "Готово": "Done", "Календарь привычек": "Habit calendar", "Смахни привычку влево, чтобы отметить «Не выполнил».": "Swipe a habit left to mark it as not completed.", "Не выполнил": "Not completed", "Отменить отметку": "Undo status", "Запланировано": "Planned"});
 Object.assign(EN,{"Навигация": "Navigation", "Окончание": "End time", "Время окончания": "End time", "Убрать окончание": "Clear end time", "Добавить": "Add", "Начало": "Start", "Время окончания должно быть позже начала.": "End time must be later than the start time.", "Сначала укажи время начала.": "Choose a start time first.", "Укажи название задачи.": "Enter a task title.", "Предыдущая неделя": "Previous week", "Следующая неделя": "Next week", "Место для твоих идей": "A place for your ideas", "Помощник для твоих планов": "Your planning assistant", "Здесь можно будет обсудить планы, разбить большую задачу на шаги и составить расписание.": "Here you will be able to discuss plans, break a big task into steps and create a schedule.", "Спланировать день": "Plan my day", "Разбить задачу на шаги": "Break a task into steps", "AI пока не подключён": "AI is not connected yet"});
 function tr(text){return settings.language==="en"?(EN[text]||text):text}
+function updateLanguageToggle(){
+ const button=document.getElementById("toggleLanguage");if(!button)return;
+ const target=settings.language==="ru"?"en":"ru";
+ button.setAttribute("aria-label",target==="en"?"Switch to English":"Переключить на русский");
+ button.title=target==="en"?"Switch to English":"Переключить на русский";
+ button.querySelectorAll("[data-lang]").forEach(flag=>flag.classList.toggle("active",flag.dataset.lang===settings.language));
+}
 function applyTranslations(){
+ updateLanguageToggle();
  document.documentElement.lang=settings.language;
  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=tr(el.dataset.i18n));
  for(const attr of ["placeholder","title","aria-label"])document.querySelectorAll("[data-i18n-"+attr+"]").forEach(el=>el.setAttribute(attr,tr(el.getAttribute("data-i18n-"+attr))));
@@ -503,6 +526,7 @@ function initAppearanceControls(){
  modal.onclick=e=>{if(e.target===modal)modal.classList.remove('open')};
  document.getElementById('themeMode').onchange=e=>changeSetting('theme',e.target.value);
  document.getElementById('appLanguage').onchange=e=>changeSetting('language',e.target.value);
+ document.getElementById('toggleLanguage').onclick=()=>changeSetting('language',settings.language==='ru'?'en':'ru');
  document.getElementById('backgroundPage').onchange=()=>{setSettingsStatus('');renderSettings()};
  document.getElementById('chooseBackground').onclick=()=>document.getElementById('backgroundFile').click();
  document.getElementById('backgroundFile').onchange=e=>{const file=e.target.files[0],page=document.getElementById('backgroundPage').value;e.target.value='';importBackground(file,page)};
@@ -604,8 +628,12 @@ function dueLabel(task){
 function isOverdueLabel(label){if(label===tr("Вчера"))return true;const n=Number.parseInt(label,10);return Number.isFinite(n)&&n>=2}
 function priorityClass(priority){return ["low","medium","high"].includes(priority)?"priority-edge-"+priority:"priority-edge-none"}
 function subtaskStats(items){const valid=(items||[]).filter(x=>x.title&&x.title.trim()),done=valid.filter(x=>x.done).length;return {total:valid.length,done,percent:valid.length?Math.round(done/valid.length*100):0}}
-function subtaskProgress(items){const p=subtaskStats(items);return p.total?'<div class="subtask-progress"><span>'+p.done+'/'+p.total+' · '+p.percent+'%</span><i><b style="width:'+p.percent+'%"></b></i></div>':""}
-function taskMarkup(t,compact=false){return '<div class="task-swipe-shell"><div class="task-delete-reveal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></div><article class="kanban-card '+(compact?"list-card":"")+' '+priorityClass(t.priority)+'" data-edit="'+t.id+'"><input class="task-check" type="checkbox" data-check="'+t.id+'" '+(t.done?"checked":"")+'><div class="task-copy"><span class="task-title '+(t.done?"done":"")+'">'+esc(t.title)+'</span>'+(t.description?'<span class="task-description">'+esc(firstLine(t.description))+'</span>':"")+subtaskProgress(t.subtasks)+'<div class="kanban-meta">'+dueLabel(t)+categoryTag(t.category)+'</div></div></article></div>'}
+function subtaskProgress(items){
+ const p=subtaskStats(items);if(!p.total)return "";
+ const label=settings.language==="en"?`${p.percent}% complete, ${p.done} of ${p.total} subtasks`:`${p.percent}% выполнено, ${p.done} из ${p.total} подзадач`;
+ return '<span class="subtask-ring" role="img" aria-label="'+esc(label)+'" title="'+esc(label)+'"><svg viewBox="0 0 36 36" aria-hidden="true"><circle class="ring-track" cx="18" cy="18" r="15.5"/><circle class="ring-fill" cx="18" cy="18" r="15.5" pathLength="100" stroke-dasharray="'+p.percent+' 100"/></svg><span>'+p.percent+'%</span></span>';
+}
+function taskMarkup(t,compact=false){return '<div class="task-swipe-shell"><div class="task-delete-reveal" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg></div><article class="kanban-card '+(compact?"list-card":"")+' '+priorityClass(t.priority)+'" data-edit="'+t.id+'"><input class="task-check" type="checkbox" data-check="'+t.id+'" '+(t.done?"checked":"")+'><div class="task-copy"><div class="task-main-line"><span class="task-title '+(t.done?"done":"")+'">'+esc(t.title)+'</span>'+subtaskProgress(t.subtasks)+'</div>'+(t.description?'<span class="task-description">'+esc(firstLine(t.description))+'</span>':"")+'<div class="kanban-meta">'+dueLabel(t)+categoryTag(t.category)+'</div></div></article></div>'}
 
 function renderCategoryOptions(selected){
  const select=document.getElementById("taskCategory"),current=selected!==undefined?selected:select.value;
