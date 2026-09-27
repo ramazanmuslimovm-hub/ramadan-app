@@ -348,6 +348,33 @@ button:active{opacity:.8}
 .language-flag.active{opacity:1;filter:none;transform:scale(1.05)}
 .language-toggle:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 @media(max-width:350px){.app header .header-right{gap:0}.language-toggle{min-width:58px}}
+
+/* Размеры карточки близки к мобильному списку задач на образце. */
+#todayView .today-panel{margin-inline:6px}
+#todayView .task-swipe-shell>.kanban-card{padding:13px 14px;grid-template-columns:20px minmax(0,1fr);column-gap:10px;border-radius:16px}
+#todayView .task-swipe-shell .task-check{width:20px;height:20px;margin-top:2px}
+#todayView .kanban-card .task-title{font-size:15px;font-weight:400;line-height:1.35;letter-spacing:-.1px}
+#todayView .kanban-card .task-description{font-size:12px;line-height:1.4}
+#todayView .kanban-card .kanban-meta{margin-top:5px;gap:7px}
+#todayView .kanban-card .due-label,#todayView .kanban-card .category-tag{font-size:12px;font-weight:400}
+#todayView .task-swipe-shell{border-radius:16px;margin-bottom:8px}
+/* Фиксированная геометрия редактора: строки подзадач прокручиваются внутри окна. */
+#taskModal .modal,.telegram-app #taskModal .modal{
+ width:min(100%,520px);height:min(540px,calc(100svh - 24px - var(--pro-safe-top,0px) - var(--composer-keyboard,0px)));
+ min-height:0;max-height:calc(100svh - 24px - var(--pro-safe-top,0px) - var(--composer-keyboard,0px));
+ flex:none;overflow-x:hidden;overflow-y:auto;scrollbar-gutter:stable;contain:layout;
+}
+#taskModal .subtask-editor{min-width:0;max-width:100%;grid-template-columns:20px minmax(0,1fr) 28px}
+#taskModal .subtask-editor input[type=text]{font-size:16px;min-width:0;width:100%}
+/* Переходы привязаны к содержимому, без изменения ширины страницы. */
+.view.active{animation:pro-view-enter 300ms var(--motion-ease) both}
+@keyframes pro-view-enter{from{opacity:.35}to{opacity:1}}
+.backdrop{transition:opacity 280ms ease,visibility 280ms ease}
+.backdrop .modal,#taskModal .modal,#habitModal .habit-sheet{transition:opacity 260ms ease,transform 320ms var(--motion-ease)}
+#taskModal .modal{transition:opacity 260ms ease,transform 320ms var(--motion-ease)}
+#menuModal .menu-sheet,.telegram-app #menuModal .menu-sheet{transition:transform 330ms var(--motion-ease),opacity 250ms ease}
+.home-tabs button::after,.group-chevron,.habit-card,.task-swipe-shell,.kanban-card,.menu-page,.nav-button,.habit-calendar-day,.calendar-cell{transition-duration:240ms}
+@media(prefers-reduced-motion:reduce){.view.active{animation:none!important}#menuModal .menu-sheet,#taskModal .modal,.backdrop .modal{transition-duration:.01ms!important}}
 </style></head>
 <body>
 <div class="app">
@@ -749,7 +776,7 @@ function renderHabitPageTools(){
  document.getElementById('habitBrowseDate').value=iso(habitBrowseDate);
  document.querySelectorAll('[data-habit-status]').forEach(b=>{const selected=(b.dataset.habitStatus==='archived')===habitArchiveView;b.classList.toggle('active',selected);b.setAttribute('aria-pressed',String(selected))});
  const grid=document.getElementById('habitSharedCalendar');grid.innerHTML=Array.from({length:7},(_,i)=>{const date=addDays(start,i),key=iso(date),habits=habitsForDate(date,habitArchiveView),done=habits.filter(h=>h.done.includes(key)).length;return '<button type="button" class="habit-calendar-day '+(key===iso(habitBrowseDate)?'selected ':'')+(habits.length&&done===habits.length?'all-done':'')+'" data-habits-date="'+key+'" aria-pressed="'+(key===iso(habitBrowseDate))+'" aria-label="'+esc(fmt(date,{day:'numeric',month:'long'})+' · '+done+'/'+habits.length)+'"><span class="habit-calendar-weekday">'+weekdayLabels()[i]+'</span><strong>'+date.getDate()+'</strong><small>'+(habits.length?done+'/'+habits.length:'·')+'</small></button>'}).join('');
- grid.querySelectorAll('[data-habits-date]').forEach(button=>button.onclick=()=>{habitBrowseDate=fromISO(button.dataset.habitsDate);render()});
+ grid.querySelectorAll('[data-habits-date]').forEach(button=>button.onclick=()=>{habitBrowseDate=fromISO(button.dataset.habitsDate);render();animateContent(document.getElementById('habitList'))});
  const habits=habitsForDate(habitBrowseDate,habitArchiveView),done=habits.filter(h=>h.done.includes(iso(habitBrowseDate))).length;document.getElementById('habitDaySummary').textContent=fmt(habitBrowseDate,{day:'numeric',month:'long'})+' · '+tr('Выполнено')+': '+done+'/'+habits.length;
 }
 function renderHabitHistory(){
@@ -791,10 +818,10 @@ function initHabitSchedule(){
  };
  document.getElementById('archiveHabit').onclick=()=>{const h=data.habits.find(h=>h.id===editingHabitId);if(!h)return;if(!persistHabits(data.habits.map(v=>v.id===h.id?{...v,archived:!v.archived,archivedAt:v.archived?null:iso(today)}:v)))return;closeHabitEditor();closeHabit();render()};
  document.getElementById('deleteHabit').onclick=()=>{const h=data.habits.find(h=>h.id===editingHabitId);if(!h||!confirm(h.title+'\n\n'+tr('Удалить привычку и всю историю её выполнения? Это действие нельзя отменить.')))return;if(!persistHabits(data.habits.filter(v=>v.id!==h.id)))return;closeHabitEditor();closeHabit();render()};
- document.getElementById('habitWeekPrev').onclick=()=>{habitBrowseDate=addDays(habitBrowseDate,-7);render()};document.getElementById('habitWeekNext').onclick=()=>{habitBrowseDate=addDays(habitBrowseDate,7);render()};
- document.getElementById('habitBrowseDate').onchange=e=>{if(e.target.value){habitBrowseDate=fromISO(e.target.value);render()}};
- document.getElementById('habitGoToday').onclick=()=>{habitBrowseDate=new Date(today);render()};
- document.querySelectorAll('[data-habit-status]').forEach(button=>button.onclick=()=>{habitArchiveView=button.dataset.habitStatus==='archived';render()});
+ document.getElementById('habitWeekPrev').onclick=()=>{habitBrowseDate=addDays(habitBrowseDate,-7);render();animateContent(document.getElementById('habitSharedCalendar'));animateContent(document.getElementById('habitList'))};document.getElementById('habitWeekNext').onclick=()=>{habitBrowseDate=addDays(habitBrowseDate,7);render();animateContent(document.getElementById('habitSharedCalendar'));animateContent(document.getElementById('habitList'))};
+ document.getElementById('habitBrowseDate').onchange=e=>{if(e.target.value){habitBrowseDate=fromISO(e.target.value);render();animateContent(document.getElementById('habitSharedCalendar'));animateContent(document.getElementById('habitList'))}};
+ document.getElementById('habitGoToday').onclick=()=>{habitBrowseDate=new Date(today);render();animateContent(document.getElementById('habitSharedCalendar'));animateContent(document.getElementById('habitList'))};
+ document.querySelectorAll('[data-habit-status]').forEach(button=>button.onclick=()=>{habitArchiveView=button.dataset.habitStatus==='archived';render();animateContent(document.getElementById('habitList'))});
  document.getElementById('habitMonthPrev').onclick=()=>{habitHistoryMonth=new Date(habitHistoryMonth.getFullYear(),habitHistoryMonth.getMonth()-1,1);renderHabitHistory()};document.getElementById('habitMonthNext').onclick=()=>{habitHistoryMonth=new Date(habitHistoryMonth.getFullYear(),habitHistoryMonth.getMonth()+1,1);renderHabitHistory()};
 }
 
@@ -857,9 +884,9 @@ function openHabitReflection(){
  const h=activeHabit();if(!h||!h.done.includes(activeHabitDate))return;
  const entry=h.entries[activeHabitDate]||{};habitMood=Number.isInteger(entry.mood)&&entry.mood>=1&&entry.mood<=5?entry.mood:null;
  document.getElementById('habitComment').value=entry.comment||'';
- document.getElementById('habitMain').hidden=true;document.getElementById('habitReflection').hidden=false;document.getElementById('habitModal').classList.add('is-reflecting');document.querySelector('#habitModal .habit-sheet').scrollTop=0;renderHabitMoods();setHabitError();
+ document.getElementById('habitMain').hidden=true;document.getElementById('habitReflection').hidden=false;document.getElementById('habitModal').classList.add('is-reflecting');document.querySelector('#habitModal .habit-sheet').scrollTop=0;renderHabitMoods();setHabitError();animateContent(document.getElementById('habitReflection'));
 }
-function showHabitResult(){document.getElementById('habitMain').hidden=false;document.getElementById('habitReflection').hidden=true;document.getElementById('habitModal').classList.remove('is-reflecting');refreshHabitDetail();document.querySelector('#habitModal .habit-sheet').scrollTop=0;setHabitError()}
+function showHabitResult(){document.getElementById('habitMain').hidden=false;document.getElementById('habitReflection').hidden=true;document.getElementById('habitModal').classList.remove('is-reflecting');refreshHabitDetail();document.querySelector('#habitModal .habit-sheet').scrollTop=0;setHabitError();animateContent(document.getElementById('habitMain'))}
 function completeHabit(){
  const h=activeHabit();if(!h||h.archived||activeHabitDate>iso(today)||!isScheduledHabitDay(h,fromISO(activeHabitDate))){setHabitSlide(0);return}
  if(h.done.includes(activeHabitDate)){setHabitSlide(0);return}
@@ -1040,12 +1067,17 @@ document.getElementById("taskForm").onsubmit=e=>{
 };
 function addHabit(){openHabitEditor()}
 document.getElementById("addHabit").onclick=addHabit;
-document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar()}};
-document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,-7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,-1);else calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar()};
-document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,1);else calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar()};
+document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar();animateContent(document.getElementById("calendarContent"))}};
+document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,-7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,-1);else calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar();animateContent(document.getElementById("calendarContent"))};
+document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,1);else calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar();animateContent(document.getElementById("calendarContent"))};
+function animateContent(el){
+ if(!el||window.matchMedia('(prefers-reduced-motion: reduce)').matches||typeof el.animate!=='function')return;
+ el.getAnimations().forEach(animation=>animation.cancel());
+ el.animate([{opacity:.4,transform:'translateY(7px)'},{opacity:1,transform:'translateY(0)'}],{duration:280,easing:'cubic-bezier(.22,1,.36,1)'});
+}
 document.querySelectorAll(".nav-button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav-button").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(b.dataset.view).classList.add("active");if(b.dataset.view==="todayView"){taskPage="today";homeSection="today"}render()});
 document.querySelectorAll("[data-home]").forEach((button,index,buttons)=>{
- button.onclick=()=>{homeSection=button.dataset.home;render()};
+ button.onclick=()=>{homeSection=button.dataset.home;render();animateContent(document.getElementById("homeContent"))};
  button.onkeydown=e=>{let next;if(e.key==="ArrowRight")next=(index+1)%buttons.length;else if(e.key==="ArrowLeft")next=(index+buttons.length-1)%buttons.length;else if(e.key==="Home")next=0;else if(e.key==="End")next=buttons.length-1;else return;e.preventDefault();buttons[next].focus();buttons[next].click()};
 });
 function closeMenu(){document.getElementById("menuModal").classList.remove("open");document.getElementById("openMenu").setAttribute("aria-expanded","false");document.getElementById("openMenu").focus({preventScroll:true})}
@@ -1058,7 +1090,7 @@ function initMenu(){
   taskPage=button.dataset.taskPage;homeSection="today";
   document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="todayView"));
   document.querySelectorAll(".nav-button").forEach(b=>b.classList.toggle("active",b.dataset.view==="todayView"));
-  closeMenu();render();
+  closeMenu();render();animateContent(document.getElementById("homeContent"));
  });
 }
 
@@ -1108,8 +1140,8 @@ function initMotion(){
 
 function initTaskSheetViewport(){
  const viewport=window.visualViewport;if(!viewport)return;
- const sync=()=>{document.documentElement.style.setProperty('--composer-height',viewport.height+'px');document.documentElement.style.setProperty('--composer-keyboard',Math.max(0,innerHeight-viewport.height-viewport.offsetTop)+'px')};
- viewport.addEventListener('resize',sync);viewport.addEventListener('scroll',sync);sync();
+ const sync=()=>{const keyboard=Math.max(0,Math.round(innerHeight-viewport.height));document.documentElement.style.setProperty('--composer-keyboard',keyboard>120?keyboard+'px':'0px')};
+ viewport.addEventListener('resize',sync);window.addEventListener('orientationchange',sync);sync();
 }
 initTaskSheetViewport();
 initMotion();initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();
