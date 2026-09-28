@@ -375,6 +375,20 @@ button:active{opacity:.8}
 #menuModal .menu-sheet,.telegram-app #menuModal .menu-sheet{transition:transform 330ms var(--motion-ease),opacity 250ms ease}
 .home-tabs button::after,.group-chevron,.habit-card,.task-swipe-shell,.kanban-card,.menu-page,.nav-button,.habit-calendar-day,.calendar-cell{transition-duration:240ms}
 @media(prefers-reduced-motion:reduce){.view.active{animation:none!important}#menuModal .menu-sheet,#taskModal .modal,.backdrop .modal{transition-duration:.01ms!important}}
+/* Habit editor and calendar controls. */
+#habitEditorModal .modal{width:min(100%,520px);max-height:calc(100dvh - 24px);padding:22px;background:var(--bg)}
+#habitEditorModal .modal-head{justify-content:space-between;gap:12px}#habitEditorModal .modal-head h2{flex:1;text-align:center;font-size:18px}
+#habitEditorModal .habit-editor-step[hidden],#habitIconGrid[hidden],#habitIconText[hidden],#calendarTabs[hidden]{display:none!important}
+.habit-icon-panel,.habit-quote-field{padding:18px;border-radius:18px;background:var(--card)}.habit-icon-panel h3{margin:0 0 12px;font-size:16px;font-weight:550}
+.habit-icon-preview{display:grid;place-items:center;width:62px;height:62px;margin:0 auto 12px;border-radius:50%;background:var(--soft);font-size:33px}
+.habit-icon-tabs{display:flex;gap:12px;margin-bottom:13px}.habit-icon-tabs button{border:0;border-radius:20px;padding:7px 12px;background:transparent;color:var(--muted)}.habit-icon-tabs button.active{background:var(--soft);color:var(--blue)}
+.habit-icon-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;max-height:250px;overflow-y:auto}.habit-icon-grid button{min-width:0;aspect-ratio:1;border:2px solid transparent;border-radius:50%;background:var(--soft);font-size:23px}.habit-icon-grid button.selected{border-color:var(--blue)}
+#habitIconText{width:100%;text-align:center;font-size:22px}#habitEditorModal .habit-quote-field{margin-top:16px}.habit-editor-main-action{display:block;width:100%;margin:22px 0 2px}.habit-editor-step{animation:pro-page-in 220ms ease}
+.habit-result.pending{width:36px;height:36px;color:var(--habit-color);font-size:22px}.habit-pending-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:color-mix(in srgb,var(--habit-color) 25%,var(--card))}.habit-result.done{color:var(--habit-color)}.habit-goal-line{display:block;color:var(--muted);font-size:11px}.habit-card-name{min-width:0}
+.calendar-mode-wrap{position:relative;margin-left:auto}.calendar-mode-trigger{font-size:19px}.calendar-mode-menu{position:absolute;right:0;top:calc(100% + 7px);z-index:9;width:150px;padding:6px;border:1px solid var(--line);border-radius:13px;background:var(--card);box-shadow:0 12px 32px #18203a29}.calendar-mode-menu button{display:block;width:100%;padding:10px;border:0;border-radius:8px;text-align:left;background:transparent;color:var(--text)}.calendar-mode-menu button.active{background:var(--soft);color:var(--blue)}
+.calendar-time-picker{position:absolute;left:0;right:0;z-index:4;height:34px;display:flex;align-items:center;touch-action:none;cursor:ns-resize;transform:translateY(-17px)}.calendar-time-picker strong{display:grid;place-items:center;width:61px;height:30px;border-radius:16px;background:var(--blue);color:#fff;font-size:11px;box-shadow:0 2px 8px #26346d35}.calendar-time-picker i{height:2px;flex:1;background:var(--blue);pointer-events:none}.calendar-time-picker:focus-visible{outline:2px solid var(--blue)}
+.calendar-three-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.calendar-three-day{min-width:0;min-height:260px;padding:10px 5px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);text-align:left}.calendar-three-day.selected{border-color:var(--blue)}.calendar-three-day h3{margin:0 0 12px;font-size:11px}.calendar-three-event{display:block;margin:4px 0;padding:6px;border-radius:6px;background:var(--soft);font-size:10px;overflow-wrap:anywhere}
+.habit-reminder-toast{position:fixed;z-index:31;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));width:min(90vw,420px);transform:translateX(-50%);padding:12px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 12px 30px #18203a30;color:var(--text);font-size:13px}
 /* Плавные открытия без анимации высоты редактора и с уважением к настройке системы. */
 .backdrop{transition:opacity 300ms ease,visibility 300ms ease}
 .backdrop .modal,.backdrop.open .modal{transition:opacity 300ms ease,transform 330ms cubic-bezier(.2,.8,.2,1)}
@@ -440,7 +454,7 @@ button:active{opacity:.8}
 </section>
 <section class="view" id="calendarView">
 <div class="heading calendar-heading"><p class="muted" id="calendarHeroMonth"></p><h1 id="calendarHeroTitle">Сегодня</h1></div>
-<div class="panel calendar-panel"><div class="panel-head"><div class="period-tools"><button class="icon-button" id="periodPrev">‹</button><strong id="periodTitle"></strong><button class="icon-button" id="periodNext">›</button></div><div class="tabs" id="calendarTabs"><button class="active" data-i18n="День" data-mode="day">День</button><button data-i18n="Неделя" data-mode="week">Неделя</button><button data-i18n="Месяц" data-mode="month">Месяц</button><button data-i18n="Год" data-mode="year">Год</button></div></div><div id="calendarContent"></div></div>
+<div class="panel calendar-panel"><div class="panel-head"><div class="period-tools"><button class="icon-button" id="periodPrev">‹</button><strong id="periodTitle"></strong><button class="icon-button" id="periodNext">›</button></div><div class="calendar-mode-wrap"><button type="button" class="icon-button calendar-mode-trigger" id="calendarModeButton" aria-label="Режим календаря" data-i18n-aria-label="Режим календаря" aria-haspopup="menu" aria-expanded="false">☰</button><div class="calendar-mode-menu" id="calendarTabs" role="menu" hidden><button type="button" role="menuitemradio" data-mode="day" data-i18n="День">День</button><button type="button" role="menuitemradio" data-mode="three" data-i18n="3 дня">3 дня</button><button type="button" role="menuitemradio" data-mode="week" data-i18n="Неделя">Неделя</button><button type="button" role="menuitemradio" data-mode="month" data-i18n="Месяц">Месяц</button><button type="button" role="menuitemradio" data-mode="year" data-i18n="Год">Год</button></div></div></div><div id="calendarContent"></div></div>
 <div class="panel calendar-detail-panel" id="calendarDetailPanel"><div class="panel-head"><h2 id="calendarDayTitle">Задачи выбранного дня</h2></div><div class="task-list" id="calendarTaskList"></div></div><button class="primary calendar-add" data-i18n-aria-label="Добавить задачу" aria-label="Добавить задачу" id="addCalendarTask">+</button>
 </section>
 <section class="view" id="habitsView">
@@ -486,6 +500,7 @@ button:active{opacity:.8}
 <div id="habitMain">
 <div class="habit-illustration" aria-hidden="true"><svg viewBox="0 0 220 240"><rect x="43" y="33" width="136" height="185" rx="22" fill="#000" opacity=".12"/><rect x="34" y="22" width="136" height="185" rx="22" fill="#fff"/><path d="M56 22h92a22 22 0 0 1 22 22v37H34V44a22 22 0 0 1 22-22" fill="#f8de72"/><circle cx="102" cy="44" r="10" fill="#81b99b"/><path d="M102 13v31" stroke="#edaa8b" stroke-width="8" stroke-linecap="round"/><path d="M55 108h91M55 129h65M55 150h78M55 171h51" stroke="#edf0f3" stroke-width="10" stroke-linecap="round"/><path class="habit-success-mark" d="m126 181 20 20 43-53" fill="none" stroke="#9685ed" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
 <h2 id="habitTitle" class="habit-detail-title"></h2>
+<p id="habitProgressDetail" class="muted"></p><p id="habitExtraDetail" class="muted"></p>
 <div id="habitSwipeArea"><p class="habit-swipe-hint" data-i18n="Проведи вправо">Проведи вправо</p><div class="habit-slider" id="habitSlider"><span aria-hidden="true">› › ›</span><button type="button" class="habit-thumb" id="habitThumb" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Отметить выполнение" data-i18n-aria-label="Отметить выполнение"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4 10-11"/></svg></button></div></div>
 <div id="habitMissedControls"><button type="button" class="habit-undo" id="markHabitMissed" data-i18n="Не выполнил">Не выполнил</button><button type="button" class="habit-undo" id="clearHabitMissed" data-i18n="Отменить отметку" hidden>Отменить отметку</button><p id="habitMissedLabel" class="muted"></p></div>
 <p id="habitFuture" class="habit-swipe-hint" data-i18n="Выполнение доступно в этот день." hidden>Выполнение доступно в этот день.</p>
@@ -496,14 +511,19 @@ button:active{opacity:.8}
 <p id="habitError" role="status" class="habit-error"></p>
 </div></div>
 <div class="backdrop" id="habitEditorModal" role="dialog" aria-modal="true" aria-labelledby="habitEditorTitle"><form class="modal" id="habitEditorForm">
-<div class="modal-head"><h2 id="habitEditorTitle"></h2><button class="close-button" id="closeHabitEditor" type="button" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button></div>
-<div class="field"><label for="habitNameInput" data-i18n="Название">Название</label><input id="habitNameInput" maxlength="120" required placeholder="Например, Читать 20 минут" data-i18n-placeholder="Например, Читать 20 минут"></div>
-<div class="field"><label for="habitIconInput" data-i18n="Значок">Значок</label><select id="habitIconInput"><option value="✨">✨</option><option value="📖">📖</option><option value="🏃">🏃</option><option value="💧">💧</option><option value="🌿">🌿</option><option value="🧠">🧠</option><option value="☀️">☀️</option><option value="✓">✓</option></select></div>
+<div class="modal-head"><button class="close-button habit-editor-back" id="habitEditorBack" type="button" aria-label="Назад">‹</button><h2 id="habitEditorTitle"></h2><button class="close-button" id="closeHabitEditor" type="button" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button></div>
+<div class="habit-editor-step" id="habitEditorStepOne"><div class="field"><label class="sr-only" for="habitNameInput" data-i18n="Название">Название</label><input id="habitNameInput" maxlength="120" required placeholder="Например, Читать 20 минут" data-i18n-placeholder="Например, Читать 20 минут"></div>
+<div class="habit-icon-panel"><h3 data-i18n="Значок">Значок</h3><div class="habit-icon-preview" id="habitIconPreview"></div><div class="habit-icon-tabs"><button type="button" id="habitIconEmojiTab" data-i18n="Значок">Значок</button><button type="button" id="habitIconTextTab" data-i18n="Текст">Текст</button></div><div id="habitIconGrid" class="habit-icon-grid"></div><input id="habitIconText" maxlength="2" placeholder="A" aria-label="Текст значка" hidden><input id="habitIconInput" type="hidden"></div>
+<div class="field habit-quote-field"><label for="habitQuote" data-i18n="Цитата">Цитата</label><input id="habitQuote" maxlength="180" placeholder="Хорошие вещи требуют времени" data-i18n-placeholder="Хорошие вещи требуют времени"></div><button type="button" class="primary habit-editor-main-action" id="habitEditorNext" data-i18n="Далее">Далее</button></div>
+<div class="habit-editor-step" id="habitEditorStepTwo" hidden>
+<div class="field"><label for="habitSchedulePreset" data-i18n="Частота выполнения">Частота выполнения</label><select id="habitSchedulePreset"><option value="daily" data-i18n="Каждый день">Каждый день</option><option value="weekdays" data-i18n="Будние дни">Будние дни</option><option value="weekends" data-i18n="Выходные">Выходные</option><option value="custom" data-i18n="Выбрать дни">Выбрать дни</option></select></div><div class="field"><label data-i18n="Выбрать дни">Выбрать дни</label><div class="habit-day-options" id="habitDayOptions" role="group" aria-label="Дни недели" data-i18n-aria-label="Дни недели"></div></div>
+<div class="form-row"><div class="field"><label for="habitGoalCount" data-i18n="Цель">Цель</label><input id="habitGoalCount" type="number" min="1" max="100" value="1"></div><div class="field"><label for="habitGoalUnit" data-i18n="Единица цели">Единица цели</label><input id="habitGoalUnit" maxlength="24" placeholder="раз" data-i18n-placeholder="раз"></div></div>
+<div class="form-row"><div class="field"><label for="habitStartDate" data-i18n="Дата начала">Дата начала</label><input id="habitStartDate" type="date"></div><div class="field"><label for="habitTargetDays" data-i18n="Цель в днях">Цель в днях</label><input id="habitTargetDays" type="number" min="0" max="9999" value="0"></div></div>
+<div class="field"><label for="habitSection" data-i18n="Раздел">Раздел</label><input id="habitSection" maxlength="50" placeholder="Например, Здоровье" data-i18n-placeholder="Например, Здоровье"></div>
+<div class="field"><label for="habitReminderTime" data-i18n="Время напоминания">Время напоминания</label><input id="habitReminderTime" type="time"></div>
 <div class="form-row"><div class="field"><label for="habitPeriod" data-i18n="Время дня">Время дня</label><select id="habitPeriod"><option value="any" data-i18n="Любое">Любое</option><option value="morning" data-i18n="Утро">Утро</option><option value="afternoon" data-i18n="Днём">Днём</option><option value="evening" data-i18n="Вечер">Вечер</option></select></div><div class="field"><label for="habitExactTime" data-i18n="Точное время">Точное время</label><div class="habit-time-row"><input id="habitExactTime" type="hidden"><button type="button" class="time-choice" id="habitTimeDisplay" data-time-target="habitExactTime" aria-label="Выбрать время" data-i18n-aria-label="Выбрать время">—</button><button type="button" id="clearHabitTime" class="clear-time" aria-label="Убрать время" data-i18n-aria-label="Убрать время">×</button></div></div></div>
-<div class="field"><label for="habitSchedulePreset" data-i18n="Повторять">Повторять</label><select id="habitSchedulePreset"><option value="daily" data-i18n="Каждый день">Каждый день</option><option value="weekdays" data-i18n="Будние дни">Будние дни</option><option value="weekends" data-i18n="Выходные">Выходные</option><option value="custom" data-i18n="Выбрать дни">Выбрать дни</option></select></div><div class="habit-day-options" id="habitDayOptions" role="group" aria-label="Дни недели" data-i18n-aria-label="Дни недели"></div>
 <p class="muted" data-i18n="Изменения расписания действуют с сегодняшнего дня. История сохраняется.">Изменения расписания действуют с сегодняшнего дня. История сохраняется.</p>
-<p id="habitEditorError" class="habit-error" role="status"></p>
-<div class="modal-actions"><button type="button" class="secondary" id="cancelHabitEditor" data-i18n="Отмена">Отмена</button><button class="primary" data-i18n="Сохранить">Сохранить</button></div>
+<div class="modal-actions"><button type="button" class="secondary" id="cancelHabitEditor" data-i18n="Отмена">Отмена</button><button class="primary" data-i18n="Сохранить">Сохранить</button></div></div><p id="habitEditorError" class="habit-error" role="status"></p>
 <div class="habit-manage" id="habitManage" hidden><button type="button" class="secondary" id="archiveHabit"></button><button type="button" class="secondary danger" id="deleteHabit" data-i18n="Удалить привычку">Удалить привычку</button></div>
 </form></div>
 <div class="backdrop" id="deleteTaskModal" role="alertdialog" aria-modal="true" aria-labelledby="deleteTaskTitle"><div class="modal confirm-sheet"><h2 id="deleteTaskTitle" data-i18n="Вы хотите удалить задачу?">Вы хотите удалить задачу?</h2><p id="deleteTaskName" class="muted"></p><p id="deleteTaskError" role="status" class="muted"></p><div class="modal-actions"><button type="button" class="secondary" id="cancelTaskDelete" data-i18n="Нет">Нет</button><button type="button" class="primary danger-fill" id="confirmTaskDelete" data-i18n="Да">Да</button></div></div></div>
@@ -523,6 +543,7 @@ button:active{opacity:.8}
 <p aria-live="polite" class="settings-status" id="settingsStatus" role="status"></p>
 </div></div>
 <div aria-hidden="true" class="page-wallpaper"></div>
+<div id="habitReminderToast" class="habit-reminder-toast" role="status" aria-live="polite" hidden></div>
 <script>
 const settingsKey="pro-plan-settings-v1";
 let settings={theme:"system",language:"ru",backgrounds:{}};
@@ -534,6 +555,7 @@ Object.assign(EN,{"Активные": "Active", "Архив": "Archive", "Пре
 EN["Днём"]="Afternoon";EN["Любое"]="Anytime";
 Object.assign(EN,{"Вы хотите удалить задачу?": "Do you want to delete this task?", "Да": "Yes", "Нет": "No", "Часы": "Hours", "Минуты": "Minutes", "Готово": "Done", "Календарь привычек": "Habit calendar", "Смахни привычку влево, чтобы отметить «Не выполнил».": "Swipe a habit left to mark it as not completed.", "Не выполнил": "Not completed", "Отменить отметку": "Undo status", "Запланировано": "Planned"});
 Object.assign(EN,{"Навигация": "Navigation", "Окончание": "End time", "Время окончания": "End time", "Убрать окончание": "Clear end time", "Добавить": "Add", "Начало": "Start", "Время окончания должно быть позже начала.": "End time must be later than the start time.", "Сначала укажи время начала.": "Choose a start time first.", "Укажи название задачи.": "Enter a task title.", "Предыдущая неделя": "Previous week", "Следующая неделя": "Next week", "Место для твоих идей": "A place for your ideas", "Помощник для твоих планов": "Your planning assistant", "Здесь можно будет обсудить планы, разбить большую задачу на шаги и составить расписание.": "Here you will be able to discuss plans, break a big task into steps and create a schedule.", "Спланировать день": "Plan my day", "Разбить задачу на шаги": "Break a task into steps", "AI пока не подключён": "AI is not connected yet"});
+Object.assign(EN,{"3 дня":"3 days","Режим календаря":"Calendar view","Время новой задачи":"New task time","Текст":"Text","Цитата":"Quote","Хорошие вещи требуют времени":"Good things take time","Далее":"Next","Назад":"Back","Частота выполнения":"Frequency","Цель":"Goal","Единица цели":"Goal unit","раз":"times","Дата начала":"Start date","Цель в днях":"Goal in days","Раздел":"Section","Например, Здоровье":"For example, Health","Время напоминания":"Reminder time"});
 function tr(text){return settings.language==="en"?(EN[text]||text):text}
 function updateLanguageToggle(){
  const button=document.getElementById("toggleLanguage");if(!button)return;
@@ -644,7 +666,7 @@ if(data.categories.length&&typeof data.categories[0]==="string"){
  data.categories=data.categories.map(name=>{const id="cat-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);map[name]=id;return {id,name,color:categoryColor(name)}});
  data.tasks=data.tasks.map(t=>({...t,category:t.category?(map[t.category]||""):""}));
 }
-data.habits.forEach(h=>{h.skipped=Array.isArray(h.skipped)?[...new Set(h.skipped)].filter(d=>!h.done.includes(d)):[];h.period=["morning","afternoon","evening"].includes(h.period)?h.period:"any";h.time=h.time||"";h.archived=!!h.archived;h.scheduleHistory=Array.isArray(h.scheduleHistory)&&h.scheduleHistory.length?h.scheduleHistory:[{from:h.createdAt||"0001-01-01",days:[...h.days],period:h.period,time:h.time}]});
+data.habits.forEach(h=>{h.skipped=Array.isArray(h.skipped)?[...new Set(h.skipped)].filter(d=>!h.done.includes(d)):[];h.period=["morning","afternoon","evening"].includes(h.period)?h.period:"any";h.time=h.time||"";h.archived=!!h.archived;h.scheduleHistory=Array.isArray(h.scheduleHistory)&&h.scheduleHistory.length?h.scheduleHistory:[{from:h.createdAt||"0001-01-01",days:[...h.days],period:h.period,time:h.time}];h.goalCount=Math.max(1,Math.min(100,Number(h.goalCount)||1));h.counts=h.counts&&typeof h.counts==='object'&&!Array.isArray(h.counts)?h.counts:{};h.startDate=h.startDate||h.createdAt||null;h.targetDays=Math.max(0,Number(h.targetDays)||0);h.goalUnit=h.goalUnit||'';h.section=h.section||'';h.quote=h.quote||'';h.reminderTime=h.reminderTime||''});
 let habitBrowseDate=new Date(today),habitArchiveView=false,editingHabitId=null,editingHabitDays=[],habitHistoryMonth=new Date(today.getFullYear(),today.getMonth(),1);
 const habitPeriods={morning:"Утро",afternoon:"День",evening:"Вечер",any:"В любое время"};
 const CATEGORY_COLORS=["#73acf5","#89cbb2","#edb77b","#b19ae8","#e99baa","#f2637a","#5cc0c0","#f0b429","#8f9bff","#6bc47d"];
@@ -783,8 +805,8 @@ function openTimePicker(target){
 function closeTimePicker(){document.getElementById('timePickerModal').classList.remove('open');timePickerTarget=null}
 function markHabitMissed(id,date){
  const h=data.habits.find(h=>h.id===id);if(!h||h.archived||date>iso(today)||!isScheduledHabitDay(h,fromISO(date)))return;
- const done=h.done.slice(),skipped=(h.skipped||[]).slice();h.done=h.done.filter(d=>d!==date);h.skipped=[...new Set(skipped.concat(date))];
- if(!save()){h.done=done;h.skipped=skipped;alert(tr('Не удалось сохранить. Проверь свободную память и попробуй снова.'));return}
+ const done=h.done.slice(),skipped=(h.skipped||[]).slice(),count=h.counts[date];h.done=h.done.filter(d=>d!==date);delete h.counts[date];h.skipped=[...new Set(skipped.concat(date))];
+ if(!save()){h.done=done;h.skipped=skipped;if(count!==undefined)h.counts[date]=count;alert(tr('Не удалось сохранить. Проверь свободную память и попробуй снова.'));return}
  render();if(document.getElementById('habitModal').classList.contains('open')&&activeHabitId===id)refreshHabitDetail();
 }
 function initSwipeAndTime(){
@@ -815,7 +837,7 @@ function renderHabits(id='habitList',date=habitBrowseDate){
   const group=list.filter(h=>(habitScheduleOn(h,date).period||'any')===period).sort((a,b)=>(habitScheduleOn(a,date).time||'99:99').localeCompare(habitScheduleOn(b,date).time||'99:99'));
   if(!group.length)return '';
   const label=settings.language==='en'?{morning:'Morning',afternoon:'Afternoon',evening:'Evening',any:'Other'}[period]:{morning:'Утром',afternoon:'Днём',evening:'Вечером',any:'Другие'}[period];
-  return '<details class="habit-period-group" open><summary>'+label+'<span class="habit-period-count">'+group.length+'</span><span class="habit-period-chevron" aria-hidden="true">⌄</span></summary><div class="habit-period-items">'+group.map((h,index)=>{const schedule=habitScheduleOn(h,date),done=h.done.includes(dateKey),future=dateKey>iso(today),skipped=(h.skipped||[]).includes(dateKey),status=tr(done?'Выполнено':future?'Запланировано':skipped?'Не выполнил':'Не выполнено'),streak=habitStats(h).current,color=['#7077ec','#56a4fa','#55cb79','#e5dc4f','#a789e8'][index%5];return '<article class="habit-card" data-habit-swipe="'+h.id+'" style="--habit-color:'+color+'"><div class="habit-card-row"><button class="habit-result '+(done?'done':'pending')+'" type="button" data-habit="'+h.id+'" aria-label="'+esc(h.title+' · '+status)+'" title="'+esc(status)+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+(done?'<path d="m4 12 5 5 11-12"/>':'<circle cx="12" cy="12" r="7"/>')+'</svg></button><button type="button" class="habit-card-name" data-habit="'+h.id+'">'+esc(h.title)+(schedule.time?' · '+esc(schedule.time):'')+'</button><span class="habit-streak" title="'+esc(streakLabel)+'"><strong>'+streak+'</strong><small>'+streakLabel+'</small></span></div></article>' }).join('')+'</div></details>';
+  return '<details class="habit-period-group" open><summary>'+label+'<span class="habit-period-count">'+group.length+'</span><span class="habit-period-chevron" aria-hidden="true">⌄</span></summary><div class="habit-period-items">'+group.map((h,index)=>{const schedule=habitScheduleOn(h,date),done=h.done.includes(dateKey),future=dateKey>iso(today),skipped=(h.skipped||[]).includes(dateKey),status=tr(done?'Выполнено':future?'Запланировано':skipped?'Не выполнил':'Не выполнено'),streak=habitStats(h).current,color=['#7077ec','#56a4fa','#55cb79','#e5dc4f','#a789e8'][index%5],progress=h.done.includes(dateKey)?h.goalCount:Math.min(h.goalCount,Number(h.counts?.[dateKey])||0),goal=h.goalCount>1?'<span class="habit-goal-line">'+progress+'/'+h.goalCount+' '+esc(h.goalUnit||tr('раз'))+'</span>':'';return '<article class="habit-card" data-habit-swipe="'+h.id+'" style="--habit-color:'+color+'"><div class="habit-card-row"><button class="habit-result '+(done?'done':'pending')+'" type="button" data-habit="'+h.id+'" aria-label="'+esc(h.title+' · '+status)+'" title="'+esc(status)+'">'+(done?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5 11-12"/></svg>':'<span class="habit-pending-icon" aria-hidden="true">'+esc(h.icon||'✨')+'</span>')+'</button><button type="button" class="habit-card-name" data-habit="'+h.id+'">'+esc(h.title)+goal+(schedule.time?' · '+esc(schedule.time):'')+'</button><span class="habit-streak" title="'+esc(streakLabel)+'"><strong>'+streak+'</strong><small>'+streakLabel+'</small></span></div></article>' }).join('')+'</div></details>';
  }).join('')||'<div class="empty">'+tr('На этот день привычек нет.')+'</div>';
  box.querySelectorAll('[data-habit]').forEach(b=>b.onclick=()=>openHabit(Number(b.dataset.habit),dateKey));
  box.querySelectorAll('[data-habit-swipe]').forEach(card=>bindLeftSwipe(card,()=>markHabitMissed(Number(card.dataset.habitSwipe),dateKey),false));
@@ -840,18 +862,34 @@ function renderHabitDayOptions(){
  document.getElementById('habitDayOptions').innerHTML=weekdayLabels().map((label,i)=>'<button type="button" data-habit-weekday="'+i+'" aria-pressed="'+editingHabitDays.includes(i)+'">'+label+'</button>').join('');
  document.querySelectorAll('[data-habit-weekday]').forEach(button=>button.onclick=()=>{const day=Number(button.dataset.habitWeekday);editingHabitDays=editingHabitDays.includes(day)?editingHabitDays.filter(v=>v!==day):editingHabitDays.concat(day);editingHabitDays.sort((a,b)=>a-b);document.getElementById('habitSchedulePreset').value=habitPreset(editingHabitDays);renderHabitDayOptions()});
 }
+const HABIT_ICONS=['🙂','🐈','💛','📘','🏃','🍌','🎞️','☀️','🥛','🐕','🧘','✏️','🥕','📖','🌙','🍳','📰','🗓️','📔','📷','🗣️','🚶','🍚','⭐','💸','💧','🌿','🧠','🏋️'];
+let habitIconMode='emoji',habitEditorStep=1;
+function renderHabitIconChoices(){
+ const value=document.getElementById('habitIconInput').value||'🙂';document.getElementById('habitIconPreview').textContent=value;
+ document.getElementById('habitIconGrid').hidden=habitIconMode==='text';document.getElementById('habitIconText').hidden=habitIconMode!=='text';
+ document.getElementById('habitIconEmojiTab').classList.toggle('active',habitIconMode==='emoji');document.getElementById('habitIconTextTab').classList.toggle('active',habitIconMode==='text');
+ document.getElementById('habitIconGrid').innerHTML=HABIT_ICONS.map(icon=>'<button type="button" class="'+(icon===value?'selected':'')+'" data-icon="'+esc(icon)+'" aria-label="'+esc(icon)+'" aria-pressed="'+(icon===value)+'">'+esc(icon)+'</button>').join('');
+ document.querySelectorAll('[data-icon]').forEach(button=>button.onclick=()=>{document.getElementById('habitIconInput').value=button.dataset.icon;renderHabitIconChoices()});
+}
+function showHabitEditorStep(step){habitEditorStep=step;document.getElementById('habitEditorStepOne').hidden=step!==1;document.getElementById('habitEditorStepTwo').hidden=step!==2;document.getElementById('habitEditorBack').hidden=step===1;document.querySelector('#habitEditorModal .modal').scrollTop=0}
 function openHabitEditor(id=null){
  const h=data.habits.find(h=>h.id===id);editingHabitId=h?h.id:null;editingHabitDays=h?[...h.days]:[0,1,2,3,4,5,6];
  document.getElementById('habitEditorTitle').textContent=tr(h?'Редактировать привычку':'Новая привычка');document.getElementById('habitNameInput').value=h?h.title:'';
- const icons=document.getElementById('habitIconInput'),icon=h?.icon||'✨';if(![...icons.options].some(o=>o.value===icon)){const option=document.createElement('option');option.value=icon;option.textContent=icon;icons.append(option)}icons.value=icon;
+ const icon=h?.icon||'🙂';document.getElementById('habitIconInput').value=icon;habitIconMode=h?.iconMode||'emoji';document.getElementById('habitIconText').value=habitIconMode==='text'?icon:'';document.getElementById('habitQuote').value=h?.quote||'';
+ document.getElementById('habitGoalCount').value=h?.goalCount||1;document.getElementById('habitGoalUnit').value=h?.goalUnit||'';document.getElementById('habitStartDate').value=h?.startDate||iso(today);document.getElementById('habitTargetDays').value=h?.targetDays||0;document.getElementById('habitSection').value=h?.section||'';document.getElementById('habitReminderTime').value=h?.reminderTime||'';
  document.getElementById('habitPeriod').value=h?h.period:'any';document.getElementById('habitExactTime').value=h?h.time:'';document.getElementById('habitSchedulePreset').value=habitPreset(editingHabitDays);
  document.getElementById('habitManage').hidden=!h;document.getElementById('archiveHabit').textContent=tr(h?.archived?'Восстановить':'Архивировать');document.getElementById('habitEditorError').textContent='';
- renderHabitDayOptions();refreshTimeDisplays();applyTranslations();document.getElementById('habitEditorModal').classList.add('open');
+ renderHabitDayOptions();renderHabitIconChoices();showHabitEditorStep(1);refreshTimeDisplays();applyTranslations();document.getElementById('habitEditorModal').classList.add('open');
 }
 function closeHabitEditor(){document.getElementById('habitEditorModal').classList.remove('open')}
 function persistHabits(next){const previous=data.habits;data.habits=next;if(!save()){data.habits=previous;document.getElementById('habitEditorError').textContent=tr('Не удалось сохранить. Проверь свободную память и попробуй снова.');return false}return true}
 function initHabitSchedule(){
  document.getElementById('editHabit').onclick=()=>openHabitEditor(activeHabitId);
+ document.getElementById('habitEditorBack').onclick=()=>showHabitEditorStep(1);
+ document.getElementById('habitEditorNext').onclick=()=>{const title=document.getElementById('habitNameInput');if(!title.value.trim()){document.getElementById('habitEditorError').textContent=tr('Укажи название привычки.');title.focus();return}document.getElementById('habitEditorError').textContent='';showHabitEditorStep(2)};
+ document.getElementById('habitIconEmojiTab').onclick=()=>{habitIconMode='emoji';document.getElementById('habitIconInput').value='🙂';renderHabitIconChoices()};
+ document.getElementById('habitIconTextTab').onclick=()=>{habitIconMode='text';document.getElementById('habitIconInput').value=document.getElementById('habitIconText').value.trim()||'A';renderHabitIconChoices()};
+ document.getElementById('habitIconText').oninput=e=>{document.getElementById('habitIconInput').value=e.target.value.trim()||'A';document.getElementById('habitIconPreview').textContent=document.getElementById('habitIconInput').value};
  document.getElementById('closeHabitEditor').onclick=closeHabitEditor;document.getElementById('cancelHabitEditor').onclick=closeHabitEditor;document.getElementById('habitEditorModal').onclick=e=>{if(e.target.id==='habitEditorModal')closeHabitEditor()};
  document.getElementById('clearHabitTime').onclick=()=>{document.getElementById('habitExactTime').value='';refreshTimeDisplays()};
  document.getElementById('habitSchedulePreset').onchange=e=>{const presets={daily:[0,1,2,3,4,5,6],weekdays:[0,1,2,3,4],weekends:[5,6]};if(presets[e.target.value])editingHabitDays=presets[e.target.value].slice();renderHabitDayOptions()};
@@ -862,7 +900,8 @@ function initHabitSchedule(){
   const schedule={from:date,days:days.slice(),period,time};let history=previous?previous.scheduleHistory.map(v=>({...v,days:[...v.days]})):[];
   if(!previous||JSON.stringify(previous.days)!==JSON.stringify(days)||previous.period!==period||previous.time!==time){history=history.filter(v=>v.from<date);history.push(schedule)}
   const id=previous?previous.id:Math.max(Date.now(),...data.habits.map(h=>Number(h.id)+1));
-  const habit={...(previous||{}),id,title,icon:document.getElementById('habitIconInput').value,days,period,time,scheduleHistory:history,createdAt:previous?previous.createdAt:date,done:previous?previous.done:[],entries:previous?previous.entries:{},skipped:previous?previous.skipped:[],archived:previous?previous.archived:false};
+  const selectedStart=document.getElementById('habitStartDate').value||date;
+  const habit={...(previous||{}),id,title,icon:document.getElementById('habitIconInput').value,iconMode:habitIconMode,quote:document.getElementById('habitQuote').value.trim(),goalCount:Math.max(1,Math.min(100,Number(document.getElementById('habitGoalCount').value)||1)),goalUnit:document.getElementById('habitGoalUnit').value.trim(),startDate:previous&&!previous.startDate&&selectedStart===date?null:selectedStart,targetDays:Math.max(0,Number(document.getElementById('habitTargetDays').value)||0),section:document.getElementById('habitSection').value.trim(),reminderTime:document.getElementById('habitReminderTime').value,counts:previous?.counts||{},days,period,time,scheduleHistory:history,createdAt:previous?previous.createdAt:date,done:previous?previous.done:[],entries:previous?previous.entries:{},skipped:previous?previous.skipped:[],archived:previous?previous.archived:false};
   if(!persistHabits(previous?data.habits.map(h=>h.id===id?habit:h):data.habits.concat(habit)))return;
   closeHabitEditor();render();if(document.getElementById('habitModal').classList.contains('open'))refreshHabitDetail();
  };
@@ -879,11 +918,11 @@ let activeHabitId=null,activeHabitDate='',habitMood=null,habitSlide=0,habitDrag=
 const moodFaces=['😢','🙁','😐','🙂','😄'],moodLabels=['Очень плохо','Плохо','Нормально','Хорошо','Отлично'];
 function activeHabit(){return data.habits.find(h=>h.id===activeHabitId)}
 function habitScheduleOn(h,d){const date=typeof d==="string"?d:iso(d);return [...(h.scheduleHistory||[])].reverse().find(v=>v.from<=date)||{days:h.days,period:h.period||"any",time:h.time||""}}
-function isScheduledHabitDay(h,d){return (!h.createdAt||iso(d)>=h.createdAt)&&habitScheduleOn(h,d).days.includes((d.getDay()+6)%7)}
+function isScheduledHabitDay(h,d){return (!h.startDate||iso(d)>=h.startDate)&&habitScheduleOn(h,d).days.includes((d.getDay()+6)%7)}
 function adjacentHabitDate(h,date,direction){
  if(!h.days.length)return null;
  let d=fromISO(date);
- for(let i=0;i<14;i++){d=addDays(d,direction);if(direction<0&&h.createdAt&&iso(d)<h.createdAt)return null;if(isScheduledHabitDay(h,d))return iso(d)}return null;
+ for(let i=0;i<14;i++){d=addDays(d,direction);if(direction<0&&h.startDate&&iso(d)<h.startDate)return null;if(isScheduledHabitDay(h,d))return iso(d)}return null;
 }
 function habitStats(h){
  const todayKey=h.archived&&h.archivedAt&&h.archivedAt<iso(today)?h.archivedAt:iso(today),done=[...new Set(h.done)].filter(d=>d<=todayKey).sort(),days=new Set(done);
@@ -913,6 +952,8 @@ function refreshHabitDetail(){
  document.getElementById('habitMissedControls').hidden=completed||future||h.archived||!isScheduledHabitDay(h,fromISO(activeHabitDate));document.getElementById('clearHabitMissed').hidden=!(h.skipped||[]).includes(activeHabitDate);document.getElementById('habitMissedLabel').textContent=(h.skipped||[]).includes(activeHabitDate)?tr('Не выполнил'):'';
  document.getElementById('habitCompleted').hidden=!completed;document.getElementById('undoHabit').hidden=h.archived;
  document.getElementById('habitTotal').textContent=stats.total;document.getElementById('habitBest').textContent=stats.best;document.getElementById('habitStreak').textContent=stats.current;
+ document.getElementById('habitProgressDetail').textContent=h.goalCount>1?(completed?h.goalCount:Math.min(h.goalCount,Number(h.counts?.[activeHabitDate])||0))+'/'+h.goalCount+' '+(h.goalUnit||tr('раз')):'';
+ document.getElementById('habitExtraDetail').textContent=[h.quote,h.section,h.reminderTime?(tr('Время напоминания')+': '+h.reminderTime):'',h.targetDays?(tr('Цель в днях')+': '+stats.total+'/'+h.targetDays):''].filter(Boolean).join(' · ');
  const entry=h.entries[activeHabitDate]||{},note=document.getElementById('habitSavedNote');
  const mood=Number.isInteger(entry.mood)&&entry.mood>=1&&entry.mood<=5?moodFaces[entry.mood-1]+' ':'';
  note.textContent=mood+(entry.comment||'');note.hidden=!note.textContent;
@@ -940,9 +981,10 @@ function showHabitResult(){document.getElementById('habitMain').hidden=false;doc
 function completeHabit(){
  const h=activeHabit();if(!h||h.archived||activeHabitDate>iso(today)||!isScheduledHabitDay(h,fromISO(activeHabitDate))){setHabitSlide(0);return}
  if(h.done.includes(activeHabitDate)){setHabitSlide(0);return}
- const previous=h.done.slice(),previousSkipped=(h.skipped||[]).slice();h.done.push(activeHabitDate);h.skipped=previousSkipped.filter(d=>d!==activeHabitDate);
- if(!save()){h.done=previous;h.skipped=previousSkipped;setHabitSlide(0);setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
- clickSound();render();refreshHabitDetail();openHabitReflection();
+ const previous=h.done.slice(),previousSkipped=(h.skipped||[]).slice(),previousCount=h.counts[activeHabitDate]||0;
+ const count=Math.min(h.goalCount,previousCount+1);h.counts[activeHabitDate]=count;if(count>=h.goalCount)h.done.push(activeHabitDate);h.skipped=previousSkipped.filter(d=>d!==activeHabitDate);
+ if(!save()){h.done=previous;h.skipped=previousSkipped;if(previousCount)h.counts[activeHabitDate]=previousCount;else delete h.counts[activeHabitDate];setHabitSlide(0);setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
+ clickSound();render();refreshHabitDetail();if(count>=h.goalCount)openHabitReflection();
 }
 function initHabitDetails(){
  const modal=document.getElementById('habitModal'),thumb=document.getElementById('habitThumb');
@@ -956,8 +998,8 @@ function initHabitDetails(){
   showHabitResult();render();
  };
  document.getElementById('undoHabit').onclick=()=>{
-  const h=activeHabit();if(!h)return;const done=h.done.slice(),entry=h.entries[activeHabitDate];h.done=h.done.filter(d=>d!==activeHabitDate);delete h.entries[activeHabitDate];
-  if(!save()){h.done=done;if(entry)h.entries[activeHabitDate]=entry;setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
+  const h=activeHabit();if(!h)return;const done=h.done.slice(),entry=h.entries[activeHabitDate],count=h.counts[activeHabitDate];h.done=h.done.filter(d=>d!==activeHabitDate);delete h.entries[activeHabitDate];delete h.counts[activeHabitDate];
+  if(!save()){h.done=done;if(entry)h.entries[activeHabitDate]=entry;if(count!==undefined)h.counts[activeHabitDate]=count;setHabitError('Не удалось сохранить. Проверь свободную память и попробуй снова.');return}
   render();showHabitResult();
  };
  thumb.onpointerdown=e=>{if(e.button!==0||habitDrag)return;habitDrag={id:e.pointerId,start:e.clientX};thumb.classList.add('dragging');try{thumb.setPointerCapture(e.pointerId)}catch(err){};e.preventDefault()};
@@ -989,7 +1031,15 @@ function renderHome(){
  document.getElementById("addTask").setAttribute("aria-label",habits?tr("Добавить привычку"):tr("Добавить задачу"));
  if(habits)renderHabits("todayHabitList",today);else renderTasks("taskList",iso(today));
 }
-let calendarScrollDate='';
+let calendarScrollDate='',calendarSelectedMinutes=Math.round((new Date().getHours()*60+new Date().getMinutes())/5)*5;
+function calendarSelectedTime(){return String(Math.floor(calendarSelectedMinutes/60)).padStart(2,'0')+':'+String(calendarSelectedMinutes%60).padStart(2,'0')}
+function bindCalendarTimePicker(box){
+ const handle=box.querySelector('.calendar-time-picker'),grid=box.querySelector('.calendar-time-grid'),scroll=box.querySelector('.calendar-time-scroll');if(!handle)return;
+ const sync=()=>{handle.style.top=(calendarSelectedMinutes/60*64)+'px';handle.querySelector('strong').textContent=calendarSelectedTime();handle.setAttribute('aria-valuenow',String(calendarSelectedMinutes));handle.setAttribute('aria-valuetext',calendarSelectedTime())};
+ let dragging=null;const move=e=>{const rect=grid.getBoundingClientRect();calendarSelectedMinutes=Math.max(0,Math.min(1435,Math.round(((e.clientY-rect.top)/64*60)/5)*5));sync();if(dragging!==null){const sc=scroll.getBoundingClientRect();if(e.clientY<sc.top+30)scroll.scrollTop-=14;else if(e.clientY>sc.bottom-30)scroll.scrollTop+=14}};
+ handle.onpointerdown=e=>{dragging=e.pointerId;handle.setPointerCapture(e.pointerId);move(e);e.preventDefault()};handle.onpointermove=e=>{if(dragging===e.pointerId){move(e);e.preventDefault()}};const finish=e=>{if(dragging===e.pointerId)dragging=null};handle.onpointerup=finish;handle.onpointercancel=finish;
+ handle.onkeydown=e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();calendarSelectedMinutes=Math.max(0,Math.min(1435,calendarSelectedMinutes+(e.key==='ArrowUp'?-5:5)));sync();handle.scrollIntoView({block:'nearest'})}};sync();
+}
 function calendarTaskColor(task){
  const color=getCategory(task.category)?.color||({high:'#ef7775',medium:'#f0b84d',low:'#73aafa'}[task.priority])||'#7e9ee1';
  return /^#[0-9a-f]{6}$/i.test(color)?color:'#7e9ee1';
@@ -1005,11 +1055,12 @@ function renderDayAgenda(box){
  for(const ev of events){if(cluster.length&&ev.begin>=clusterEnd){finishCluster();clusterEnd=-1}cluster.push(ev);clusterEnd=Math.max(clusterEnd,ev.end)}if(cluster.length)finishCluster();
  const eventHTML=events.map(({task,begin,end,column,columns})=>{const color=calendarTaskColor(task),left=column/columns*100,width=100/columns;return '<button type="button" class="calendar-event '+(task.done?'done':'')+'" data-calendar-task="'+task.id+'" style="--event-top:'+(begin/60*64)+'px;--event-height:'+Math.max(30,(end-begin)/60*64-3)+'px;--event-left:'+left+';--event-width:'+width+';--event-accent:'+color+';--event-bg:'+color+'b8"><strong>'+esc(task.title)+'</strong><span>'+esc(task.time+(task.endTime?' – '+task.endTime:''))+'</span></button>'}).join('');
  const now=new Date(),current=key===iso(now)?'<div class="calendar-now" style="top:'+((now.getHours()*60+now.getMinutes())/60*64)+'px"></div>':'';
- box.innerHTML='<div class="calendar-week-strip" aria-label="'+tr('Неделя')+'">'+strip+'</div><div class="calendar-all-day">'+chips+'</div><div class="calendar-time-scroll"><div class="calendar-time-grid">'+Array.from({length:24},(_,h)=>'<span class="calendar-hour" style="top:'+(h*64)+'px">'+String(h).padStart(2,'0')+':00</span>').join('')+eventHTML+current+'</div></div>';
+ box.innerHTML='<div class="calendar-week-strip" aria-label="'+tr('Неделя')+'">'+strip+'</div><div class="calendar-all-day">'+chips+'</div><div class="calendar-time-scroll"><div class="calendar-time-grid">'+Array.from({length:24},(_,h)=>'<span class="calendar-hour" style="top:'+(h*64)+'px">'+String(h).padStart(2,'0')+':00</span>').join('')+eventHTML+current+'<div class="calendar-time-picker" role="slider" tabindex="0" aria-label="Время новой задачи" aria-valuemin="0" aria-valuemax="1435"><strong></strong><i></i></div></div></div>';
+ bindCalendarTimePicker(box);
  box.querySelectorAll('[data-calendar-date]').forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.calendarDate);calendarDate=new Date(selectedDate);render()});
  box.querySelectorAll('[data-calendar-task]').forEach(b=>b.onclick=()=>openModal(Number(b.dataset.calendarTask)));
  box.querySelectorAll('[data-calendar-habit]').forEach(b=>b.onclick=()=>openHabit(Number(b.dataset.calendarHabit),key));
- const scroll=box.querySelector('.calendar-time-scroll');if(calendarScrollDate===key&&previousScroll!==undefined)scroll.scrollTop=previousScroll;else{const target=events.length?Math.min(events[0].begin,now.getHours()*60):key===iso(now)?now.getHours()*60:8*60;scroll.scrollTop=Math.max(0,target/60*64-90)}calendarScrollDate=key;
+ const scroll=box.querySelector('.calendar-time-scroll');if(calendarScrollDate===key&&previousScroll!==undefined)scroll.scrollTop=previousScroll;else scroll.scrollTop=Math.max(0,calendarSelectedMinutes/60*64-90);calendarScrollDate=key;
  const week=box.querySelector('.calendar-week-strip');let startX=null;week.addEventListener('touchstart',e=>{startX=e.touches[0]?.clientX??null},{passive:true});week.addEventListener('touchend',e=>{if(startX===null)return;const diff=e.changedTouches[0]?.clientX-startX;startX=null;if(Math.abs(diff)<55)return;selectedDate=addDays(selectedDate,diff<0?7:-7);calendarDate=new Date(selectedDate);render()},{passive:true});
 }
 function renderCalendar(){
@@ -1018,11 +1069,15 @@ function renderCalendar(){
  document.getElementById('calendarHeroMonth').textContent=fmt(calendarDate,{month:'long',year:'numeric'});
  document.getElementById('calendarHeroTitle').textContent=calendarMode==='day'&&iso(calendarDate)===iso(today)?tr('Сегодня'):calendarMode==='day'?fmt(calendarDate,{weekday:'long',day:'numeric',month:'long'}):tr('Календарь');
  document.getElementById('calendarDetailPanel').hidden=calendarMode==='day';
- document.querySelectorAll("#calendarTabs button").forEach(b=>b.classList.toggle("active",b.dataset.mode===calendarMode));
+ document.querySelectorAll("#calendarTabs button").forEach(b=>{b.classList.toggle("active",b.dataset.mode===calendarMode);b.setAttribute('aria-checked',String(b.dataset.mode===calendarMode))});
  if(calendarMode==="day"){renderDayAgenda(box);return}
  if(calendarMode==="year"){
   box.innerHTML='<div class="year-grid">'+Array.from({length:12},(_,i)=>'<button class="year-month" data-month="'+i+'"><strong>'+fmt(new Date(y,i,1),{month:"long"})+'</strong><span>'+tr("Открыть месяц →")+'</span></button>').join("")+'</div>';
   box.querySelectorAll("[data-month]").forEach(b=>b.onclick=()=>{calendarDate.setMonth(Number(b.dataset.month));calendarMode="month";renderCalendar()});return
+ }
+ if(calendarMode==='three'){
+  box.innerHTML='<div class="calendar-three-grid">'+Array.from({length:3},(_,i)=>{const d=addDays(calendarDate,i),key=iso(d),items=data.tasks.filter(t=>t.date===key).sort((a,b)=>(a.time||'').localeCompare(b.time||''));return '<div class="calendar-three-day '+(key===iso(selectedDate)?'selected':'')+'"><h3>'+esc(fmt(d,{weekday:'short',day:'numeric',month:'short'}))+'</h3>'+items.map(t=>'<button type="button" class="calendar-three-event" data-calendar-task="'+t.id+'">'+(t.time?esc(t.time)+' ':'')+esc(t.title)+'</button>').join('')+'<button type="button" class="calendar-three-event" data-three-date="'+key+'">'+tr('＋ Задача')+'</button></div>'}).join('')+'</div>';
+  box.querySelectorAll('[data-calendar-task]').forEach(b=>b.onclick=()=>openModal(Number(b.dataset.calendarTask)));box.querySelectorAll('[data-three-date]').forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.threeDate);openModal(undefined,b.dataset.threeDate)});return;
  }
  if(calendarMode==="week"){
   const start=mondayOf(calendarDate);box.innerHTML='<div class="week-agenda">'+Array.from({length:7},(_,i)=>{const d=addDays(start,i),ls=data.tasks.filter(t=>t.date===iso(d));return '<div class="week-column '+(iso(d)===iso(today)?"today":"")+'"><h3>'+weekdayLabels()[i]+" "+d.getDate()+'</h3>'+ls.map(t=>'<div class="week-event">'+esc(t.title)+'</div>').join("")+'</div>'}).join("")+'</div>';return
@@ -1039,13 +1094,13 @@ function render(){
  renderHome();renderTasks("calendarTaskList",iso(selectedDate));renderHabits("habitList",habitBrowseDate);renderHabitPageTools();renderCalendar();applyTranslations();applyAppearance();
 }
 
-function openModal(id,defaultDate){
+function openModal(id,defaultDate,defaultTime=''){
  editingId=id===undefined?null:id;const t=editingId===null?null:data.tasks.find(x=>x.id===editingId);editingSubtasks=t?(t.subtasks||[]).map(x=>({...x})):[];
  document.getElementById("modalTitle").textContent=t?tr("Редактировать задачу"):tr("Новая задача");
  document.getElementById("taskTitle").value=t?t.title:"";
  document.getElementById("taskDescription").value=t?t.description||"":"";
  document.getElementById("taskDate").value=t?t.date:(defaultDate!==undefined?defaultDate:iso(selectedDate));
- document.getElementById("taskTime").value=t?t.time||"":"";
+ document.getElementById("taskTime").value=t?t.time||"":defaultTime;
  document.getElementById('taskEndTime').value=t?t.endTime||'':'';
  document.getElementById('taskFormError').hidden=true;
  document.getElementById('saveTaskButton').dataset.i18n=t?'Сохранить':'Добавить';applyTranslations();
@@ -1129,7 +1184,7 @@ function closeModal(){document.getElementById("taskModal").classList.remove("ope
 document.getElementById("addTask").onclick=()=>taskPage==="today"&&homeSection==="habits"?addHabit():openModal(undefined,taskPage==="inbox"?"":iso(taskPage==="tomorrow"?addDays(today,1):today));
 document.getElementById("addCategoryInline").onclick=()=>openCategoryModal(null);
 document.getElementById("addSubtask").onclick=()=>{editingSubtasks.push({id:Date.now()+Math.random(),title:"",done:false});renderSubtasks()};
-document.getElementById("addCalendarTask").onclick=()=>openModal(undefined,iso(selectedDate));
+document.getElementById("addCalendarTask").onclick=()=>openModal(undefined,iso(selectedDate),calendarMode==='day'?calendarSelectedTime():'');
 document.getElementById("closeModal").onclick=closeModal;
 document.getElementById("cancelModal").onclick=closeModal;
 document.getElementById("taskModal").onclick=e=>{if(e.target.id==="taskModal")closeModal()};
@@ -1143,9 +1198,14 @@ document.getElementById("taskForm").onsubmit=e=>{
 };
 function addHabit(){openHabitEditor()}
 document.getElementById("addHabit").onclick=addHabit;
-document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar();animateContent(document.getElementById("calendarContent"))}};
-document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week"||calendarMode==="day")calendarDate=addDays(calendarDate,-7);else calendarDate.setMonth(calendarDate.getMonth()-1);if(calendarMode==="day")selectedDate=new Date(calendarDate);renderCalendar();animateContent(document.getElementById("calendarContent"))};
-document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week"||calendarMode==="day")calendarDate=addDays(calendarDate,7);else calendarDate.setMonth(calendarDate.getMonth()+1);if(calendarMode==="day")selectedDate=new Date(calendarDate);renderCalendar();animateContent(document.getElementById("calendarContent"))};
+const calendarModeButton=document.getElementById('calendarModeButton'),calendarModeMenu=document.getElementById('calendarTabs');
+function closeCalendarModeMenu(){calendarModeMenu.hidden=true;calendarModeButton.setAttribute('aria-expanded','false')}
+calendarModeButton.onclick=()=>{calendarModeMenu.hidden=!calendarModeMenu.hidden;calendarModeButton.setAttribute('aria-expanded',String(!calendarModeMenu.hidden))};
+calendarModeMenu.onclick=e=>{const b=e.target.closest('[data-mode]');if(!b)return;calendarMode=b.dataset.mode;closeCalendarModeMenu();renderCalendar();animateContent(document.getElementById('calendarContent'))};
+document.addEventListener('click',e=>{if(!e.target.closest('.calendar-mode-wrap'))closeCalendarModeMenu()});
+function shiftCalendar(direction){if(calendarMode==='year')calendarDate.setFullYear(calendarDate.getFullYear()+direction);else if(calendarMode==='month')calendarDate.setMonth(calendarDate.getMonth()+direction);else calendarDate=addDays(calendarDate,direction*(calendarMode==='week'?7:calendarMode==='three'?3:1));if(calendarMode==='day'||calendarMode==='three')selectedDate=new Date(calendarDate);renderCalendar();animateContent(document.getElementById('calendarContent'))}
+document.getElementById('periodPrev').onclick=()=>shiftCalendar(-1);
+document.getElementById('periodNext').onclick=()=>shiftCalendar(1);
 function animateContent(el){
  if(!el||window.matchMedia('(prefers-reduced-motion: reduce)').matches||typeof el.animate!=='function')return;
  el.getAnimations().forEach(animation=>animation.cancel());
@@ -1223,9 +1283,15 @@ initTaskSheetViewport();
 initMotion();initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();
 render();
 // Обновляем на границе минуты, чтобы отсчёт совпадал с часами.
-function scheduleMinuteRefresh(){setTimeout(()=>{window.refreshPlannerWhenIdle();scheduleMinuteRefresh()},60000-Date.now()%60000+25)}
+const seenHabitReminders=new Set();let habitReminderDismiss;
+function checkHabitReminders(){
+ if(document.hidden)return;const now=new Date(),day=iso(now),clock=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+ const due=data.habits.filter(h=>!h.archived&&h.reminderTime===clock&&isScheduledHabitDay(h,now)&&!h.done.includes(day)&&!seenHabitReminders.has(day+':'+h.id));
+ if(!due.length)return;due.forEach(h=>seenHabitReminders.add(day+':'+h.id));const toast=document.getElementById('habitReminderToast');toast.textContent=(settings.language==='en'?'Habit reminder: ':'Напоминание о привычке: ')+due.map(h=>h.title).join(', ');toast.hidden=false;clearTimeout(habitReminderDismiss);habitReminderDismiss=setTimeout(()=>toast.hidden=true,12000);
+}
+function scheduleMinuteRefresh(){setTimeout(()=>{window.refreshPlannerWhenIdle();checkHabitReminders();scheduleMinuteRefresh()},60000-Date.now()%60000+25)}
 scheduleMinuteRefresh();
-document.addEventListener("visibilitychange",()=>{if(!document.hidden)window.refreshPlannerWhenIdle()});
+checkHabitReminders();document.addEventListener("visibilitychange",()=>{if(!document.hidden){window.refreshPlannerWhenIdle();checkHabitReminders()}});
 document.addEventListener("gesturestart",e=>e.preventDefault(),{passive:false});
 document.addEventListener("gesturechange",e=>e.preventDefault(),{passive:false});
 document.addEventListener("touchmove",e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
