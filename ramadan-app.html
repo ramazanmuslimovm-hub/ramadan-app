@@ -375,6 +375,54 @@ button:active{opacity:.8}
 #menuModal .menu-sheet,.telegram-app #menuModal .menu-sheet{transition:transform 330ms var(--motion-ease),opacity 250ms ease}
 .home-tabs button::after,.group-chevron,.habit-card,.task-swipe-shell,.kanban-card,.menu-page,.nav-button,.habit-calendar-day,.calendar-cell{transition-duration:240ms}
 @media(prefers-reduced-motion:reduce){.view.active{animation:none!important}#menuModal .menu-sheet,#taskModal .modal,.backdrop .modal{transition-duration:.01ms!important}}
+/* Плавные открытия без анимации высоты редактора и с уважением к настройке системы. */
+.backdrop{transition:opacity 300ms ease,visibility 300ms ease}
+.backdrop .modal,.backdrop.open .modal{transition:opacity 300ms ease,transform 330ms cubic-bezier(.2,.8,.2,1)}
+.backdrop:not(#menuModal):not(#taskModal):not(#habitModal) .modal{transform:translateY(18px) scale(.97)}
+.backdrop.open:not(#menuModal):not(#taskModal):not(#habitModal) .modal{transform:translateY(0) scale(1)}
+.view.active{animation:pro-view-enter 330ms cubic-bezier(.2,.8,.2,1) both}
+.task-group-items,.habit-period-items{transform-origin:top;animation:pro-page-in 240ms ease both}
+.calendar-panel,.calendar-detail-panel{box-shadow:none}
+.calendar-heading{text-align:center;margin:3px 0 12px}.calendar-heading p{font-size:12px;margin:0;color:var(--muted)}
+#calendarView .calendar-heading h1{font-size:20px;font-weight:600}
+.calendar-panel{background:transparent;border:0;padding:0}.calendar-panel .panel-head{margin:0 2px 10px}
+.calendar-week-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;margin:6px 0 16px}
+.calendar-week-day{display:grid;justify-items:center;align-content:center;gap:7px;min-height:65px;border:0;border-radius:17px;background:transparent;color:var(--text);font-size:16px}
+.calendar-week-day small{font-size:11px;color:var(--muted)}.calendar-week-day strong{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;font-weight:550}
+.calendar-week-day.selected strong{background:var(--blue);color:#fff}.calendar-week-day i{width:4px;height:4px;border-radius:50%;background:var(--blue);opacity:0}
+.calendar-week-day.has-event i{opacity:.55}.calendar-week-day.selected i{opacity:0}
+.calendar-all-day{display:grid;gap:4px;margin-left:44px;padding:7px 5px 8px;border:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--card);min-height:42px}
+.calendar-all-day:empty:after{content:"·";color:var(--muted);text-align:center}
+.calendar-chip{display:block;max-width:100%;padding:5px 8px;border:0;border-radius:6px;background:var(--soft);color:var(--text);font-size:11px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.calendar-chip.done{opacity:.55;text-decoration:line-through}.calendar-chip.habit{background:#dce5fb;color:#5269a0}
+.calendar-time-scroll{height:min(65svh,670px);min-height:370px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;background:var(--card);border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px}
+.calendar-time-grid{position:relative;height:1536px;margin-left:44px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 63px,var(--line) 63px,var(--line) 64px)}
+.calendar-hour{position:absolute;left:-44px;width:41px;transform:translateY(-9px);font-size:11px;color:var(--muted);text-align:left}
+.calendar-event{position:absolute;z-index:1;left:calc(var(--event-left)*1% + 3px);width:calc(var(--event-width)*1% - 6px);top:var(--event-top);height:var(--event-height);min-height:28px;overflow:hidden;padding:5px 7px;border:0;border-left:3px solid var(--event-accent);border-radius:7px;background:var(--event-bg);color:#29313d;text-align:left;font-size:11px;line-height:1.3}
+.calendar-event strong{display:block;font-size:11px;font-weight:550;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}.calendar-event span{display:block;font-size:10px;margin-top:2px;opacity:.75}
+.calendar-event.done{opacity:.5}.calendar-now{position:absolute;left:0;right:0;z-index:2;height:1px;background:#ed7373;pointer-events:none}.calendar-now:before{content:"";position:absolute;left:-4px;top:-3px;width:7px;height:7px;border-radius:50%;background:#ed7373}
+.calendar-add{position:fixed;z-index:6;right:22px;bottom:calc(92px + env(safe-area-inset-bottom));width:58px;height:58px;padding:0;border-radius:50%;font-size:32px;box-shadow:0 8px 22px #5269e84a}
+.habit-period-group{overflow:hidden;border-radius:18px;background:var(--card);margin-bottom:11px;padding:5px 14px 7px}
+.habit-period-group>summary{display:flex;align-items:center;gap:9px;list-style:none;min-height:51px;font-size:15px;font-weight:600;cursor:pointer}
+.habit-period-group>summary::-webkit-details-marker{display:none}.habit-period-count{margin-left:auto;color:var(--muted);font-size:12px;font-weight:400}
+.habit-period-chevron{color:var(--muted);font-size:16px;transition:transform 240ms ease}.habit-period-group:not([open]) .habit-period-chevron{transform:rotate(-90deg)}
+.habit-period-group .habit-card{padding:9px 0;margin:0;border:0;border-radius:0;background:transparent;min-height:58px}
+.habit-period-group .habit-card-row{gap:10px}.habit-period-group .habit-result{width:28px;height:36px;color:var(--habit-color,var(--green))}
+.habit-period-group .habit-result svg{width:24px;height:24px;stroke-width:2.5}.habit-period-group .habit-result.pending{color:var(--muted)}
+.habit-period-group .habit-card-name{flex:1;min-width:0;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-size:14px;font-weight:450}
+.habit-period-group .habit-card-icon{font-size:15px}.habit-streak{display:grid;justify-items:end;min-width:54px;flex:none;line-height:1.15}
+.habit-streak strong{font-size:17px;font-weight:550;color:var(--text)}.habit-streak small{font-size:9px;color:var(--muted);white-space:nowrap}
+.habit-period-group .habit-card-schedule{display:none}
+#habitsView .heading{text-align:center;margin:4px 0 10px}#habitsView .heading h1{font-size:20px;font-weight:600}
+#habitsView .habit-shared-calendar{border:0;background:transparent;padding:1px 0 8px}
+#habitsView .habit-calendar-day{border:0;background:transparent}
+#habitsView .habit-calendar-day strong{display:grid;place-items:center;width:37px;height:37px;border-radius:50%}
+#habitsView .habit-calendar-day.selected strong{background:var(--blue);color:#fff}
+#habitsView .habit-calendar-day.selected small{color:var(--muted)}
+#habitsView .habit-week-hint{display:none}
+@media(max-width:520px){.calendar-panel .panel-head{gap:5px}.calendar-panel .tabs{margin-left:auto}.calendar-panel .tabs button{font-size:10px;padding:6px 7px}.calendar-add{right:18px;bottom:calc(88px + env(safe-area-inset-bottom));width:54px;height:54px}.habit-period-group{padding-inline:12px}.habit-streak small{font-size:8px}}
+.telegram-app .calendar-add{right:calc(18px + var(--pro-safe-right,0px));bottom:calc(88px + var(--pro-safe-bottom,0px))}
+@media(prefers-reduced-motion:reduce){.view.active,.task-group-items,.habit-period-items{animation:none!important}.backdrop,.backdrop .modal,.habit-period-chevron{transition-duration:.01ms!important}}
 </style></head>
 <body>
 <div class="app">
@@ -391,9 +439,9 @@ button:active{opacity:.8}
 <button aria-label="Добавить задачу" class="floating-add"  id="addTask">+</button>
 </section>
 <section class="view" id="calendarView">
-<div class="heading"><p class="muted" data-i18n="Планируй заранее">Планируй заранее</p><h1 data-i18n="Календарь">Календарь</h1></div>
-<div class="panel"><div class="panel-head"><div class="period-tools"><button class="icon-button" id="periodPrev">‹</button><strong id="periodTitle"></strong><button class="icon-button" id="periodNext">›</button></div><div class="tabs" id="calendarTabs"><button data-i18n="День" data-mode="day">День</button><button data-i18n="Неделя" data-mode="week">Неделя</button><button class="active" data-i18n="Месяц" data-mode="month">Месяц</button><button data-i18n="Год" data-mode="year">Год</button></div></div><div id="calendarContent"></div></div>
-<div class="panel"><div class="panel-head"><h2 id="calendarDayTitle">Задачи выбранного дня</h2><button class="primary" data-i18n="＋ Задача" id="addCalendarTask">＋ Задача</button></div><div class="task-list" id="calendarTaskList"></div></div>
+<div class="heading calendar-heading"><p class="muted" id="calendarHeroMonth"></p><h1 id="calendarHeroTitle">Сегодня</h1></div>
+<div class="panel calendar-panel"><div class="panel-head"><div class="period-tools"><button class="icon-button" id="periodPrev">‹</button><strong id="periodTitle"></strong><button class="icon-button" id="periodNext">›</button></div><div class="tabs" id="calendarTabs"><button class="active" data-i18n="День" data-mode="day">День</button><button data-i18n="Неделя" data-mode="week">Неделя</button><button data-i18n="Месяц" data-mode="month">Месяц</button><button data-i18n="Год" data-mode="year">Год</button></div></div><div id="calendarContent"></div></div>
+<div class="panel calendar-detail-panel" id="calendarDetailPanel"><div class="panel-head"><h2 id="calendarDayTitle">Задачи выбранного дня</h2></div><div class="task-list" id="calendarTaskList"></div></div><button class="primary calendar-add" data-i18n-aria-label="Добавить задачу" aria-label="Добавить задачу" id="addCalendarTask">+</button>
 </section>
 <section class="view" id="habitsView">
 <div class="heading"><p class="muted" data-i18n="Маленькие шаги каждый день">Маленькие шаги каждый день</p><h1 data-i18n="Привычки">Привычки</h1></div>
@@ -603,7 +651,7 @@ const CATEGORY_COLORS=["#73acf5","#89cbb2","#edb77b","#b19ae8","#e99baa","#f2637
 let editingCategoryId=null,selectedCategoryColor=CATEGORY_COLORS[0];
 let homeSection="today",taskPage="today";
 const taskPageLabels={"today": "Сегодня", "tomorrow": "Завтра", "week": "Вся неделя", "inbox": "Входящие", "all": "Все"};
-let selectedDate=new Date(today),calendarDate=new Date(today),calendarMode="month",editingId=null,taskView="kanban",editingSubtasks=[];
+let selectedDate=new Date(today),calendarDate=new Date(today),calendarMode="day",editingId=null,taskView="kanban",editingSubtasks=[];
 function save(){try{localStorage.setItem(key,JSON.stringify(data));return true}catch(e){return false}}
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 
@@ -762,10 +810,12 @@ function habitMark(h,date,selected,history=false){
 function habitsForDate(date,archived=false){return data.habits.filter(h=>h.archived===archived&&(isScheduledHabitDay(h,date)||h.done.includes(iso(date))||(h.skipped||[]).includes(iso(date))))}
 function renderHabits(id='habitList',date=habitBrowseDate){
  const box=document.getElementById(id),dateKey=iso(date),home=id==='todayHabitList',list=habitsForDate(date,home?false:habitArchiveView);
+ const streakLabel=settings.language==='en'?'Current streak':'Текущая серия';
  box.innerHTML=['morning','afternoon','evening','any'].map(period=>{
   const group=list.filter(h=>(habitScheduleOn(h,date).period||'any')===period).sort((a,b)=>(habitScheduleOn(a,date).time||'99:99').localeCompare(habitScheduleOn(b,date).time||'99:99'));
   if(!group.length)return '';
-  return '<section><h3 class="habit-period-title">'+periodLabel(period)+'</h3>'+group.map(h=>{const schedule=habitScheduleOn(h,date),done=h.done.includes(dateKey),future=dateKey>iso(today),skipped=(h.skipped||[]).includes(dateKey),status=tr(done?'Выполнено':future?'Запланировано':skipped?'Не выполнил':'Не выполнено');return '<article class="habit-card" data-habit-swipe="'+h.id+'"><div class="habit-card-row"><button class="habit-result '+(done?'done':'pending')+'" type="button" data-habit="'+h.id+'" aria-label="'+esc(h.title+' · '+status)+'" title="'+esc(status)+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+(done?'<path d="m5 12 4 4 10-11"/>':'<circle cx="12" cy="12" r="7"/>')+'</svg></button><button type="button" class="habit-card-name" data-habit="'+h.id+'"><span class="habit-card-icon" aria-hidden="true">'+esc(h.icon||'✓')+'</span>'+esc(h.title)+'</button></div><p class="habit-card-schedule">'+periodLabel(schedule.period)+(schedule.time?' · '+esc(schedule.time):'')+' · '+status+'</p></article>' }).join('')+'</section>';
+  const label=settings.language==='en'?{morning:'Morning',afternoon:'Afternoon',evening:'Evening',any:'Other'}[period]:{morning:'Утром',afternoon:'Днём',evening:'Вечером',any:'Другие'}[period];
+  return '<details class="habit-period-group" open><summary>'+label+'<span class="habit-period-count">'+group.length+'</span><span class="habit-period-chevron" aria-hidden="true">⌄</span></summary><div class="habit-period-items">'+group.map((h,index)=>{const schedule=habitScheduleOn(h,date),done=h.done.includes(dateKey),future=dateKey>iso(today),skipped=(h.skipped||[]).includes(dateKey),status=tr(done?'Выполнено':future?'Запланировано':skipped?'Не выполнил':'Не выполнено'),streak=habitStats(h).current,color=['#7077ec','#56a4fa','#55cb79','#e5dc4f','#a789e8'][index%5];return '<article class="habit-card" data-habit-swipe="'+h.id+'" style="--habit-color:'+color+'"><div class="habit-card-row"><button class="habit-result '+(done?'done':'pending')+'" type="button" data-habit="'+h.id+'" aria-label="'+esc(h.title+' · '+status)+'" title="'+esc(status)+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+(done?'<path d="m4 12 5 5 11-12"/>':'<circle cx="12" cy="12" r="7"/>')+'</svg></button><button type="button" class="habit-card-name" data-habit="'+h.id+'">'+esc(h.title)+(schedule.time?' · '+esc(schedule.time):'')+'</button><span class="habit-streak" title="'+esc(streakLabel)+'"><strong>'+streak+'</strong><small>'+streakLabel+'</small></span></div></article>' }).join('')+'</div></details>';
  }).join('')||'<div class="empty">'+tr('На этот день привычек нет.')+'</div>';
  box.querySelectorAll('[data-habit]').forEach(b=>b.onclick=()=>openHabit(Number(b.dataset.habit),dateKey));
  box.querySelectorAll('[data-habit-swipe]').forEach(card=>bindLeftSwipe(card,()=>markHabitMissed(Number(card.dataset.habitSwipe),dateKey),false));
@@ -939,11 +989,37 @@ function renderHome(){
  document.getElementById("addTask").setAttribute("aria-label",habits?tr("Добавить привычку"):tr("Добавить задачу"));
  if(habits)renderHabits("todayHabitList",today);else renderTasks("taskList",iso(today));
 }
+let calendarScrollDate='';
+function calendarTaskColor(task){
+ const color=getCategory(task.category)?.color||({high:'#ef7775',medium:'#f0b84d',low:'#73aafa'}[task.priority])||'#7e9ee1';
+ return /^#[0-9a-f]{6}$/i.test(color)?color:'#7e9ee1';
+}
+function renderDayAgenda(box){
+ const key=iso(calendarDate),start=mondayOf(calendarDate),tasks=data.tasks.filter(t=>t.date===key),untimed=tasks.filter(t=>!t.time),timed=tasks.filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t.time||'')),habits=habitsForDate(calendarDate,false);
+ const previousScroll=box.querySelector('.calendar-time-scroll')?.scrollTop;
+ const strip=Array.from({length:7},(_,i)=>{const d=addDays(start,i),s=iso(d),has=data.tasks.some(t=>t.date===s)||habitsForDate(d,false).length;return '<button type="button" class="calendar-week-day '+(s===key?'selected ':'')+(has?'has-event':'')+'" data-calendar-date="'+s+'" aria-label="'+esc(fmt(d,{weekday:'long',day:'numeric',month:'long'}))+'" aria-pressed="'+(s===key)+'"><small>'+weekdayLabels()[i]+'</small><strong>'+d.getDate()+'</strong><i aria-hidden="true"></i></button>'}).join('');
+ const chips=untimed.map(t=>'<button class="calendar-chip '+(t.done?'done':'')+'" data-calendar-task="'+t.id+'" style="background:'+calendarTaskColor(t)+'33">'+esc(t.title)+'</button>').join('')+habits.map(h=>'<button class="calendar-chip habit '+(h.done.includes(key)?'done':'')+'" data-calendar-habit="'+h.id+'">'+(h.done.includes(key)?'✓ ':'○ ')+esc(h.title)+'</button>').join('');
+ const events=timed.map(t=>{const [hour,minute]=t.time.split(':').map(Number),begin=hour*60+minute,end=t.endTime&&t.endTime>t.time?Number(t.endTime.slice(0,2))*60+Number(t.endTime.slice(3)):Math.min(1440,begin+45);return {task:t,begin,end:Math.max(begin+25,end),column:0,columns:1}}).sort((a,b)=>a.begin-b.begin||a.end-b.end);
+ let cluster=[],clusterEnd=-1;
+ const finishCluster=()=>{const lanes=[];for(const ev of cluster){let col=lanes.findIndex(last=>last<=ev.begin);if(col<0)col=lanes.length;lanes[col]=ev.end;ev.column=col}for(const ev of cluster)ev.columns=lanes.length;cluster=[]};
+ for(const ev of events){if(cluster.length&&ev.begin>=clusterEnd){finishCluster();clusterEnd=-1}cluster.push(ev);clusterEnd=Math.max(clusterEnd,ev.end)}if(cluster.length)finishCluster();
+ const eventHTML=events.map(({task,begin,end,column,columns})=>{const color=calendarTaskColor(task),left=column/columns*100,width=100/columns;return '<button type="button" class="calendar-event '+(task.done?'done':'')+'" data-calendar-task="'+task.id+'" style="--event-top:'+(begin/60*64)+'px;--event-height:'+Math.max(30,(end-begin)/60*64-3)+'px;--event-left:'+left+';--event-width:'+width+';--event-accent:'+color+';--event-bg:'+color+'b8"><strong>'+esc(task.title)+'</strong><span>'+esc(task.time+(task.endTime?' – '+task.endTime:''))+'</span></button>'}).join('');
+ const now=new Date(),current=key===iso(now)?'<div class="calendar-now" style="top:'+((now.getHours()*60+now.getMinutes())/60*64)+'px"></div>':'';
+ box.innerHTML='<div class="calendar-week-strip" aria-label="'+tr('Неделя')+'">'+strip+'</div><div class="calendar-all-day">'+chips+'</div><div class="calendar-time-scroll"><div class="calendar-time-grid">'+Array.from({length:24},(_,h)=>'<span class="calendar-hour" style="top:'+(h*64)+'px">'+String(h).padStart(2,'0')+':00</span>').join('')+eventHTML+current+'</div></div>';
+ box.querySelectorAll('[data-calendar-date]').forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.calendarDate);calendarDate=new Date(selectedDate);render()});
+ box.querySelectorAll('[data-calendar-task]').forEach(b=>b.onclick=()=>openModal(Number(b.dataset.calendarTask)));
+ box.querySelectorAll('[data-calendar-habit]').forEach(b=>b.onclick=()=>openHabit(Number(b.dataset.calendarHabit),key));
+ const scroll=box.querySelector('.calendar-time-scroll');if(calendarScrollDate===key&&previousScroll!==undefined)scroll.scrollTop=previousScroll;else{const target=events.length?Math.min(events[0].begin,now.getHours()*60):key===iso(now)?now.getHours()*60:8*60;scroll.scrollTop=Math.max(0,target/60*64-90)}calendarScrollDate=key;
+ const week=box.querySelector('.calendar-week-strip');let startX=null;week.addEventListener('touchstart',e=>{startX=e.touches[0]?.clientX??null},{passive:true});week.addEventListener('touchend',e=>{if(startX===null)return;const diff=e.changedTouches[0]?.clientX-startX;startX=null;if(Math.abs(diff)<55)return;selectedDate=addDays(selectedDate,diff<0?7:-7);calendarDate=new Date(selectedDate);render()},{passive:true});
+}
 function renderCalendar(){
  const box=document.getElementById("calendarContent"),title=document.getElementById("periodTitle"),y=calendarDate.getFullYear(),m=calendarDate.getMonth();
  title.textContent=calendarMode==="year"?String(y):fmt(calendarDate,{month:"long",year:"numeric"});
+ document.getElementById('calendarHeroMonth').textContent=fmt(calendarDate,{month:'long',year:'numeric'});
+ document.getElementById('calendarHeroTitle').textContent=calendarMode==='day'&&iso(calendarDate)===iso(today)?tr('Сегодня'):calendarMode==='day'?fmt(calendarDate,{weekday:'long',day:'numeric',month:'long'}):tr('Календарь');
+ document.getElementById('calendarDetailPanel').hidden=calendarMode==='day';
  document.querySelectorAll("#calendarTabs button").forEach(b=>b.classList.toggle("active",b.dataset.mode===calendarMode));
- if(calendarMode==="day"){box.innerHTML='<div class="empty">'+fmt(calendarDate,{weekday:"long",day:"numeric",month:"long"})+'</div>';return}
+ if(calendarMode==="day"){renderDayAgenda(box);return}
  if(calendarMode==="year"){
   box.innerHTML='<div class="year-grid">'+Array.from({length:12},(_,i)=>'<button class="year-month" data-month="'+i+'"><strong>'+fmt(new Date(y,i,1),{month:"long"})+'</strong><span>'+tr("Открыть месяц →")+'</span></button>').join("")+'</div>';
   box.querySelectorAll("[data-month]").forEach(b=>b.onclick=()=>{calendarDate.setMonth(Number(b.dataset.month));calendarMode="month";renderCalendar()});return
@@ -953,7 +1029,7 @@ function renderCalendar(){
  }
  const first=new Date(y,m,1),start=mondayOf(first),count=new Date(y,m+1,0).getDate(),cells=Math.ceil(((first.getDay()+6)%7+count)/7)*7;
  box.innerHTML='<div class="calendar-grid">'+weekdayLabels().map(d=>'<div class="calendar-weekday">'+d+'</div>').join("")+Array.from({length:cells},(_,i)=>{const d=addDays(start,i),s=iso(d),ls=data.tasks.filter(t=>t.date===s);let c="calendar-cell";if(d.getMonth()!==m)c+=" other";if(s===iso(today))c+=" today";if(s===iso(selectedDate))c+=" selected";return '<button class="'+c+'" data-date="'+s+'">'+d.getDate()+(ls.length?'<small>'+ls.length+(settings.language==="en"?(ls.length===1?' task':' tasks'):' задач')+'</small>':"")+'</button>'}).join("")+'</div>';
- box.querySelectorAll("[data-date]").forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.date);calendarDate=new Date(selectedDate);render()});
+ box.querySelectorAll("[data-date]").forEach(b=>b.onclick=()=>{selectedDate=fromISO(b.dataset.date);calendarDate=new Date(selectedDate);calendarMode="day";render()});
 }
 function render(){
  const now=new Date();today.setTime(now.getTime());today.setHours(0,0,0,0);
@@ -1068,8 +1144,8 @@ document.getElementById("taskForm").onsubmit=e=>{
 function addHabit(){openHabitEditor()}
 document.getElementById("addHabit").onclick=addHabit;
 document.getElementById("calendarTabs").onclick=e=>{const b=e.target.closest("[data-mode]");if(b){calendarMode=b.dataset.mode;renderCalendar();animateContent(document.getElementById("calendarContent"))}};
-document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,-7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,-1);else calendarDate.setMonth(calendarDate.getMonth()-1);renderCalendar();animateContent(document.getElementById("calendarContent"))};
-document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week")calendarDate=addDays(calendarDate,7);else if(calendarMode==="day")calendarDate=addDays(calendarDate,1);else calendarDate.setMonth(calendarDate.getMonth()+1);renderCalendar();animateContent(document.getElementById("calendarContent"))};
+document.getElementById("periodPrev").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()-1);else if(calendarMode==="week"||calendarMode==="day")calendarDate=addDays(calendarDate,-7);else calendarDate.setMonth(calendarDate.getMonth()-1);if(calendarMode==="day")selectedDate=new Date(calendarDate);renderCalendar();animateContent(document.getElementById("calendarContent"))};
+document.getElementById("periodNext").onclick=()=>{if(calendarMode==="year")calendarDate.setFullYear(calendarDate.getFullYear()+1);else if(calendarMode==="week"||calendarMode==="day")calendarDate=addDays(calendarDate,7);else calendarDate.setMonth(calendarDate.getMonth()+1);if(calendarMode==="day")selectedDate=new Date(calendarDate);renderCalendar();animateContent(document.getElementById("calendarContent"))};
 function animateContent(el){
  if(!el||window.matchMedia('(prefers-reduced-motion: reduce)').matches||typeof el.animate!=='function')return;
  el.getAnimations().forEach(animation=>animation.cancel());
@@ -1129,7 +1205,7 @@ function initMotion(){
  renderTasks=wrap('tasks',renderTasks,(id,date)=>[id,date,taskPage,homeSection,taskView,language(),data.tasks,data.categories,iso(today),data.tasks.map(t=>dueLabel(t))],id=>document.getElementById(id));
  renderHabits=wrap('habits',renderHabits,(id='habitList',date=habitBrowseDate)=>[id,iso(date),habitArchiveView,language(),data.habits,iso(today)],(id='habitList')=>document.getElementById(id));
  renderHabitPageTools=wrap('habitTools',renderHabitPageTools,()=>[iso(habitBrowseDate),habitArchiveView,language(),data.habits,iso(today)],()=>document.getElementById('habitSharedCalendar'));
- renderCalendar=wrap('calendar',renderCalendar,()=>[iso(calendarDate),iso(selectedDate),calendarMode,language(),data.tasks,iso(today)],()=>document.getElementById('calendarContent'));
+ renderCalendar=wrap('calendar',renderCalendar,()=>[iso(calendarDate),iso(selectedDate),calendarMode,language(),data.tasks,data.habits,iso(today),Math.floor(Date.now()/60000)],()=>document.getElementById('calendarContent'));
  // Фоновое обновление не должно перестраивать страницу во время движения пальца.
  window.refreshPlannerWhenIdle=function(){
   if(document.hidden)return;
