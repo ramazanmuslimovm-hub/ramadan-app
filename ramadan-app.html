@@ -518,7 +518,8 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 #habitProgressModal,.telegram-app #habitProgressModal{z-index:15;inset:auto 0 auto;top:var(--task-visible-top,0px);height:var(--task-visible-height,100dvh);padding:calc(8px + max(0px,var(--pro-safe-top,env(safe-area-inset-top,0px)) - var(--task-visible-top,0px))) var(--pro-safe-right,0px) 0 var(--pro-safe-left,0px);align-items:flex-end;overflow:hidden}
 #habitProgressModal .modal,.telegram-app #habitProgressModal .modal{display:flex;flex-direction:column;width:min(100%,600px);height:100%;max-height:100%;min-height:0;padding:0;border-radius:28px 28px 0 0;background:var(--bg);overflow:hidden}
 .habit-report-header{display:flex;align-items:center;gap:10px;padding:16px;flex:none}
-.habit-report-header .habit-glass-button{flex:none;font-size:28px;font-weight:300}
+.habit-report-header .habit-glass-button{flex:none;padding:0;line-height:1}
+.habit-report-header .habit-glass-button svg{display:block;width:22px;height:22px}
 .habit-report-tabs{display:flex;justify-content:center;gap:3px;flex:1;min-width:0}
 .habit-report-tabs button{border:0;border-radius:22px;padding:8px 10px;background:none;color:var(--muted);font-size:14px;white-space:nowrap}
 .habit-report-tabs button[aria-selected="true"]{background:var(--soft);color:var(--blue);font-weight:600}
@@ -528,8 +529,12 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 .habit-report-period button{border:0;background:none;color:var(--blue);font-size:28px;width:32px;height:36px;padding:0}
 .habit-report-period strong{font-size:14px;text-align:center;font-weight:550}
 .habit-report-week{display:grid;grid-template-columns:minmax(95px,1.55fr) repeat(7,minmax(0,1fr));gap:12px 7px;align-items:center}
-.habit-report-label{display:flex;align-items:center;gap:8px;min-width:0;border:0;background:none;padding:4px 0;text-align:left;color:var(--text);font-size:13px}
-.habit-report-label>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.habit-report-week>div{min-width:0;max-width:100%;overflow:hidden}
+.habit-report-label{display:grid;grid-template-columns:22px minmax(0,1fr);align-items:center;gap:8px;width:100%;max-width:100%;min-width:0;overflow:hidden;border:0;background:none;padding:4px 0;text-align:left;color:var(--text);font-size:13px}
+.habit-report-label>span:last-child{display:block;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* Clip the name before the first day and fade its edge into the card surface. */
+.habit-report-week .habit-report-label>span:last-child{text-overflow:clip;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 12px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 12px),transparent)}
+.habit-report-week .habit-report-label:focus-visible{outline-offset:-2px}
 .habit-report-icon{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--report-color);color:white;font-size:13px}
 .habit-report-dow{text-align:center;font-size:11px;color:var(--muted);line-height:24px;border-radius:50%}
 .habit-report-dow.today{background:var(--blue);color:white}
@@ -554,7 +559,7 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 .habit-report-date input{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px}
 #habitReportMore{width:100%;min-height:44px}#habitReportStatus{font-size:12px;color:var(--muted);margin:0 16px 8px}#habitReportStatus:empty{display:none}
 #habitProgressModal [hidden]{display:none!important}
-@media(max-width:360px){.habit-report-header{padding:12px;gap:5px}.habit-report-header .habit-glass-button{width:36px;height:36px;padding:7px}.habit-report-tabs button{font-size:12px;padding:8px}.habit-report-scroll{padding-left:12px;padding-right:12px}.habit-report-panel{padding:12px}.habit-report-week{grid-template-columns:minmax(85px,1.5fr) repeat(7,minmax(0,1fr));gap:10px 5px}.habit-report-month{gap:20px 14px}.habit-mini-grid{gap:4px}}
+@media(max-width:360px){.habit-report-header{padding:12px;gap:5px}.habit-report-header .habit-glass-button{width:36px;height:36px;padding:0}.habit-report-tabs button{font-size:12px;padding:8px}.habit-report-scroll{padding-left:12px;padding-right:12px}.habit-report-panel{padding:12px}.habit-report-week{grid-template-columns:minmax(85px,1.5fr) repeat(7,minmax(0,1fr));gap:10px 5px}.habit-report-month{gap:20px 14px}.habit-mini-grid{gap:4px}}
 
 </style></head>
 <body>
@@ -613,7 +618,7 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 <div class="modal-actions"><button class="secondary" data-i18n="Удалить" id="deleteCategoryBtn" style="color:#c94b4b;display:none" type="button">Удалить</button><span style="flex:1"></span><button class="secondary" data-i18n="Отмена" id="cancelCategoryModal" type="button">Отмена</button><button class="primary" data-i18n="Сохранить" id="saveCategoryBtn" type="button">Сохранить</button></div>
 </div></div>
 <div class="backdrop" id="habitProgressModal" role="dialog" aria-modal="true" aria-label="Прогресс привычек" data-i18n-aria-label="Прогресс привычек"><div class="modal">
-<div class="habit-report-header"><button type="button" id="closeHabitProgress" class="habit-glass-button" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button><div class="habit-report-tabs" role="tablist" aria-label="Прогресс привычек" data-i18n-aria-label="Прогресс привычек"><button type="button" role="tab" id="habitReportWeekTab" data-report-mode="week" aria-selected="true" aria-controls="habitReportContent" data-i18n="Неделя">Неделя</button><button type="button" role="tab" id="habitReportMonthTab" data-report-mode="month" aria-selected="false" aria-controls="habitReportContent" data-i18n="Месяц">Месяц</button><button type="button" role="tab" id="habitReportRecordTab" data-report-mode="record" aria-selected="false" aria-controls="habitReportContent" data-i18n="История">История</button></div><button type="button" id="exportHabitProgress" class="habit-glass-button" aria-label="Скачать CSV" data-i18n-aria-label="Скачать CSV"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 4H6a3 3 0 0 0-3 3v11a3 3 0 0 0 3 3h11a3 3 0 0 0 3-3v-4"/></svg></button></div>
+<div class="habit-report-header"><button type="button" id="closeHabitProgress" class="habit-glass-button" aria-label="Закрыть" data-i18n-aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button><div class="habit-report-tabs" role="tablist" aria-label="Прогресс привычек" data-i18n-aria-label="Прогресс привычек"><button type="button" role="tab" id="habitReportWeekTab" data-report-mode="week" aria-selected="true" aria-controls="habitReportContent" data-i18n="Неделя">Неделя</button><button type="button" role="tab" id="habitReportMonthTab" data-report-mode="month" aria-selected="false" aria-controls="habitReportContent" data-i18n="Месяц">Месяц</button><button type="button" role="tab" id="habitReportRecordTab" data-report-mode="record" aria-selected="false" aria-controls="habitReportContent" data-i18n="История">История</button></div><button type="button" id="exportHabitProgress" class="habit-glass-button" aria-label="Скачать CSV" data-i18n-aria-label="Скачать CSV"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 4H6a3 3 0 0 0-3 3v11a3 3 0 0 0 3 3h11a3 3 0 0 0 3-3v-4"/></svg></button></div>
 <p id="habitReportStatus" role="status"></p><div class="habit-report-scroll" id="habitReportScroll"><div id="habitReportContent" role="tabpanel" aria-labelledby="habitReportWeekTab"></div></div><label class="habit-report-date" title="Выбрать дату" data-i18n-title="Выбрать дату"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18M7 14h2m3 0h2m3 0h1"/></svg><input type="date" id="habitReportDate" aria-label="Выбрать дату" data-i18n-aria-label="Выбрать дату"></label></div></div>
 <div class="backdrop" id="habitModal" role="dialog" aria-modal="true" aria-labelledby="habitTitle">
 <div class="modal habit-sheet">
