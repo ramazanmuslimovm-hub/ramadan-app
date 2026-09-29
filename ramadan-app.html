@@ -488,11 +488,11 @@ body:has(#habitsView.active):not(.custom-background){--bg:#f2f3f8;--soft:#f2f3f8
 #habitsView .habit-streak strong{font-size:17px;font-weight:550;line-height:1}
 #habitsView .habit-streak small{font-size:9px;color:#a1a1a6;white-space:nowrap;line-height:1.2}
 #habitsView #addHabit{width:61px;height:61px;right:20px;bottom:calc(94px + var(--pro-safe-bottom,env(safe-area-inset-bottom,0px)));font-size:40px;box-shadow:inset 0 1px 1px #a0afff;border:1px solid #3659ed;background:#4f6bf2}
-body:has(#habitsView.active) .bottom-nav{left:20px;right:20px;bottom:calc(12px + var(--pro-safe-bottom,env(safe-area-inset-bottom,0px)));padding:4px;min-height:58px;border:1px solid #babdc6;border-radius:34px;background:var(--nav-surface);box-shadow:inset 0 1px 2px #fff;gap:4px}
-body:has(#habitsView.active) .nav-button{height:48px;min-height:48px;border-radius:28px;align-content:center;color:var(--text)}
-body:has(#habitsView.active) .nav-button.active{background:var(--surface-soft);color:#526cf4}
-body:has(#habitsView.active) .nav-button .nav-symbol{width:25px;height:25px}
-body:has(#habitsView.active) .nav-button>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+body .bottom-nav,.telegram-app .bottom-nav{left:calc(20px + var(--pro-safe-left,0px));right:calc(20px + var(--pro-safe-right,0px));bottom:calc(12px + var(--pro-safe-bottom,env(safe-area-inset-bottom,0px)));padding:4px;min-height:58px;border:1px solid #babdc6;border-radius:34px;background:var(--nav-surface);box-shadow:inset 0 1px 2px #fff;gap:4px}
+body .nav-button{height:48px;min-height:48px;border-radius:28px;align-content:center;color:var(--text)}
+body .nav-button.active{background:var(--surface-soft);color:#526cf4}
+body .nav-button .nav-symbol{width:25px;height:25px}
+body .nav-button>span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 [data-theme="dark"] .habit-glass-button,[data-theme="dark"] .habit-header-capsule{background:linear-gradient(145deg,#ffffff20,#ffffff08);border-color:var(--line);box-shadow:inset 0 1px 1px #ffffff22}
 /* Editors have one scrollable body and a footer outside it. */
 #habitEditorModal,.telegram-app #habitEditorModal,#habitModal,.telegram-app #habitModal{inset:auto 0 auto;top:var(--task-visible-top,0px);height:var(--task-visible-height,100dvh);min-height:0;align-items:flex-end;padding:calc(8px + max(0px,var(--pro-safe-top,env(safe-area-inset-top,0px)) - var(--task-visible-top,0px))) var(--pro-safe-right,env(safe-area-inset-right,0px)) 0 var(--pro-safe-left,env(safe-area-inset-left,0px));overflow:hidden}
@@ -510,7 +510,7 @@ body:has(#habitsView.active) .nav-button>span{position:absolute;width:1px;height
 #habitModal .habit-top{position:sticky;top:-16px;z-index:2;background:inherit;padding:8px 0;margin-top:-8px}
 html.modal-open{overflow:hidden;scroll-behavior:auto}
 body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;width:100%;overflow:hidden}
-@media(min-width:700px){.app:has(#habitsView.active){max-width:560px}body:has(#habitsView.active) .bottom-nav{max-width:520px;margin:auto}}
+@media(min-width:700px){.app:has(#habitsView.active){max-width:560px}body .bottom-nav{max-width:520px;margin:auto}}
 @media(prefers-reduced-motion:reduce){.calendar-mode-menu{animation:none}}
 
 </style></head>
