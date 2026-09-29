@@ -513,6 +513,49 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 @media(min-width:700px){.app:has(#habitsView.active){max-width:560px}body .bottom-nav{max-width:520px;margin:auto}}
 @media(prefers-reduced-motion:reduce){.calendar-mode-menu{animation:none}}
 
+
+/* Habit progress: week matrix, monthly calendars and daily records. */
+#habitProgressModal,.telegram-app #habitProgressModal{z-index:15;inset:auto 0 auto;top:var(--task-visible-top,0px);height:var(--task-visible-height,100dvh);padding:calc(8px + max(0px,var(--pro-safe-top,env(safe-area-inset-top,0px)) - var(--task-visible-top,0px))) var(--pro-safe-right,0px) 0 var(--pro-safe-left,0px);align-items:flex-end;overflow:hidden}
+#habitProgressModal .modal,.telegram-app #habitProgressModal .modal{display:flex;flex-direction:column;width:min(100%,600px);height:100%;max-height:100%;min-height:0;padding:0;border-radius:28px 28px 0 0;background:var(--bg);overflow:hidden}
+.habit-report-header{display:flex;align-items:center;gap:10px;padding:16px;flex:none}
+.habit-report-header .habit-glass-button{flex:none;font-size:28px;font-weight:300}
+.habit-report-tabs{display:flex;justify-content:center;gap:3px;flex:1;min-width:0}
+.habit-report-tabs button{border:0;border-radius:22px;padding:8px 10px;background:none;color:var(--muted);font-size:14px;white-space:nowrap}
+.habit-report-tabs button[aria-selected="true"]{background:var(--soft);color:var(--blue);font-weight:600}
+.habit-report-scroll{min-height:0;flex:1;overflow:auto;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding:6px 16px calc(90px + var(--pro-safe-bottom,env(safe-area-inset-bottom,0px)))}
+.habit-report-panel,.habit-record-day{background:var(--card);border-radius:16px;padding:16px;margin-bottom:16px}
+.habit-report-period{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:20px}
+.habit-report-period button{border:0;background:none;color:var(--blue);font-size:28px;width:32px;height:36px;padding:0}
+.habit-report-period strong{font-size:14px;text-align:center;font-weight:550}
+.habit-report-week{display:grid;grid-template-columns:minmax(95px,1.55fr) repeat(7,minmax(0,1fr));gap:12px 7px;align-items:center}
+.habit-report-label{display:flex;align-items:center;gap:8px;min-width:0;border:0;background:none;padding:4px 0;text-align:left;color:var(--text);font-size:13px}
+.habit-report-label>span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.habit-report-icon{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--report-color);color:white;font-size:13px}
+.habit-report-dow{text-align:center;font-size:11px;color:var(--muted);line-height:24px;border-radius:50%}
+.habit-report-dow.today{background:var(--blue);color:white}
+.habit-report-cell{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:1;max-width:25px;justify-self:center;border:0;border-radius:5px;padding:0;background:var(--line);color:#ed767b;font-size:18px;font-weight:500;line-height:1;overflow:hidden}
+.habit-report-cell.done{background:var(--report-color)}
+.habit-report-cell.partial{background:linear-gradient(to top,var(--report-color) var(--report-percent),var(--line) var(--report-percent))}
+.habit-report-cell.future,.habit-report-cell.off{opacity:.35}.habit-report-cell.off{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.habit-report-cell:focus-visible,.habit-report-label:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.habit-report-month{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 22px}
+.habit-mini-calendar{min-width:0}.habit-mini-calendar .habit-report-label{margin-bottom:12px;width:100%}
+.habit-mini-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.habit-mini-grid .habit-report-cell{border-radius:3px;font-size:13px}
+.habit-record-day h3{margin:0 0 14px;font-size:15px;font-weight:650}
+.habit-record-row{display:grid;grid-template-columns:minmax(0,1fr) 84px;align-items:center;gap:10px;margin:10px 0}
+.habit-record-row .habit-report-label{font-size:14px}
+.habit-record-result{text-align:right;font-size:10px;color:var(--muted);min-width:0}
+.habit-record-track{display:block;overflow:hidden;height:6px;margin-top:4px;border-radius:6px;background:var(--line)}
+.habit-record-track i{display:block;height:100%;background:var(--report-color);border-radius:inherit}
+.habit-report-total{font-size:11px;color:var(--muted);margin:16px 0 0}
+.habit-report-date{position:absolute;bottom:calc(22px + var(--pro-safe-bottom,env(safe-area-inset-bottom,0px)));right:22px;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:var(--blue);color:#fff;box-shadow:0 3px 12px #23263820}
+.habit-report-date svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.6}
+.habit-report-date input{position:absolute;inset:0;width:100%;height:100%;opacity:0;font-size:16px}
+#habitReportMore{width:100%;min-height:44px}#habitReportStatus{font-size:12px;color:var(--muted);margin:0 16px 8px}#habitReportStatus:empty{display:none}
+#habitProgressModal [hidden]{display:none!important}
+@media(max-width:360px){.habit-report-header{padding:12px;gap:5px}.habit-report-header .habit-glass-button{width:36px;height:36px;padding:7px}.habit-report-tabs button{font-size:12px;padding:8px}.habit-report-scroll{padding-left:12px;padding-right:12px}.habit-report-panel{padding:12px}.habit-report-week{grid-template-columns:minmax(85px,1.5fr) repeat(7,minmax(0,1fr));gap:10px 5px}.habit-report-month{gap:20px 14px}.habit-mini-grid{gap:4px}}
+
 </style></head>
 <body>
 <div class="app">
@@ -533,8 +576,8 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 <div class="panel calendar-detail-panel" id="calendarDetailPanel"><div class="panel-head"><h2 id="calendarDayTitle">Задачи выбранного дня</h2></div><div class="task-list" id="calendarTaskList"></div></div><button class="primary calendar-add" data-i18n-aria-label="Добавить задачу" aria-label="Добавить задачу" id="addCalendarTask">+</button>
 </section>
 <section class="view" id="habitsView">
-<div class="habit-reference-header"><button class="habit-glass-button" id="habitGoToday" type="button" aria-label="Сегодня" data-i18n-aria-label="Сегодня"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v9H3"/></svg></button><h1 data-i18n="Привычка">Привычка</h1><div class="habit-header-capsule"><button id="habitArchiveButton" type="button" aria-label="Архив" data-i18n-aria-label="Архив" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="4"/><path d="M8 3v18m4-14h4"/></svg></button><button id="habitOptionsButton" type="button" aria-label="Настройки привычек" data-i18n-aria-label="Настройки привычек" aria-expanded="false" aria-controls="habitOptions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="7" cy="5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="10" cy="19" r="2"/></svg></button></div></div><div id="habitOptions" class="habit-options" hidden><div class="habit-page-toolbar"><div class="tabs" id="habitStatusTabs"><button type="button" data-habit-status="active" data-i18n="Активные" class="active">Активные</button><button type="button" data-habit-status="archived" data-i18n="Архив">Архив</button></div></div>
-<div class="habit-week-toolbar"><button type="button" class="icon-button" id="habitWeekPrev" aria-label="Предыдущая неделя" data-i18n-aria-label="Предыдущая неделя">‹</button><label class="habit-date-picker"><span id="habitWeekTitle"></span><input type="date" id="habitBrowseDate" aria-label="Выбрать дату" data-i18n-aria-label="Выбрать дату"></label><button type="button" class="icon-button" id="habitWeekNext" aria-label="Следующая неделя" data-i18n-aria-label="Следующая неделя">›</button></div>
+<div class="habit-reference-header"><button class="habit-glass-button" id="habitProgressButton" type="button" aria-label="Прогресс привычек" data-i18n-aria-label="Прогресс привычек" aria-haspopup="dialog" aria-controls="habitProgressModal"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v9H3"/></svg></button><h1 data-i18n="Привычка">Привычка</h1><div class="habit-header-capsule"><button id="habitArchiveButton" type="button" aria-label="Архив" data-i18n-aria-label="Архив" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="15" height="18" rx="4"/><path d="M8 3v18m4-14h4"/></svg></button><button id="habitOptionsButton" type="button" aria-label="Настройки привычек" data-i18n-aria-label="Настройки привычек" aria-expanded="false" aria-controls="habitOptions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="7" cy="5" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="10" cy="19" r="2"/></svg></button></div></div><div id="habitOptions" class="habit-options" hidden><div class="habit-page-toolbar"><div class="tabs" id="habitStatusTabs"><button type="button" data-habit-status="active" data-i18n="Активные" class="active">Активные</button><button type="button" data-habit-status="archived" data-i18n="Архив">Архив</button></div></div>
+<button type="button" class="secondary" id="habitGoToday" data-i18n="Сегодня">Сегодня</button><div class="habit-week-toolbar"><button type="button" class="icon-button" id="habitWeekPrev" aria-label="Предыдущая неделя" data-i18n-aria-label="Предыдущая неделя">‹</button><label class="habit-date-picker"><span id="habitWeekTitle"></span><input type="date" id="habitBrowseDate" aria-label="Выбрать дату" data-i18n-aria-label="Выбрать дату"></label><button type="button" class="icon-button" id="habitWeekNext" aria-label="Следующая неделя" data-i18n-aria-label="Следующая неделя">›</button></div>
 </div>
 <div class="habit-shared-calendar" id="habitSharedCalendar" aria-label="Календарь привычек" data-i18n-aria-label="Календарь привычек"></div><p class="muted" id="habitDaySummary"></p><p class="muted habit-week-hint" data-i18n="Смахни привычку влево, чтобы отметить «Не выполнил».">Смахни привычку влево, чтобы отметить «Не выполнил».</p>
 <div id="habitList"></div>
@@ -569,6 +612,9 @@ body.modal-open{position:fixed;top:var(--locked-body-top,0px);left:0;right:0;wid
 <div class="field"><label data-i18n="Цвет">Цвет</label><div class="color-swatches" id="categoryColorSwatches"></div></div>
 <div class="modal-actions"><button class="secondary" data-i18n="Удалить" id="deleteCategoryBtn" style="color:#c94b4b;display:none" type="button">Удалить</button><span style="flex:1"></span><button class="secondary" data-i18n="Отмена" id="cancelCategoryModal" type="button">Отмена</button><button class="primary" data-i18n="Сохранить" id="saveCategoryBtn" type="button">Сохранить</button></div>
 </div></div>
+<div class="backdrop" id="habitProgressModal" role="dialog" aria-modal="true" aria-label="Прогресс привычек" data-i18n-aria-label="Прогресс привычек"><div class="modal">
+<div class="habit-report-header"><button type="button" id="closeHabitProgress" class="habit-glass-button" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button><div class="habit-report-tabs" role="tablist" aria-label="Прогресс привычек" data-i18n-aria-label="Прогресс привычек"><button type="button" role="tab" id="habitReportWeekTab" data-report-mode="week" aria-selected="true" aria-controls="habitReportContent" data-i18n="Неделя">Неделя</button><button type="button" role="tab" id="habitReportMonthTab" data-report-mode="month" aria-selected="false" aria-controls="habitReportContent" data-i18n="Месяц">Месяц</button><button type="button" role="tab" id="habitReportRecordTab" data-report-mode="record" aria-selected="false" aria-controls="habitReportContent" data-i18n="История">История</button></div><button type="button" id="exportHabitProgress" class="habit-glass-button" aria-label="Скачать CSV" data-i18n-aria-label="Скачать CSV"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 3h7v7m0-7L10 14M10 4H6a3 3 0 0 0-3 3v11a3 3 0 0 0 3 3h11a3 3 0 0 0 3-3v-4"/></svg></button></div>
+<p id="habitReportStatus" role="status"></p><div class="habit-report-scroll" id="habitReportScroll"><div id="habitReportContent" role="tabpanel" aria-labelledby="habitReportWeekTab"></div></div><label class="habit-report-date" title="Выбрать дату" data-i18n-title="Выбрать дату"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 10h18M7 14h2m3 0h2m3 0h1"/></svg><input type="date" id="habitReportDate" aria-label="Выбрать дату" data-i18n-aria-label="Выбрать дату"></label></div></div>
 <div class="backdrop" id="habitModal" role="dialog" aria-modal="true" aria-labelledby="habitTitle">
 <div class="modal habit-sheet">
 <div class="habit-top"><button class="habit-back" type="button" id="closeHabit" aria-label="Закрыть" data-i18n-aria-label="Закрыть">×</button><span id="habitDate" class="habit-date"></span><button class="habit-back habit-edit-button" id="editHabit" type="button" aria-label="Редактировать привычку" data-i18n-aria-label="Редактировать привычку"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 15-1 5 5-1L20 8l-4-4Zm9-9 4 4"/></svg></button></div>
@@ -717,7 +763,7 @@ function initAppearanceControls(){
   }else unlockTimer=setTimeout(()=>{if(!document.querySelector('.backdrop.open')&&locked){document.body.classList.remove('modal-open');document.body.style.removeProperty('--locked-body-top');document.documentElement.classList.remove('modal-open');window.scrollTo({top:lockScrollY,behavior:'instant'});locked=false}},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:340);
  };
  const observer=new MutationObserver(syncLock);document.querySelectorAll('.backdrop').forEach(el=>observer.observe(el,{attributes:true,attributeFilter:['class']}));
- document.addEventListener('keydown',e=>{if(e.key==='Escape'){const open=[...document.querySelectorAll('.backdrop.open')].pop();if(open?.id==='menuModal')closeMenu();else if(open?.id==='taskModal')closeModal();else if(open?.id==='habitEditorModal')closeHabitEditor();else if(open)open.classList.remove('open')}});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'){const open=[...document.querySelectorAll('.backdrop.open')].pop();if(open?.id==='menuModal')closeMenu();else if(open?.id==='taskModal')closeModal();else if(open?.id==='habitEditorModal')closeHabitEditor();else if(open?.id==='habitProgressModal')closeHabitProgress();else if(open)open.classList.remove('open')}});
  document.querySelectorAll('.close-button').forEach(b=>{b.dataset.i18nAriaLabel='Закрыть';b.setAttribute('aria-label',tr('Закрыть'))});
  document.getElementById('periodPrev').dataset.i18nAriaLabel='Предыдущий период';document.getElementById('periodNext').dataset.i18nAriaLabel='Следующий период';
 }
@@ -1223,7 +1269,7 @@ function render(){
  const title=(settings.language==="en"?"Tasks · ":"Задачи · ")+fmt(selectedDate,{day:"numeric",month:"long"});
  document.getElementById("greeting").textContent=taskPage==="week"?fmt(mondayOf(today),{day:"numeric",month:"short"})+" — "+fmt(addDays(mondayOf(today),6),{day:"numeric",month:"short"}):taskPage==="inbox"?tr("Задачи без даты"):fmt(taskPage==="tomorrow"?addDays(today,1):today,{weekday:"long",day:"numeric",month:"long"});document.getElementById("todayNavDate").textContent=String(today.getDate());
  document.getElementById("calendarDayTitle").textContent=title;
- renderHome();renderTasks("calendarTaskList",iso(selectedDate));renderHabits("habitList",habitBrowseDate);renderHabitPageTools();renderCalendar();applyTranslations();applyAppearance();
+ renderHome();renderTasks("calendarTaskList",iso(selectedDate));renderHabits("habitList",habitBrowseDate);renderHabitPageTools();renderCalendar();applyTranslations();applyAppearance();if(document.getElementById("habitProgressModal").classList.contains("open"))renderHabitReport();
 }
 
 function openModal(id,defaultDate,defaultTime=''){
@@ -1412,6 +1458,82 @@ function initMotion(){
  };
 }
 
+// Reports read the existing history; opening a report never changes check-ins.
+let habitReportMode='week',habitReportAnchor=new Date(today),habitRecordLimit=7;
+Object.assign(EN,{'Прогресс привычек':'Habit progress','История':'Record','Скачать CSV':'Download CSV','Эта неделя':'This week','Не отмечено':'Not checked','Частично':'Partial','Будущий день':'Future day','Показать ещё':'Show more','Нет истории за этот период.':'No history for this period.','Выполнено за период':'Completed in this period','CSV сохранён':'CSV downloaded','Не удалось скачать CSV.':'Could not download CSV.'});
+function habitReportColor(h){return ['#7779ee','#61a0f5','#62cc7b','#e2e858','#a4df91'][Math.abs(Number(h.id)||0)%5]}
+function validHabitReportDate(value){if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return false;const d=fromISO(value);return Number.isFinite(d.getTime())&&iso(d)===value}
+function habitReportStart(h){
+ const known=[h.startDate,h.createdAt,...(h.done||[]),...(h.skipped||[]),...Object.keys(h.counts||{}),...Object.keys(h.entries||{})].filter(validHabitReportDate).sort();
+ return h.startDate&&validHabitReportDate(h.startDate)?h.startDate:known[0]||iso(today);
+}
+function habitReportState(h,date){
+ const goal=Math.max(1,Number(h.goalCount)||1),done=(h.done||[]).includes(date),missed=(h.skipped||[]).includes(date),count=Math.max(0,Math.min(goal,Number(h.counts?.[date])||0));
+ const recorded=done||missed||count>0||!!h.entries?.[date];
+ const archivedOut=h.archived&&(!h.archivedAt||date>h.archivedAt);
+ const scheduled=date>=habitReportStart(h)&&!archivedOut&&isScheduledHabitDay(h,fromISO(date));
+ if(!scheduled&&!recorded)return {kind:'off',percent:0,count:0,goal,eligible:false,label:tr('Не запланировано')};
+ if(date>iso(today))return {kind:'future',percent:0,count:0,goal,eligible:false,label:tr('Будущий день')};
+ if(done)return {kind:'done',percent:100,count:goal,goal,eligible:true,label:tr('Выполнено')};
+ if(missed)return {kind:'missed',percent:0,count:0,goal,eligible:true,label:tr('Не выполнил')};
+ return {kind:count?'partial':'pending',percent:Math.round(count/goal*100),count,goal,eligible:true,label:count?tr('Частично')+' '+count+'/'+goal:tr('Не отмечено')};
+}
+function habitReportRange(){
+ if(habitReportMode==='week'){const start=mondayOf(habitReportAnchor);return {start,end:addDays(start,6)}}
+ if(habitReportMode==='month'){const y=habitReportAnchor.getFullYear(),m=habitReportAnchor.getMonth();return {start:new Date(y,m,1),end:new Date(y,m+1,0)}}
+ return {start:addDays(habitReportAnchor,1-habitRecordLimit),end:new Date(habitReportAnchor)};
+}
+function habitReportDates(start,end){const dates=[];for(let d=new Date(start);d<=end;d=addDays(d,1))dates.push(iso(d));return dates}
+function habitReportItems(dates){return data.habits.filter(h=>dates.some(date=>habitReportState(h,date).kind!=='off'))}
+function habitReportLabel(h,date){return '<button type="button" class="habit-report-label" data-report-habit="'+h.id+'" data-report-date="'+date+'" title="'+esc(h.title)+'"><span class="habit-report-icon" aria-hidden="true">'+esc(h.icon||h.title.slice(0,1))+'</span><span>'+esc(h.title)+'</span></button>'}
+function habitReportCell(h,date){
+ const state=habitReportState(h,date),label=h.title+' · '+fmt(fromISO(date),{day:'numeric',month:'long',year:'numeric'})+' · '+state.label;
+ return '<button type="button" class="habit-report-cell '+state.kind+'" style="--report-color:'+habitReportColor(h)+';--report-percent:'+state.percent+'%" data-report-habit="'+h.id+'" data-report-date="'+date+'" title="'+esc(label)+'" aria-label="'+esc(label)+'" '+(['off','future'].includes(state.kind)?'disabled':'')+'>'+(state.kind==='missed'?'×':'')+'</button>';
+}
+function habitReportPeriodTitle(start,end){return habitReportMode==='week'?(iso(start)===iso(mondayOf(today))?tr('Эта неделя'):fmt(start,{day:'numeric',month:'short'})+' — '+fmt(end,{day:'numeric',month:'short',year:'numeric'})):fmt(start,{month:'long',year:'numeric'})}
+function renderHabitReport(resetScroll=false){
+ const box=document.getElementById('habitReportContent'),scroll=document.getElementById('habitReportScroll'),oldScroll=scroll.scrollTop;
+ const {start,end}=habitReportRange(),dates=habitReportDates(start,end),habits=habitReportItems(dates);
+ document.getElementById('habitReportDate').value=iso(habitReportAnchor);
+ document.querySelectorAll('[data-report-mode]').forEach(button=>{const active=button.dataset.reportMode===habitReportMode;button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;if(active)box.setAttribute('aria-labelledby',button.id)});
+ const period='<div class="habit-report-period"><button type="button" id="habitReportPrev" aria-label="'+tr('Предыдущий период')+'">‹</button><strong>'+esc(habitReportPeriodTitle(start,end))+'</strong><button type="button" id="habitReportNext" aria-label="'+tr('Следующий период')+'">›</button></div>';
+ let checked=0,total=0;for(const h of habits)for(const date of dates){const state=habitReportState(h,date);if(state.eligible){total++;if(state.kind==='done')checked++}}
+ const summary='<p class="habit-report-total">'+tr('Выполнено за период')+': '+checked+'/'+total+(total?' · '+Math.round(checked/total*100)+'%':'')+'</p>';
+ const empty='<div class="empty">'+tr('Нет истории за этот период.')+'</div>';
+ if(habitReportMode==='week'){
+  box.innerHTML='<div class="habit-report-panel">'+period+(habits.length?'<div class="habit-report-week"><span></span>'+dates.map(date=>'<span class="habit-report-dow '+(date===iso(today)?'today':'')+'" title="'+esc(fmt(fromISO(date),{day:'numeric',month:'long'}))+'">'+esc(fmt(fromISO(date),{weekday:'short'}))+'</span>').join('')+habits.map(h=>'<div style="--report-color:'+habitReportColor(h)+'">'+habitReportLabel(h,iso(habitReportAnchor))+'</div>'+dates.map(date=>habitReportCell(h,date)).join('')).join('')+'</div>'+summary:empty)+'</div>';
+ }else if(habitReportMode==='month'){
+  const offset=(start.getDay()+6)%7;
+  box.innerHTML='<div class="habit-report-panel">'+period+(habits.length?'<div class="habit-report-month">'+habits.map(h=>'<section class="habit-mini-calendar" style="--report-color:'+habitReportColor(h)+'">'+habitReportLabel(h,iso(habitReportAnchor))+'<div class="habit-mini-grid">'+'<span aria-hidden="true"></span>'.repeat(offset)+dates.map(date=>habitReportCell(h,date)).join('')+'</div></section>').join('')+'</div>'+summary:empty)+'</div>';
+ }else{
+  box.innerHTML=dates.slice().reverse().map(date=>{
+   const items=habits.filter(h=>habitReportState(h,date).kind!=='off');if(!items.length)return '';
+   return '<section class="habit-record-day"><h3>'+esc(fmt(fromISO(date),{day:'numeric',month:'short',year:'numeric'}))+'</h3>'+items.map(h=>{const state=habitReportState(h,date);return '<div class="habit-record-row" style="--report-color:'+habitReportColor(h)+'">'+habitReportLabel(h,date)+'<span class="habit-record-result">'+esc(state.label)+'<span class="habit-record-track" role="progressbar" aria-label="'+esc(h.title)+'" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+state.percent+'"><i style="width:'+state.percent+'%"></i></span></span></div>'}).join('')+'</section>';
+  }).join('')||empty;
+  const earliest=data.habits.map(habitReportStart).sort()[0];
+  if(earliest&&iso(start)>earliest)box.innerHTML+='<button type="button" class="secondary" id="habitReportMore">'+tr('Показать ещё')+'</button>';
+ }
+ box.querySelectorAll('[data-report-habit]').forEach(button=>button.onclick=()=>openHabit(Number(button.dataset.reportHabit),button.dataset.reportDate));
+ for(const [id,direction] of [['habitReportPrev',-1],['habitReportNext',1]]){const button=document.getElementById(id);if(button)button.onclick=()=>{habitReportAnchor=habitReportMode==='week'?addDays(habitReportAnchor,direction*7):new Date(habitReportAnchor.getFullYear(),habitReportAnchor.getMonth()+direction,1);renderHabitReport(true)}}
+ const more=document.getElementById('habitReportMore');if(more)more.onclick=()=>{habitRecordLimit+=14;renderHabitReport()};
+ scroll.scrollTop=resetScroll?0:oldScroll;
+}
+function openHabitProgress(){habitReportAnchor=new Date(habitBrowseDate);habitRecordLimit=7;document.getElementById('habitReportStatus').textContent='';applyTranslations();renderHabitReport(true);document.getElementById('habitProgressModal').classList.add('open');document.getElementById('closeHabitProgress').focus({preventScroll:true})}
+function closeHabitProgress(){document.getElementById('habitProgressModal').classList.remove('open');document.getElementById('habitProgressButton').focus({preventScroll:true})}
+function exportHabitReport(){
+ const {start,end}=habitReportRange(),dates=habitReportDates(start,end),rows=[[tr('Дата'),tr('Привычка'),tr('Выполнено'),tr('Цель'),'%',tr('История')]];
+ for(const date of dates)for(const h of habitReportItems([date])){const state=habitReportState(h,date);rows.push([date,h.title,state.count,state.goal,state.percent,state.label])}
+ const quote=value=>'"'+String(value).replace(/^[=+@-]/,"'$&").replace(/"/g,'""')+'"';
+ try{const blob=new Blob(['\ufeff'+rows.map(row=>row.map(quote).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download='habit-progress-'+iso(start)+'-'+iso(end)+'.csv';document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);document.getElementById('habitReportStatus').textContent=tr('CSV сохранён')}catch(e){document.getElementById('habitReportStatus').textContent=tr('Не удалось скачать CSV.')}
+}
+function initHabitProgress(){
+ document.getElementById('habitProgressButton').onclick=openHabitProgress;document.getElementById('closeHabitProgress').onclick=closeHabitProgress;
+ document.getElementById('habitProgressModal').addEventListener('click',e=>{if(e.target.id==='habitProgressModal')closeHabitProgress()});
+ document.getElementById('habitReportDate').onchange=e=>{if(validHabitReportDate(e.target.value)){habitReportAnchor=fromISO(e.target.value);habitRecordLimit=7;renderHabitReport(true)}};
+ document.querySelectorAll('[data-report-mode]').forEach((button,i,buttons)=>{button.onclick=()=>{habitReportMode=button.dataset.reportMode;habitRecordLimit=7;renderHabitReport(true)};button.onkeydown=e=>{let next;if(e.key==='ArrowRight')next=(i+1)%buttons.length;else if(e.key==='ArrowLeft')next=(i+buttons.length-1)%buttons.length;else return;e.preventDefault();buttons[next].click();buttons[next].focus({preventScroll:true})}});
+ document.getElementById('exportHabitProgress').onclick=exportHabitReport;
+}
+
 function initTaskSheetViewport(){
  const root=document.documentElement,viewport=window.visualViewport;
  let frame=0,fullHeight=window.innerHeight,lastWidth=window.innerWidth;
@@ -1440,11 +1562,11 @@ function initTaskSheetViewport(){
  document.addEventListener('focusin',schedule);
  document.addEventListener('input',e=>{if(e.target.matches('textarea'))schedule()});
  const observer=new MutationObserver(schedule);
- for(const id of ['taskModal','habitEditorModal','habitModal'])observer.observe(document.getElementById(id),{attributes:true,attributeFilter:['class']});
+ for(const id of ['taskModal','habitEditorModal','habitModal','habitProgressModal'])observer.observe(document.getElementById(id),{attributes:true,attributeFilter:['class']});
  window.syncEditorViewport=sync;sync();
 }
 initTaskSheetViewport();
-initMotion();initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();
+initMotion();initAppearanceControls();initMenu();initHabitDetails();initHabitSchedule();initSwipeAndTime();initHabitProgress();
 render();
 // Обновляем на границе минуты, чтобы отсчёт совпадал с часами.
 const habitRemindersKey='pro-plan-habit-reminders-v1';let seenHabitReminderDay='',seenHabitReminders=new Set(),habitReminderDismiss;
